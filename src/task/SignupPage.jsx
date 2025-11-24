@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://api.daewooebg.com/api";
 
 const SignupPage = () => {
     const [formData, setFormData] = useState({

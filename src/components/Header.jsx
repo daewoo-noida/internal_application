@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { User, LogIn, ChevronDown, Menu } from "lucide-react";
 
 export const Header = () => {
@@ -7,15 +7,16 @@ export const Header = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
     const dropdownRef = useRef(null);
 
-    // Load logged user
+    // Load logged user on mount
     useEffect(() => {
         const stored = localStorage.getItem("userData");
         if (stored) setUser(JSON.parse(stored));
     }, []);
 
-    // Close dropdown on click outside
+    // Close dropdown on outside click
     useEffect(() => {
         function handleClick(e) {
             if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -31,6 +32,9 @@ export const Header = () => {
         navigate("/login");
     };
 
+    // 🚫 COMPLETELY HIDE HEADER WHEN LOGGED OUT
+    if (!user) return null;
+
     return (
         <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-md z-50">
             <div className="px-5 py-3 flex items-center justify-between">
@@ -40,62 +44,45 @@ export const Header = () => {
                     <img src="/images/logo.png" alt="Logo" className="h-8 w-auto" />
                 </Link>
 
-                {/* HAMBURGER (Mobile) */}
-                {user && (
-                    <button
-                        className="md:hidden p-2 rounded-lg hover:bg-gray-100"
-                        onClick={() => setMobileOpen(!mobileOpen)}
-                    >
-                        <Menu size={22} />
-                    </button>
-                )}
+                {/* MOBILE MENU BUTTON */}
+                <button
+                    className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+                    onClick={() => setMobileOpen(!mobileOpen)}
+                >
+                    <Menu size={22} />
+                </button>
 
-                {/* NAVIGATION (Desktop) */}
-                {user && (
-                    <nav className="hidden md:flex gap-4">
-                        {[
-                            { href: "/sales/booknow", label: "Book Now" },
-                            { href: "/sales/download", label: "Downloads" },
-                            { href: "/sales/contact", label: "Support" },
-                            { href: "/sales/dashboard", label: "Dashboard" },
-                        ].map((nav) => (
-                            <Link
-                                key={nav.href}
-                                to={nav.href}
-                                className="px-4 py-1.5 no-underline rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-100 transition text-gray-700 font-medium"
-                            >
-                                {nav.label}
-                            </Link>
-                        ))}
-                    </nav>
-                )}
-
-                {/* AUTH / PROFILE */}
-                <div className="relative" ref={dropdownRef}>
-                    {!user ? (
-                        /* SHOW LOGIN BUTTON WHEN NOT LOGGED IN */
+                {/* MAIN NAV (Desktop) */}
+                <nav className="hidden md:flex gap-4">
+                    {[
+                        { href: "/sales/booknow", label: "Book Now" },
+                        { href: "/sales/download", label: "Downloads" },
+                        { href: "/sales/contact", label: "Support" },
+                        { href: "/sales/dashboard", label: "Dashboard" },
+                    ].map((nav) => (
                         <Link
-                            to="/login"
-                            className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600 text-white shadow hover:bg-blue-700 transition"
+                            key={nav.href}
+                            to={nav.href}
+                            className="px-4 py-1.5 no-underline rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-100 transition text-gray-700 font-medium"
                         >
-                            <LogIn size={18} /> Login
+                            {nav.label}
                         </Link>
-                    ) : (
-                        /* USER PROFILE BUTTON */
-                        <button
-                            onClick={() => setDropdownOpen(!dropdownOpen)}
-                            className="flex items-center gap-3 px-3 py-1.5 rounded-full bg-white shadow hover:bg-gray-100 transition"
-                        >
-                            <User className="text-gray-600" size={20} />
+                    ))}
+                </nav>
 
-                            <span className="font-medium text-gray-800">{user?.name}</span>
-
-                            <ChevronDown size={16} className="text-gray-500" />
-                        </button>
-                    )}
+                {/* PROFILE / DROPDOWN */}
+                <div className="relative" ref={dropdownRef}>
+                    <button
+                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                        className="flex items-center gap-3 px-3 py-1.5 rounded-full bg-white shadow hover:bg-gray-100 transition"
+                    >
+                        <User className="text-gray-600" size={20} />
+                        <span className="font-medium text-gray-800">{user?.name}</span>
+                        <ChevronDown size={16} className="text-gray-500" />
+                    </button>
 
                     {/* DROPDOWN MENU */}
-                    {dropdownOpen && user && (
+                    {dropdownOpen && (
                         <div className="absolute right-0 mt-2 w-44 bg-white shadow-xl rounded-lg overflow-hidden border">
                             <Link
                                 to="/profile"
@@ -115,7 +102,7 @@ export const Header = () => {
             </div>
 
             {/* MOBILE MENU */}
-            {user && mobileOpen && (
+            {mobileOpen && (
                 <div className="md:hidden bg-white border-t shadow-lg">
                     <nav className="flex flex-col py-2">
                         {[

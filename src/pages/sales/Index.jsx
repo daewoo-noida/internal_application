@@ -3,6 +3,7 @@ import FranchiseCarousel from './Franchises';
 import SignatureStoreCarousel from './SingatureStorecarousel';
 import MapToMarket from './MapToMarket';
 import HeroSection from './HeroSection';
+import LeadersSection from './LeadersSection';
 
 export default function Index() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -143,8 +144,7 @@ export default function Index() {
                 EBG – Where Purpose Meets Performance | Trusted by 40+ Brands
               </p>
               <p className="text-gray-700 mb-8 leading-relaxed">
-                At EBG Daewoo, we create strategic alliances that drive innovation and excellence.
-                Our commitment to quality and performance has made us a trusted partner for over 40 brands across India.
+                At EBG Group, we are driven by the vision of solving real-world challenges through purposeful, impactful action. With over 36 Brands under our umbrella, we are committed to transforming industries from energy solutions to advanced manufacturing, creating lasting value and sustainable growth. Our mission is clear, to shape industries that matter, delivering tangible results that improve lives. This is the promise we continue to fulfill every day. Our recent partnership with Daewoo marks a significant milestone in this journey. By aligning with a global leader in engineering and infrastructure, we are enhancing our ability to deliver advanced technologies, expand our market presence, and address India’s most pressing industrial needs with speed, scale, and precision.
               </p>
 
               {/* Feature List */}
@@ -234,6 +234,8 @@ export default function Index() {
         </div>
       </section>
 
+      <LeadersSection />
+
       {/* Master Franchise Opportunities - Exact Match */}
       <FranchiseCarousel />
 
@@ -269,9 +271,11 @@ export default function Index() {
             <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
               <h3 className="text-xl font-semibold mb-4 text-gray-900">Bank Details</h3>
               <div className="space-y-2 text-sm">
-                <p><span className="font-semibold text-gray-900">A/C Name:</span> <span className="text-gray-700">EBG Daewoo</span></p>
-                <p><span className="font-semibold text-gray-900">A/C No:</span> <span className="text-gray-700">1234567890</span></p>
-                <p><span className="font-semibold text-gray-900">IFSC Code:</span> <span className="text-gray-700">SBIN0001234</span></p>
+                <p><span className="font-semibold text-gray-900">A/C Name:</span> <span className="text-gray-700">Think eBikeGo Private Limited</span></p>
+                <p><span className="font-semibold text-gray-900">Bank Name:</span> <span className="text-gray-700">ICICI Bank</span></p>
+                <p><span className="font-semibold text-gray-900">A/C No:</span> <span className="text-gray-700">123805009535  </span></p>
+                <p><span className="font-semibold text-gray-900">Branch</span> <span className="text-gray-700">Mumbai – Andheri W.E. Highway  </span></p>
+                <p><span className="font-semibold text-gray-900">IFSC Code:</span> <span className="text-gray-700">ICIC0001238</span></p>
               </div>
               <button className="mt-4 bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-full font-semibold text-sm transition-colors">
                 Copy Details
@@ -282,7 +286,7 @@ export default function Index() {
       </section>
 
       {/* Legends Aren't Hired, They're Made - Exact Match */}
-      <section className="py-20 text-black relative overflow-hidden legends-section-bg">
+      {/* <section className="py-20 text-black relative overflow-hidden legends-section-bg">
         <div className="relative max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-5xl md:text-7xl font-bold mb-4 leading-tight">
             Legends Aren't Hired
@@ -297,10 +301,10 @@ export default function Index() {
             Join Our Team
           </button>
         </div>
-      </section>
+      </section> */}
 
       {/* Employee Of The Month - Exact Match */}
-      <section className="py-16 bg-white">
+      {/* <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Employee Of The Month</h2>
           <p className="text-gray-600 mb-12 max-w-3xl mx-auto text-lg">
@@ -327,7 +331,7 @@ export default function Index() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer - Exact Match */}
 

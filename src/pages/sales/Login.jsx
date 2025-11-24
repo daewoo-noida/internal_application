@@ -92,7 +92,7 @@ export default function Login() {
 
 
       <div style={backGroundImage}>
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-4  max-w-md w-full">
+        <div className=" rounded-2xl border border-gray-100 p-4  max-w-md w-full">
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>

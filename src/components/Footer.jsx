@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     Facebook,
     Instagram,
@@ -10,6 +10,16 @@ import {
 } from "lucide-react";
 
 export const Footer = () => {
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const stored = localStorage.getItem("userData");
+        if (stored) setUser(JSON.parse(stored));
+    }, []);
+
+    // 🚫 HIDE FOOTER IF USER IS LOGGED OUT
+    if (!user) return null;
+
     return (
         <footer className="relative bg-[#0A0F1F] text-white pt-20 pb-12 overflow-hidden">
 
@@ -19,10 +29,7 @@ export const Footer = () => {
 
             <div className="relative max-w-7xl mx-auto px-6">
 
-                {/* Footer Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-
-                    {/* Brand */}
                     <div>
                         <img
                             src="/images/footerLogo.png"
@@ -35,7 +42,6 @@ export const Footer = () => {
                             Growing together with trust and technology.
                         </p>
 
-                        {/* Social Icons */}
                         <div className="flex gap-3 mt-4">
                             {[
                                 { icon: <Facebook size={20} />, href: "#" },
@@ -55,7 +61,6 @@ export const Footer = () => {
                         </div>
                     </div>
 
-                    {/* Quick Links */}
                     <div>
                         <h3 className="text-lg font-semibold mb-6 tracking-wide">
                             Quick Links
@@ -80,7 +85,6 @@ export const Footer = () => {
                         </ul>
                     </div>
 
-                    {/* Support */}
                     <div>
                         <h3 className="text-lg font-semibold mb-6 tracking-wide">
                             Support
@@ -109,7 +113,6 @@ export const Footer = () => {
                         </ul>
                     </div>
 
-                    {/* Contact Section */}
                     <div>
                         <h3 className="text-lg font-semibold mb-6 tracking-wide">
                             Get In Touch
@@ -137,7 +140,6 @@ export const Footer = () => {
                         </div>
                     </div>
                 </div>
-
 
                 <div className="border-t border-white/10 mt-16 pt-6 text-center text-gray-400 text-sm">
                     © {new Date().getFullYear()} Powered by{" "}

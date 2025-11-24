@@ -2,15 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 
 export default function ModernHeroCarousel() {
     const heroImages = [
-        { src: "/images/hero1.jpg", title: "Innovation for India" },
-        { src: "/images/hero2.jpg", title: "India’s Strategic Future" },
-        { src: "/images/hero3.jpg", title: "Empowering Every State" },
-        { src: "/images/hero4.jpg", title: "A Nation of Possibilities" },
-        { src: "/images/hero5.jpg", title: "Transforming Opportunities" },
-        { src: "/images/hero6.jpg", title: "Stronger Together" },
-        { src: "/images/hero7.jpg", title: "Alliance for Growth" },
-        { src: "/images/hero8.jpg", title: "Vision for 2030" },
-        { src: "/images/hero9.jpg", title: "One India, One Future" },
+        { src: "/images/homeBanner_1.jpg", title: "Innovation for India" },
+
     ];
 
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -26,16 +19,10 @@ export default function ModernHeroCarousel() {
     }, [totalSlides]);
 
     return (
-        <section className="bg-white flex items-center justify-center py-5 my-5">
-            <div className="max-w-7xl w-full px-6 text-center pt-5">
-
-                {/* Main Heading */}
-                <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-10 tracking-tight">
-                    A Strategic Alliance for India
-                </h1>
-
+        <section className="pt-5" style={{ marginTop: 20 }}>
+            <div className=" w-full text-center">
                 {/* Carousel */}
-                <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+                <div className="relative overflow-hidden shadow-2xl">
 
                     {/* Slide Images */}
                     <div
@@ -54,13 +41,7 @@ export default function ModernHeroCarousel() {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
 
                                 {/* Animated Title on Image */}
-                                <h2
-                                    className={`absolute bottom-10 left-1/2 -translate-x-1/2 text-white text-2xl md:text-3xl font-semibold transition-all duration-700
-                                    ${currentSlide === idx ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}
-                                `}
-                                >
-                                    {img.title}
-                                </h2>
+
                             </div>
                         ))}
                     </div>

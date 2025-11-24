@@ -79,7 +79,7 @@ const SignupPage = () => {
 
 
     const backGroundImage = {
-        backgroundImage: `url(/images/Login_Banner.png)`,
+        backgroundImage: `url(/images/Signup_Banner.png)`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -96,7 +96,7 @@ const SignupPage = () => {
             className="min-h-screen flex items-center justify-center bg-gray-50 "
             style={backGroundImage}
         >
-            <div className="w-full max-w-md bg-white shadow-xl rounded-xl p-8 border border-gray-200">
+            <div className="w-full max-w-md  rounded-xl p-8 border border-gray-200">
                 <h2 className="text-3xl font-bold text-center mb-2 text-gray-800">
                     Create Account
                 </h2>
@@ -134,7 +134,7 @@ const SignupPage = () => {
                                 setFormData({
                                     ...formData,
                                     designation: e.target.value,
-                                    designationOther: "", // reset others input if changed
+                                    designationOther: "",
                                 })
                             }
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
@@ -149,7 +149,6 @@ const SignupPage = () => {
                         </select>
                     </div>
 
-                    {/* Show this input only if "Others" is selected */}
                     {formData.designation === "others" && (
                         <div className="mb-2">
                             <label className="block text-gray-700 font-medium mb-1">

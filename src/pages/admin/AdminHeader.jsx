@@ -23,7 +23,7 @@ export default function AdminHeader({ toggleSidebar }) {
 
     const logout = () => {
         localStorage.clear();
-        window.location.href = "/admin/login";
+        window.location.href = "/";
     };
 
     return (

@@ -28,7 +28,7 @@ With a sharp understanding of India’s market potential, he focuses on building
     return (
         <section className="py-16 bg-white">
             <h2 className="text-center text-3xl font-bold text-gray-900 mb-12">
-                FROM OUR <span className="text-blue-600">LEADERS</span>
+                FROM OUR <span className="text-[#0070b9]">LEADERS</span>
             </h2>
 
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 px-6">
@@ -41,7 +41,7 @@ With a sharp understanding of India’s market potential, he focuses on building
                             <img
                                 src={leader.img}
                                 alt={leader.name}
-                                className="w-32 h-32 rounded-full object-cover border-4 border-blue-600"
+                                className="w-32 h-32 rounded-full object-cover border-4 border-[#0070b9]"
                             />
                         </div>
 
@@ -50,7 +50,7 @@ With a sharp understanding of India’s market potential, he focuses on building
                         </p>
 
                         <div className="text-center mt-4">
-                            <h3 className="text-xl font-bold text-blue-700">{leader.name}</h3>
+                            <h3 className="text-xl font-bold text-[#0070b9]">{leader.name}</h3>
                             <p className="text-sm font-medium text-gray-600">{leader.title}</p>
                         </div>
                     </div>

@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Client = require("../models/ClientMaster");
 
 exports.signup = async (req, res) => {
   try {
@@ -95,3 +96,12 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.getAllUser = async (req, res) => {
+  try {
+    const users = await User.find({ role: "Sales" }).select("-password");
+    res.json({ success: true, data: users });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, message: "Server Error", err });
+  }
+};

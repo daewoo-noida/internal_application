@@ -1,6 +1,6 @@
 export default function CTA() {
     return (
-        <section className="cta-section py-20 md:py-32 bg-blue-600 text-white">
+        <section className="cta-section py-20 md:py-32 bg-[#0070b9] text-white">
             <div className="container-default text-center">
                 <h2 className="text-3xl md:text-4xl font-bold mb-4 fade-up" data-aos="fade-up">
                     Join Our Community of Innovators
@@ -20,7 +20,7 @@ export default function CTA() {
                     />
                     <button
                         type="submit"
-                        className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition"
+                        className="px-6 py-3 bg-white text-[#0070b9] font-semibold rounded-lg hover:bg-gray-100 transition"
                     >
                         Subscribe
                     </button>

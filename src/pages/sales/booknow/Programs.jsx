@@ -24,7 +24,7 @@ export default function Programs() {
         <section className="programs-section py-20 md:py-32 bg-white dark:bg-gray-900">
             <div className="container-default text-center">
                 <h2 className="section-title-9 mb-12 fade-up" data-aos="fade-up">
-                    Our <span className="text-blue-600">Programs</span>
+                    Our <span className="text-[#0070b9]">Programs</span>
                 </h2>
                 <div className="grid md:grid-cols-3 gap-8">
                     {programs.map((program, index) => (

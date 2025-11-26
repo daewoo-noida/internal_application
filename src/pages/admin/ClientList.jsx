@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import adminAPI from "../../utils/adminAPI";
+import adminAPI from "../../utils/api";
 
 export default function ClientsList() {
     const [clients, setClients] = useState([]);

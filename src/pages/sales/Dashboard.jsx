@@ -145,7 +145,7 @@ export default function SalesDashboard() {
                     <td className="px-6 py-4">{c.receivedPercent}%</td>
 
                     <td className="px-6 py-4">
-                      <button className="bg-blue-600 text-white px-3 py-1 rounded">
+                      <button className="bg-[#0070b9] text-white px-3 py-1 rounded">
                         Edit
                       </button>
                     </td>

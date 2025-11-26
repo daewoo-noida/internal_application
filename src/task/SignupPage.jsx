@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "https://api.daewooebg.com/api";
+const API_URL = import.meta.env.VITE_API_URL || "https://api.daewooebg.com/api";
 
 const SignupPage = () => {
     const [formData, setFormData] = useState({
@@ -25,15 +25,16 @@ const SignupPage = () => {
         setError("");
         setLoading(true);
 
-        // Email validation for allowed domains
         const allowedDomains = [
             "@theebg.com",
-            "@daewooappliances.com",
-            "@ebikego.in"
+            "@daewooappliances.in",
+            "@ebikego.in",
         ];
 
+        const finalEmail = `${formData.emailName}${formData.emailDomain}`;
+
         const emailValid = allowedDomains.some(domain =>
-            formData.email.toLowerCase().endsWith(domain)
+            finalEmail.toLowerCase().endsWith(domain)
         );
 
         if (!emailValid) {
@@ -44,6 +45,7 @@ const SignupPage = () => {
 
         const submitData = {
             ...formData,
+            email: finalEmail,
             designation:
                 formData.designation === "others"
                     ? formData.designationOther.trim()
@@ -76,6 +78,7 @@ const SignupPage = () => {
             setLoading(false);
         }
     };
+
 
 
     const backGroundImage = {
@@ -168,16 +171,37 @@ const SignupPage = () => {
 
                     <div className="mb-2">
                         <label className="block text-gray-700 font-medium mb-1">Email</label>
-                        <input
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) =>
-                                setFormData({ ...formData, email: e.target.value })
-                            }
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                            required
-                        />
+
+                        <div className="flex gap-2">
+                            {/* LEFT: USERNAME PART */}
+                            <input
+                                type="text"
+                                placeholder="Enter username (e.g. john)"
+                                value={formData.emailName || ""}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, emailName: e.target.value })
+                                }
+                                className="w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                required
+                            />
+
+                            {/* RIGHT: DOMAIN DROPDOWN */}
+                            <select
+                                value={formData.emailDomain || ""}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, emailDomain: e.target.value })
+                                }
+                                className="w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                required
+                            >
+                                <option value="">Select Domain</option>
+                                <option value="@theebg.com">@theebg.com</option>
+                                <option value="@daewooappliances.in">@daewooappliances.in</option>
+                                <option value="@ebikego.in">@ebikego.in</option>
+                            </select>
+                        </div>
                     </div>
+
 
                     <div className="mb-2">
                         <label className="block text-gray-700 font-medium mb-1">

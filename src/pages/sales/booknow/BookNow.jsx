@@ -56,7 +56,7 @@ export default function BookNow() {
             {/* -------------------------------------------------- */}
             {/*  HERO SECTION */}
             {/* -------------------------------------------------- */}
-            <section className="pt-[220px] pb-[150px] bg-gradient-to-b from-blue-700 to-blue-900 text-white relative overflow-hidden">
+            <section className="pt-[220px] pb-[150px] bg-gradient-to-b from-blue-700 to-[#0070b9] text-white relative overflow-hidden">
                 <div className="absolute inset-0 bg-blue-900/20 backdrop-blur-sm" />
 
                 {/* Floating Highlight */}
@@ -78,10 +78,10 @@ export default function BookNow() {
                     </p>
 
                     <div className="flex flex-wrap gap-4 justify-center mt-8">
-                        <a href="#franchise-booking" className="px-6 py-3 bg-white text-blue-700 rounded-lg shadow-lg hover:bg-blue-100 transition">
+                        <a href="#franchise-booking" className="px-6 py-3 bg-white text-[#0070b9] rounded-lg shadow-lg hover:bg-blue-100 transition">
                             Franchise Options
                         </a>
-                        <a href="#formats" className="px-6 py-3 border border-white rounded-lg hover:bg-white hover:text-blue-700 transition">
+                        <a href="#formats" className="px-6 py-3 border border-white rounded-lg hover:bg-white hover:text-[#0070b9] transition">
                             Outlet Formats
                         </a>
                     </div>
@@ -109,7 +109,7 @@ export default function BookNow() {
                         <div className="grid gap-4">
                             {["Future-ready formats", "Dedicated launch support", "Pan-India supply network"].map((title, i) => (
                                 <div key={i} className="flex gap-4 p-5 bg-white rounded-xl shadow">
-                                    <div className="text-2xl font-bold text-blue-600">0{i + 1}</div>
+                                    <div className="text-2xl font-bold text-[#0070b9]">0{i + 1}</div>
                                     <div>
                                         <h3 className="font-semibold text-lg">{title}</h3>
                                         <p className="text-gray-500 mt-1">
@@ -151,7 +151,7 @@ export default function BookNow() {
 
                     {/* Title */}
                     <div className="text-center space-y-3">
-                        <span className="px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">Franchise Booking</span>
+                        <span className="px-4 py-1 bg-blue-100 text-[#0070b9] rounded-full text-sm">Franchise Booking</span>
                         <h2 className="text-3xl font-bold">Choose Your Franchise Pathway</h2>
                         <p className="text-gray-600 max-w-2xl mx-auto">
                             Select a franchise tier and our team will guide you from verification to launch.
@@ -194,7 +194,7 @@ export default function BookNow() {
                     </div>
 
                     {/* CTA */}
-                    <div className="p-6 bg-blue-700 text-white rounded-2xl flex flex-col md:flex-row justify-between items-center">
+                    <div className="p-6 bg-[#0070b9] text-white rounded-2xl flex flex-col md:flex-row justify-between items-center">
                         <div>
                             <h3 className="text-2xl font-semibold">Ready to apply?</h3>
                             <p className="text-white/80 text-sm">
@@ -204,7 +204,7 @@ export default function BookNow() {
 
                         <button
                             onClick={() => navigate("/sales/addclients")}
-                            className="px-6 py-3 bg-white text-blue-600 rounded-lg font-medium hover:bg-gray-100 mt-4 md:mt-0"
+                            className="px-6 py-3 bg-white text-[#0070b9] rounded-lg font-medium hover:bg-gray-100 mt-4 md:mt-0"
                         >
                             Submit Interest
                         </button>
@@ -274,7 +274,7 @@ export default function BookNow() {
                         <input className="w-full p-3 border rounded-md" placeholder="Phone Number" />
                         <input className="w-full p-3 border rounded-md" placeholder="Email Address" />
 
-                        <button className="w-full py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        <button className="w-full py-3 bg-[#0070b9] text-white rounded-md hover:bg-[#0070b9]">
                             Request a Callback
                         </button>
                     </form>

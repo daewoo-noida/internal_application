@@ -24,6 +24,9 @@ import Downloads from "./pages/sales/Downloads.jsx";
 import AddClient from "./pages/sales/booknow/BookNowForm.jsx";
 import SalesmanDetails from "./pages/admin/SalesmanDetails.jsx";
 import SalesTeam from "./pages/sales/SalesTeam.jsx";
+import BookNowMultiStepForm from "./components/multistepform/BookNowMultiStepForm.jsx";
+import Reimbursement from "./pages/sales/Reimbursement.jsx";
+import UserProfile from "./pages/sales/Profile.jsx";
 
 // Wrapper for Sales Routes
 const SalesLayout = () => (
@@ -56,15 +59,15 @@ export default function App() {
       <Route element={<SalesLayout />}>
         <Route path="/" element={<SalesIndex />} />
         <Route path="/sales/dashboard" element={<SalesDashboard />} />
-        <Route path="/sales/addclients" element={<AddClient />} />
+        <Route path="/sales/addclients" element={<BookNowMultiStepForm />} />
         <Route path="/sales/contact" element={<Contact_Us />} />
         <Route path="/sales/download" element={<Downloads />} />
         <Route path="/sales/booknow" element={<BookNow />} />
+        <Route path="/sales/reimbursement" element={<Reimbursement />} />
+        <Route path="/sales/profile" element={<UserProfile />} />
       </Route>
 
       {/* Admin Routes */}
-
-      {/* <Route path="/admin/login" element={<AdminLogin />} /> */}
 
       <Route element={<AdminLayouts />}>
         <Route path="/admin/dashboard" element={<AdminDashboard />} />

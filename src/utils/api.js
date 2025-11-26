@@ -35,6 +35,7 @@ export const authAPI = {
   signup: (data) => api.post("/auth/signup", data),
   login: (data) => api.post("/auth/login", data),
   profile: () => api.get("/auth/profile"),
+  getallUser: (data) => api.get("/auth/user", data)
 };
 
 
@@ -44,6 +45,7 @@ export const clientAPI = {
   getById: (id) => api.get(`/clients/${id}`),
   update: (id, data) => api.put(`/clients/${id}`, data),
   delete: (id) => api.delete(`/clients/${id}`),
+
 };
 
 

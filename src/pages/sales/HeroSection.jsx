@@ -2,7 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 
 export default function ModernHeroCarousel() {
     const heroImages = [
-        { src: "/images/homeBanner_1.jpg", title: "Innovation for India" },
+        // { src: "/images/homeBanner_1.jpg", title: "Innovation for India" },
+        { src: "/images/homeBanner_2.jpg", title: "Innovation for India" },
+        { src: "/images/homeBanner_3.jpg", title: "Innovation for India" },
+        { src: "/images/homeBanner_4.jpg", title: "Innovation for India" },
+        { src: "/images/homeBanner_5.jpg", title: "Innovation for India" },
 
     ];
 
@@ -19,10 +23,10 @@ export default function ModernHeroCarousel() {
     }, [totalSlides]);
 
     return (
-        <section className="pt-5" style={{ marginTop: 20 }}>
-            <div className=" w-full text-center">
+        <section className="pt-5 " style={{ marginTop: 20 }}>
+            <div className=" w-full text-center p-3">
                 {/* Carousel */}
-                <div className="relative overflow-hidden shadow-2xl">
+                <div className="relative overflow-hidden  rounded-2xl">
 
                     {/* Slide Images */}
                     <div
@@ -38,7 +42,7 @@ export default function ModernHeroCarousel() {
                                 />
 
                                 {/* Animated Gradient Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                                {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div> */}
 
                                 {/* Animated Title on Image */}
 

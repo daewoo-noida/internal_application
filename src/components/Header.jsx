@@ -32,7 +32,6 @@ export const Header = () => {
         navigate("/login");
     };
 
-    // 🚫 COMPLETELY HIDE HEADER WHEN LOGGED OUT
     if (!user) return null;
 
     return (
@@ -41,7 +40,7 @@ export const Header = () => {
 
                 {/* LOGO */}
                 <Link to="/" className="flex items-center gap-2">
-                    <img src="/images/logo.png" alt="Logo" className="h-8 w-auto" />
+                    <img src="/images/logo.png" alt="Logo" className="h-10 w-auto" />
                 </Link>
 
                 {/* MOBILE MENU BUTTON */}
@@ -58,6 +57,7 @@ export const Header = () => {
                         { href: "/sales/booknow", label: "Book Now" },
                         { href: "/sales/download", label: "Downloads" },
                         { href: "/sales/contact", label: "Support" },
+                        { href: "/sales/reimbursement", label: "Reimbursement" },
                         { href: "/sales/dashboard", label: "Dashboard" },
                     ].map((nav) => (
                         <Link
@@ -85,7 +85,7 @@ export const Header = () => {
                     {dropdownOpen && (
                         <div className="absolute right-0 mt-2 w-44 bg-white shadow-xl rounded-lg overflow-hidden border">
                             <Link
-                                to="/profile"
+                                to="/sales/profile"
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             >
                                 Profile

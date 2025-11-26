@@ -48,114 +48,137 @@ export default function FranchiseCarousel() {
             f.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    // Auto-sliding
     useEffect(() => {
         const interval = setInterval(() => {
-            setFranchiseSlide((prev) =>
-                prev === filteredFranchises.length - 1 ? 0 : prev + 1
-            );
-        }, 3000);
+            if (!carouselRef.current) return;
+            carouselRef.current.scrollBy({
+                left: carouselRef.current.offsetWidth / 3,
+                behavior: "smooth",
+            });
+        }, 4000);
+
         return () => clearInterval(interval);
     }, [filteredFranchises.length]);
 
     const scrollCarousel = (direction) => {
         if (!carouselRef.current) return;
-        const width = carouselRef.current.offsetWidth / 5;
+        const width = carouselRef.current.offsetWidth / 2;
         carouselRef.current.scrollBy({
             left: direction === "next" ? width : -width,
             behavior: "smooth",
         });
     };
 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     return (
-        <section className="py-16 bg-gray-50">
+        <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
             <div className="max-w-7xl mx-auto px-6">
-                <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                    Master Franchise Opportunities
-                </h2>
-                <p className="text-gray-600 mb-8 max-w-3xl text-lg">
-                    Explore our master franchise opportunities across India. Join our
-                    network of successful franchise partners.
-                </p>
 
-                <div className="flex flex-col md:flex-row gap-4 mb-8 items-center">
-                    <div className="flex bg-white rounded-lg p-1 shadow-sm">
+                {/* HEADER */}
+                <div className="text-center mb-12">
+                    <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight">
+                        Master Franchise Opportunities
+                    </h2>
+                    <p className="text-gray-600 text-lg mt-3 max-w-2xl mx-auto">
+                        Explore master franchise locations across India and join our growing network.
+                    </p>
+                </div>
+
+                {/* FILTERS */}
+                <div className="flex flex-col md:flex-row gap-4 mb-10 items-center justify-between">
+
+                    {/* TABS */}
+                    <div className="bg-white p-1 rounded-full shadow flex">
                         <button
                             onClick={() => setFranchiseFilter("Available")}
-                            className={`px-6 py-2 rounded-md font-semibold text-sm transition-colors ${franchiseFilter === "Available"
-                                ? "bg-blue-500 text-white"
+                            className={`px-6 py-2 rounded-full font-medium transition-all ${franchiseFilter === "Available"
+                                ? "bg-[#0070b9] text-white shadow"
                                 : "text-gray-600 hover:bg-gray-100"
                                 }`}
                         >
-                            Available 12
+                            Available ({franchises.filter(f => f.status === "Available").length})
                         </button>
                         <button
                             onClick={() => setFranchiseFilter("Booked")}
-                            className={`px-6 py-2 rounded-md font-semibold text-sm transition-colors ${franchiseFilter === "Booked"
-                                ? "bg-red-500 text-white"
+                            className={`px-6 py-2 rounded-full font-medium transition-all ${franchiseFilter === "Booked"
+                                ? "bg-red-500 text-white shadow"
                                 : "text-gray-600 hover:bg-gray-100"
                                 }`}
                         >
-                            Booked 18
+                            Booked ({franchises.filter(f => f.status === "Booked").length})
                         </button>
                     </div>
 
+                    {/* SEARCH */}
                     <input
                         type="text"
-                        placeholder="Search by Region Name..."
+                        placeholder="Search region..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-shadow shadow-sm hover:shadow-md"
+                        className="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-[#0070b9] shadow-sm"
                     />
                 </div>
 
+                {/* CAROUSEL */}
                 <div className="relative">
+
+                    {/* LEFT ARROW */}
                     <button
                         onClick={() => scrollCarousel("prev")}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-2 hover:bg-gray-100 z-10"
+                        className="absolute -left-4 md:-left-10 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-3 hover:bg-gray-100 z-20"
                     >
                         ◀
                     </button>
+
+                    {/* CARD LIST */}
                     <div
                         ref={carouselRef}
-                        className="flex overflow-x-auto scrollbar-hide space-x-4 transition-transform"
+                        className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide snap-x"
                     >
                         {filteredFranchises.map((item, index) => (
-                            <div key={index} className="w-1/5 flex-shrink-0">
-                                <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow transform hover:scale-105 duration-300">
-                                    <div className="h-48">
-                                        <img
-                                            src={item.image}
-                                            alt={item.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-                                    <div className="p-4">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <span
-                                                className={`px-3 py-1 rounded-full text-xs font-semibold ${item.status === "Available"
-                                                    ? "bg-green-100 text-green-800"
-                                                    : "bg-red-100 text-red-800"
-                                                    }`}
-                                            >
-                                                {item.status}
-                                            </span>
-                                        </div>
-                                        <h3 className="font-semibold text-gray-900 text-sm leading-tight mb-2">
-                                            {item.title}
-                                        </h3>
-                                        <button onClick={() => navigate('/sales/addclients')} className="w-full bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-full font-semibold text-sm transition-colors">
-                                            Enquire Now
-                                        </button>
-                                    </div>
+                            <div
+                                key={index}
+                                className="min-w-[260px] snap-start bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden"
+                            >
+                                <div className="h-40">
+                                    <img
+                                        src={item.image}
+                                        alt={item.title}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+
+                                <div className="p-3">
+                                    <span
+                                        className={`px-3 py-1 rounded-full text-xs font-semibold ${item.status === "Available"
+                                            ? "bg-green-100 text-green-800"
+                                            : "bg-red-100 text-red-700"
+                                            }`}
+                                    >
+                                        {item.status}
+                                    </span>
+
+                                    <h3 className="text-[18px] font-small text-gray-900 mt-3 mb-4 leading-snug">
+                                        {item.title}
+                                    </h3>
+
+                                    <button
+                                        onClick={() => navigate("/sales/addclients")}
+                                        className="w-full bg-[#0070b9] hover:bg-[#0070b9] text-white px-4 py-2 rounded-lg font-medium shadow-sm transition"
+                                    >
+                                        Enquire Now
+                                    </button>
                                 </div>
                             </div>
                         ))}
                     </div>
+
+                    {/* RIGHT ARROW */}
                     <button
                         onClick={() => scrollCarousel("next")}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-2 hover:bg-gray-100 z-10"
+                        className="absolute -right-4 md:-right-10 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-3 hover:bg-gray-100 z-20"
                     >
                         ▶
                     </button>

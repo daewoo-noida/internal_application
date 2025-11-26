@@ -121,7 +121,7 @@ export const Footer = () => {
                         <div className="space-y-4 text-gray-400">
 
                             <div className="flex items-start gap-3">
-                                <MapPin className="text-blue-400 mt-1" size={22} />
+                                <MapPin className="text-[#0070b9] mt-1" size={22} />
                                 <p>
                                     A-Wing, 2nd Floor, Pramukh Plaza,
                                     Cardinal Gracious Road, Andheri East, Mumbai — 400059.
@@ -129,7 +129,7 @@ export const Footer = () => {
                             </div>
 
                             <div className="flex items-center gap-3">
-                                <Mail className="text-blue-400" size={20} />
+                                <Mail className="text-[#0070b9]" size={20} />
                                 <a
                                     href="mailto:help@daewooappliances.in"
                                     className="hover:text-white transition"

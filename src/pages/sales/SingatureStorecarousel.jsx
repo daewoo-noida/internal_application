@@ -54,7 +54,7 @@ export default function SignatureStoreCarousel() {
                 </p>
 
                 <div className="flex flex-col md:flex-row gap-4 mb-8 items-center">
-                    <div className="flex bg-gray-100 rounded-lg p-1">
+                    {/* <div className="flex bg-gray-100 rounded-lg p-1">
                         <button
                             onClick={() => setStoreFilter("Available")}
                             className={`px-6 py-2 rounded-md font-semibold text-sm transition-colors ${storeFilter === "Available"
@@ -73,7 +73,7 @@ export default function SignatureStoreCarousel() {
                         >
                             Booked
                         </button>
-                    </div>
+                    </div> */}
 
                     <input
                         type="text"

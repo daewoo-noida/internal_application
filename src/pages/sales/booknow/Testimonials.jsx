@@ -35,7 +35,7 @@ export default function Testimonials() {
         <section className="testimonials-section py-20 md:py-32 bg-gray-50 dark:bg-gray-900">
             <div className="container-default text-center">
                 <h2 className="section-title-9 mb-12 fade-up" data-aos="fade-up">
-                    What Our <span className="text-blue-600">Participants Say</span>
+                    What Our <span className="text-[#0070b9]">Participants Say</span>
                 </h2>
                 <div className="relative">
                     {testimonials.map((t, index) => (
@@ -63,13 +63,13 @@ export default function Testimonials() {
                     {/* Navigation Arrows */}
                     <button
                         onClick={prevSlide}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 p-2 rounded-full bg-[#0070b9] text-white hover:bg-[#0070b9] transition"
                     >
                         &#10094;
                     </button>
                     <button
                         onClick={nextSlide}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 p-2 rounded-full bg-[#0070b9] text-white hover:bg-[#0070b9] transition"
                     >
                         &#10095;
                     </button>

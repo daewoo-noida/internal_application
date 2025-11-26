@@ -16,7 +16,7 @@ export default function Hero() {
                             data-aos-delay="100"
                         >
                             Empower Your Future with
-                            <span className="text-blue-600"> WCI Initiatives</span>
+                            <span className="text-[#0070b9]"> WCI Initiatives</span>
                         </h1>
 
                         <p

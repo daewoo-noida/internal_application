@@ -24,7 +24,7 @@ export default function FranchiseBooking() {
                     {/* Right Content */}
                     <div className="fade-up" data-aos="fade-up" data-aos-delay="200">
                         <h2 className="section-title-9 mb-5">
-                            Book Your <span className="text-blue-600">Franchise Today</span>
+                            Book Your <span className="text-[#0070b9]">Franchise Today</span>
                         </h2>
                         <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md">
                             Join WCI Initiatives as a franchise partner and become part of a growing community focused on innovation, sustainability, and social impact. Expand your reach and make a difference in local communities.

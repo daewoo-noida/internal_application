@@ -7,7 +7,7 @@ export default function Intro() {
                     {/* Left Content */}
                     <div className="fade-up" data-aos="fade-up" data-aos-delay="100">
                         <h2 className="section-title-9 mb-5">
-                            Why Choose <span className="text-blue-600">WCI Initiatives?</span>
+                            Why Choose <span className="text-[#0070b9]">WCI Initiatives?</span>
                         </h2>
                         <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md">
                             WCI Initiatives empowers communities through awareness, education, and sustainable programs that focus on creative storytelling, digital safety, environmental responsibility, and social development.

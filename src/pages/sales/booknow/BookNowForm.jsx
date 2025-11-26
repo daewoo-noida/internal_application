@@ -39,13 +39,14 @@ export default function AddClient() {
     // -----------------------
     // States → Districts Data
     // -----------------------
+
     const stateDistrictMap = {
         Maharashtra: ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad"],
         Karnataka: ["Bengaluru", "Mysuru", "Hubli", "Mangalore"],
         TamilNadu: ["Chennai", "Coimbatore", "Madurai", "Salem"],
         UttarPradesh: ["Lucknow", "Kanpur", "Varanasi", "Agra"],
         Gujarat: ["Ahmedabad", "Surat", "Vadodara", "Rajkot"],
-        // Add more if needed...
+
     };
 
     const territories = [

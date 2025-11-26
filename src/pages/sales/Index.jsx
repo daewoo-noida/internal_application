@@ -4,6 +4,7 @@ import SignatureStoreCarousel from './SingatureStorecarousel';
 import MapToMarket from './MapToMarket';
 import HeroSection from './HeroSection';
 import LeadersSection from './LeadersSection';
+import ClientLogoCarousel from './ClientLogoCarousel';
 
 export default function Index() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -137,37 +138,25 @@ export default function Index() {
 
             {/* Text Content */}
             <div>
-              <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-gray-900 leading-tight">
-                Message From Our Founder
+              <h2 className="text-4xl md:text-3xl font-extrabold mb-6 text-gray-900 leading-tight">
+                A NOTE FROM FOUNDER & CEO
               </h2>
-              <p className="text-lg md:text-xl mb-6 text-gray-700 font-medium">
+              {/* <p className="text-lg md:text-xl mb-6 text-gray-700 font-medium">
                 EBG – Where Purpose Meets Performance | Trusted by 40+ Brands
-              </p>
+              </p> */}
               <p className="text-gray-700 mb-8 leading-relaxed">
                 At EBG Group, we are driven by the vision of solving real-world challenges through purposeful, impactful action. With over 36 Brands under our umbrella, we are committed to transforming industries from energy solutions to advanced manufacturing, creating lasting value and sustainable growth. Our mission is clear, to shape industries that matter, delivering tangible results that improve lives. This is the promise we continue to fulfill every day. Our recent partnership with Daewoo marks a significant milestone in this journey. By aligning with a global leader in engineering and infrastructure, we are enhancing our ability to deliver advanced technologies, expand our market presence, and address India’s most pressing industrial needs with speed, scale, and precision.
               </p>
 
-              {/* Feature List */}
-              <ul className="space-y-4">
-                {[
-                  "An ocean of experience in creative solutions",
-                  "Innovation-driven approach to business solutions",
-                  "Quality assurance and performance excellence",
-                  "Strategic partnerships for mutual growth"
-                ].map((item, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <span className="w-3 h-3 bg-blue-500 rounded-full mr-4 mt-2 flex-shrink-0"></span>
-                    <span className="text-gray-700">{item}</span>
-                  </li>
-                ))}
-              </ul>
+
+
             </div>
 
             {/* Founder Image & Info */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-72 h-72 md:w-80 md:h-80 mb-4 rounded-3xl overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-500">
+              <div className="h-100 md:w-80 md:h-80 mb-4 rounded-3xl overflow-hidden transform hover:scale-105 transition-transform duration-500">
                 <img
-                  src="/images/irfan.jpg"
+                  src="/images/irfan.png"
                   alt="Dr. Irfan - Founder & CEO"
                   className="w-full h-full object-cover"
                 />
@@ -181,58 +170,7 @@ export default function Index() {
       </section>
 
       {/* Trusted by 40+ Brands - Auto-Play Carousel */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Trusted by 40+ Brands</h2>
-          <p className="text-gray-600 mb-12 max-w-3xl mx-auto text-lg">
-            We're proud to work with industry-recognized, innovative companies across various sectors.
-          </p>
-
-          {/* Brands Auto-Play Carousel */}
-          <div className="relative overflow-hidden">
-            <div
-              className="flex carousel-transition-smooth"
-              style={{ transform: `translateX(-${brandSlide * 16.66}%)` }}
-            >
-              {/* First set of logos */}
-              {[
-                { logo: "logo_1.png", name: "AIROCLEAN" },
-                { logo: "logo_2.png", name: "kabego" },
-                { logo: "logo_3.png", name: "MEXPLE" },
-                { logo: "logo_4.png", name: "LUXER" },
-                { logo: "logo_5.png", name: "LE BRIN" },
-                { logo: "logo_6.png", name: "Great Outdoor" }
-              ].map((brand, index) => (
-                <div key={index} className="w-1/6 flex-shrink-0 h-16 flex items-center justify-center px-4">
-                  <img
-                    src={`/images/${brand.logo}`}
-                    alt={brand.name}
-                    className="max-h-12 w-auto object-contain"
-                  />
-                </div>
-              ))}
-
-              {/* Duplicate set for seamless loop */}
-              {[
-                { logo: "logo_1.png", name: "AIROCLEAN" },
-                { logo: "logo_2.png", name: "kabego" },
-                { logo: "logo_3.png", name: "MEXPLE" },
-                { logo: "logo_4.png", name: "LUXER" },
-                { logo: "logo_5.png", name: "LE BRIN" },
-                { logo: "logo_6.png", name: "Great Outdoor" }
-              ].map((brand, index) => (
-                <div key={`dup-${index}`} className="w-1/6 flex-shrink-0 h-16 flex items-center justify-center px-4">
-                  <img
-                    src={`/images/${brand.logo}`}
-                    alt={brand.name}
-                    className="max-h-12 w-auto object-contain"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <ClientLogoCarousel />
 
       <LeadersSection />
 

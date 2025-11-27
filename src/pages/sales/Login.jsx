@@ -94,8 +94,6 @@ export default function Login() {
   return (
     <div className="min-h-screen" >
 
-
-
       <div style={backGroundImage}>
         <div className=" rounded-2xl border border-gray-100 p-4  max-w-md w-full">
           {/* Header */}

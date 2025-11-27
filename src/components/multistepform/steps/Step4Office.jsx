@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Step4Office({ formData, setFormData, next, prev }) {
-    const API_URL = import.meta.env.VITE_API_URL || "https://api.daewooebg.com/api";
+    const API_URL = import.meta.env.VITE_API_URL;
+
 
     const user = JSON.parse(localStorage.getItem("userData"));
     const role = user?.designation?.toLowerCase();   // ⭐ FIX: Always lowercase

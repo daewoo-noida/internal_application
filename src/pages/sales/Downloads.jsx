@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { downloadsData } from "../../franchisePdf/downloadsData";
+import { downloadsData } from "../../utils/downloadsData";
 
 export default function Downloads() {
+
+  const PDF_BASE = import.meta.env.VITE_PDF_BASE || "http://localhost:5000/pdfs";
 
   const [path, setPath] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-
 
   const user = JSON.parse(localStorage.getItem("userData"));
 
@@ -179,13 +180,7 @@ export default function Downloads() {
                   )} */}
 
                   {!item.children && (
-                    <a
-                      href={item.file}
-                      download
-                      className="px-4 py-2 bg-black text-white rounded-lg inline-block"
-                    >
-                      Download
-                    </a>
+                    <a href={`${PDF_BASE}/${item.file}`} target="_blank">Download</a>
                   )}
                 </div>
               ))}
@@ -210,13 +205,7 @@ export default function Downloads() {
                 )} */}
 
                 {!item.children && (
-                  <a
-                    href={item.file}
-                    download
-                    className="px-4 py-2 bg-black text-white rounded-lg inline-block"
-                  >
-                    Download PDF
-                  </a>
+                  <a href={`${PDF_BASE}/${item.file}`} target="_blank">Download</a>
                 )}
               </div>
             ))}

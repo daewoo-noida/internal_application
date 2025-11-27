@@ -7,10 +7,16 @@ const authRoutes = require('./routes/auth');
 const clientRoutes = require('./routes/client');
 const adminRoutes = require('./routes/admin');
 
+const path = require('path');
+
 const app = express();
+app.use('/pdfs', express.static('./uploads/franchisePdf'));
+
 
 app.use(cors());
 app.use(express.json());
+
+
 
 // DB Connect
 connectDB();
@@ -21,6 +27,11 @@ app.use('/api/clients', clientRoutes);
 app.use('/api/admin', adminRoutes);
 
 
+
+app.use(
+    '/pdfs',
+    express.static(path.join(__dirname, 'uploads', 'franchisePdf'))
+);
 
 app.get('/health', (req, res) => {
     res.json({ status: 'Server is running' });

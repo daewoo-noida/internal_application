@@ -1,11 +1,11 @@
 import axios from "axios";
 
 // Base URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://api.daewooebg.com/api";
+const API_URL = import.meta.env.VITE_API_URL || "https://api.daewooebg.com/api";
 
 // Axios instance
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
   },

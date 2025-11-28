@@ -3,7 +3,7 @@ import { downloadsData } from "../../utils/downloadsData";
 
 export default function Downloads() {
 
-  const PDF_BASE = import.meta.env.VITE_PDF_BASE || "http://localhost:5000/pdfs";
+  const PDF_BASE = import.meta.env.VITE_PDF_BASE;
 
   const [path, setPath] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");

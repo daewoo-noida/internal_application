@@ -215,9 +215,9 @@ export default function Index() {
                 <p><span className="font-semibold text-gray-900">Branch</span> <span className="text-gray-700">Mumbai – Andheri W.E. Highway  </span></p>
                 <p><span className="font-semibold text-gray-900">IFSC Code:</span> <span className="text-gray-700">ICIC0001238</span></p>
               </div>
-              <button className="mt-4 bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-full font-semibold text-sm transition-colors">
+              {/* <button className="mt-4 bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-full font-semibold text-sm transition-colors">
                 Copy Details
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

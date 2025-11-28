@@ -6,10 +6,11 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const clientRoutes = require('./routes/client');
 const adminRoutes = require('./routes/admin');
-
+const pdfRoutes = require('./routes/pdf')
 const path = require('path');
 
 const app = express();
+
 app.use('/pdfs', express.static('./uploads/franchisePdf'));
 
 
@@ -21,10 +22,15 @@ app.use(express.json());
 // DB Connect
 connectDB();
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/admin', adminRoutes);
+
+app.use('/api/pdf', pdfRoutes)
+
 
 
 

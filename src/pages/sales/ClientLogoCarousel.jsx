@@ -74,7 +74,7 @@ export default function ClientLogoCarousel() {
                 {/* Carousel Container */}
                 <div
                     ref={sliderRef}
-                    className="flex items-center gap-16 overflow-x-scroll py-6 scrollbar-hide"
+                    className="flex items-center gap-16 overflow-x-hidden py-6 scrollbar-hide"
                 >
                     {[...brands, ...brands].map((logo, index) => (
                         <img

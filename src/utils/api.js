@@ -1,11 +1,7 @@
 import axios from "axios";
 
-// Base URL
 const API_URL = import.meta.env.VITE_API_URL;
 
-
-
-// Axios instance
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -37,7 +33,12 @@ export const authAPI = {
   signup: (data) => api.post("/auth/signup", data),
   login: (data) => api.post("/auth/login", data),
   profile: () => api.get("/auth/profile"),
-  getallUser: (data) => api.get("/auth/user", data)
+  getAllUsers: () => api.get("/auth/user"),
+  updateProfile: (data) => api.put("/auth/update-profile", data),
+  updateProfileImage: (formData) =>
+    api.put("/auth/profile-image", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
 };
 
 

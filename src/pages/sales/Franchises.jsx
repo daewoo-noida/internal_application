@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import { BiLeftArrow, BiLeftIndent, BiSolidLeftArrow } from "react-icons/bi";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 export default function FranchiseCarousel() {
@@ -129,13 +131,13 @@ export default function FranchiseCarousel() {
                         onClick={() => scrollCarousel("prev")}
                         className="absolute -left-4 md:-left-10 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-3 hover:bg-gray-100 z-20"
                     >
-                        ◀
+                        <FaArrowLeft />
                     </button>
 
                     {/* CARD LIST */}
                     <div
                         ref={carouselRef}
-                        className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide snap-x"
+                        className="flex gap-6 overflow-x-hidden scroll-smooth scrollbar-hide snap-x pb-3"
                     >
                         {filteredFranchises.map((item, index) => (
                             <div
@@ -180,7 +182,7 @@ export default function FranchiseCarousel() {
                         onClick={() => scrollCarousel("next")}
                         className="absolute -right-4 md:-right-10 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-3 hover:bg-gray-100 z-20"
                     >
-                        ▶
+                        <FaArrowRight />
                     </button>
                 </div>
             </div>

@@ -1,157 +1,227 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-
-const API = import.meta.env.VITE_API_URL;
-
-export default function UserProfile() {
+import { authAPI } from "../../utils/api";
+import { Image } from "lucide-react";
+export default function Profile() {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [showResetModal, setShowResetModal] = useState(false);
+    const [form, setForm] = useState({});
+    const [edit, setEdit] = useState(false);
+    const [customBranch, setCustomBranch] = useState("");
 
-    // Fetch user details
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const token = localStorage.getItem("authToken");
-                const res = await axios.get(`${API}/auth/user`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                setUser(res.data.user);
-                setLoading(false);
-            } catch (err) {
-                console.log("Error fetching user", err);
-            }
-        };
-
-        fetchUser();
+        loadUser();
     }, []);
 
-    if (loading) return <div className="text-center py-10">Loading...</div>;
-    if (!user) return <div className="text-center py-10">No user found</div>;
+    const loadUser = async () => {
+        const res = await authAPI.profile();
+        setUser(res.data.user);
+        setForm(res.data.user);
+        if (res.data.user.officeBranch && !["Noida", "Zirakpur", "Chandigadh", "Mumbai", "Hyderabad", "Others"].includes(res.data.user.officeBranch)) {
+            setCustomBranch(res.data.user.officeBranch);
+        }
+    };
+
+    const saveChanges = async () => {
+        const updated = { ...form };
+
+        if (form.officeBranch === "Others") {
+            updated.officeBranch = customBranch;
+        }
+
+        const res = await authAPI.updateProfile(updated);
+        setUser(res.data.user);
+        setEdit(false);
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const fd = new FormData();
+        fd.append("image", file);
+
+        const res = await authAPI.updateProfileImage(fd);
+
+        setUser({ ...user, profileImage: res.data.imageUrl });
+        setForm({ ...form, profileImage: res.data.imageUrl });
+    };
+
+    if (!user) return <div>Loading...</div>;
 
     return (
-        <div className="w-full flex justify-center py-10 bg-gray-100">
-            <div className="w-[90%] md:w-[70%] bg-white shadow-xl rounded-2xl p-8 border-4 border-[#0070b9]">
+        <div className="flex justify-center py-10 bg-gray-100 min-h-screen" style={{ padding: "12vh 0vh" }}>
+            <div className="w-[85%] bg-white rounded-3xl shadow-xl flex overflow-hidden">
 
-                {/* Header */}
-                <div className="flex items-center justify-center mb-6">
-                    <h1 className="text-3xl font-bold text-[#0070b9]">User Profile</h1>
+                {/* LEFT PANEL */}
+                <div className="w-1/3 bg-[#0066b3] text-center py-16 flex flex-col items-center justify-center">
+
+                    <div className="relative">
+                        <img
+                            src={user.profileImage}
+                            className={`w-32 h-32 rounded-full object-cover shadow-lg border-4 border-white ${!user.profileImage && "hidden"}`}
+                        />
+
+                        {!user.profileImage && (
+                            <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center text-[#0066b3] text-5xl font-bold shadow-xl">
+                                {user.name[0].toUpperCase()}
+                            </div>
+                        )}
+
+                        {/* Upload Button */}
+                        <label className="absolute bottom-0 right-0 bg-white p-2 rounded-full cursor-pointer shadow-md">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handleImageUpload}
+                            />
+                            <Image />
+                        </label>
+                    </div>
+
+                    <h2 className="mt-6 text-2xl text-white font-semibold">Let’s get you set up</h2>
+                    <p className="text-white/80 mt-2 w-[70%]">
+                        It should only take a couple of minutes to complete your profile.</p>
                 </div>
 
-                {/* Employee Code */}
-                <div className="text-center mt-4">
-                    <p className="text-lg text-gray-600">Employee ID</p>
-                    <div className="flex justify-center items-center gap-2 bg-[#0070b9] text-white rounded-full w-48 py-2 mx-auto mt-2">
-                        <i className="fa fa-user"></i>
-                        <span className="font-semibold">{user.employeeId}</span>
+                {/* RIGHT PANEL */}
+                <div className="w-2/3 px-12 py-10">
+
+                    <h2 className="text-3xl font-bold text-[#0066b3] mb-8">User Profile</h2>
+
+                    <div className="grid grid-cols-2 gap-6">
+
+                        <Input label="Name" disabled={!edit}
+                            value={form.name}
+                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        />
+
+                        <Input label="Email" disabled value={user.email} />
+
+                        {/* Gender */}
+                        <div>
+                            <label className="block mb-1 text-gray-600">Gender</label>
+                            <div className="flex items-center gap-6 mt-2">
+                                <label className="flex gap-2">
+                                    <input type="radio" value="Male" disabled={!edit}
+                                        checked={form.gender === "Male"}
+                                        onChange={(e) => setForm({ ...form, gender: e.target.value })}
+                                    />
+                                    Male
+                                </label>
+
+                                <label className="flex gap-2">
+                                    <input type="radio" value="Female" disabled={!edit}
+                                        checked={form.gender === "Female"}
+                                        onChange={(e) => setForm({ ...form, gender: e.target.value })}
+                                    />
+                                    Female
+                                </label>
+                                <label className="flex gap-2">
+                                    <input type="radio" value="Other" disabled={!edit}
+                                        checked={form.gender === "Other"}
+                                        onChange={(e) => setForm({ ...form, gender: e.target.value })}
+                                    />
+                                    Other
+                                </label>
+                            </div>
+                        </div>
+
+                        <Input
+                            label="Date of Birth"
+                            type="date"
+                            disabled={!edit}
+                            value={form.dob?.slice(0, 10) || ""}
+                            onChange={(e) => setForm({ ...form, dob: e.target.value })}
+                        />
+
+                        <Input label="Mobile" disabled={!edit}
+                            value={form.phone}
+                            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                        />
+
+                        <Input label="Designation" disabled value={user.designation} />
+
+                        {/* Branch */}
+                        <div>
+                            <label className="block mb-1 text-gray-600">Office Branch *</label>
+                            <select
+                                disabled={!edit}
+                                value={
+                                    ["Noida", "Zirakpur", "Chandigadh", "Mumbai", "Hyderabad", "Others"]
+                                        .includes(form.officeBranch)
+                                        ? form.officeBranch
+                                        : "Others"
+                                }
+                                onChange={(e) => setForm({ ...form, officeBranch: e.target.value })}
+                                className="w-full border p-3 rounded-xl bg-gray-100"
+                            >
+                                <option>Noida</option>
+                                <option>Zirakpur</option>
+                                <option>Chandigadh</option>
+                                <option>Mumbai</option>
+                                <option>Hyderabad</option>
+                                <option>Others</option>
+                            </select>
+
+                            {form.officeBranch === "Others" && edit && (
+                                <input
+                                    placeholder="Enter branch"
+                                    className="border mt-3 w-full p-3 rounded-xl"
+                                    value={customBranch}
+                                    onChange={(e) => setCustomBranch(e.target.value)}
+                                />
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex justify-end mt-10 gap-4">
+                        {edit ? (
+                            <>
+                                <button
+                                    onClick={() => {
+                                        setEdit(false);
+                                        setForm(user);
+                                    }}
+                                    className="px-6 py-2 bg-gray-200 rounded-xl"
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    onClick={saveChanges}
+                                    className="px-6 py-2 bg-green-600 text-white rounded-xl"
+                                >
+                                    Save
+                                </button>
+                            </>
+                        ) : (
+                            <button
+                                onClick={() => setEdit(true)}
+                                className="px-6 py-2 bg-[#0066b3] text-white rounded-xl"
+                            >
+                                Edit Profile
+                            </button>
+                        )}
                     </div>
                 </div>
 
-                {/* Two–Column Layout */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
-
-                    <div>
-                        <p className="label">Name</p>
-                        <input value={user.name} disabled className="input-box" />
-
-                        <p className="label">Email</p>
-                        <input value={user.email} disabled className="input-box" />
-
-                        <p className="label">Designation</p>
-                        <input value={user.designation} disabled className="input-box" />
-                    </div>
-
-                    <div>
-                        <p className="label">Contact</p>
-                        <input value={user.phone} disabled className="input-box" />
-
-                        <p className="label">Gender</p>
-                        <input value={user.gender} disabled className="input-box" />
-
-                        <p className="label">Date of Birth</p>
-                        <input value={user.dob?.slice(0, 10)} disabled className="input-box" />
-                    </div>
-                </div>
-
-                {/* Security Section */}
-                <div className="mt-10">
-                    <h2 className="text-2xl font-semibold text-[#0070b9] mb-4">Security & Password</h2>
-
-                    <button
-                        onClick={() => setShowResetModal(true)}
-                        className="blue-btn"
-                    >
-                        Reset Password
-                    </button>
-                </div>
             </div>
-
-            {/* Reset Password Modal */}
-            {showResetModal && (
-                <ResetPasswordModal onClose={() => setShowResetModal(false)} />
-            )}
         </div>
     );
 }
 
-
-/* RESET PASSWORD POPUP */
-function ResetPasswordModal({ onClose }) {
-    const [currentPassword, setCurrentPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [message, setMessage] = useState("");
-
-    const API = import.meta.env.VITE_API_URL;
-
-    const handleReset = async () => {
-        try {
-            const token = localStorage.getItem("token");
-
-            const res = await axios.post(
-                `${API}/auth/reset-password`,
-                { currentPassword, newPassword },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-
-            setMessage("Password updated successfully!");
-            setTimeout(onClose, 1200);
-        } catch (err) {
-            setMessage(err.response?.data?.message || "Error updating password");
-        }
-    };
-
+function Input({ label, value, onChange, disabled, type = "text" }) {
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-            <div className="bg-white w-[90%] md:w-[400px] rounded-xl shadow-xl p-6 border-2 border-[#0070b9]">
-
-                <h2 className="text-2xl font-bold text-[#0070b9] text-center mb-4">Reset Password</h2>
-
-                {message && <p className="text-red-500 text-center mb-3">{message}</p>}
-
-                <p className="label">Current Password</p>
-                <input
-                    type="password"
-                    className="input-box mb-4"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                />
-
-                <p className="label">New Password</p>
-                <input
-                    type="password"
-                    className="input-box mb-6"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                />
-
-                <div className="flex justify-between mt-4">
-                    <button onClick={onClose} className="cancel-btn">Cancel</button>
-                    <button onClick={handleReset} className="blue-btn px-6">Update</button>
-                </div>
-            </div>
+        <div>
+            <label className="block text-gray-600 mb-1">{label}</label>
+            <input
+                type={type}
+                disabled={disabled}
+                value={value}
+                onChange={onChange}
+                className={`w-full p-3 rounded-xl border ${disabled ? "bg-gray-100" : "bg-white"}`}
+            />
         </div>
     );
 }

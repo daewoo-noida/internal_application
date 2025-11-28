@@ -5,6 +5,7 @@ const menuItems = [
     { path: "/admin/dashboard", label: "Dashboard" },
     { path: "/admin/salesmen", label: "Sales Team" },
     { path: "/admin/clients", label: "Daewoo Clients" },
+    { path: "/admin/pdf-manager", label: "Pdf Manager" },
     { path: "/admin/settings", label: "Settings" },
 ];
 

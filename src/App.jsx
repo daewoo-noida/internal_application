@@ -27,6 +27,8 @@ import SalesTeam from "./pages/sales/SalesTeam.jsx";
 import BookNowMultiStepForm from "./components/multistepform/BookNowMultiStepForm.jsx";
 import Reimbursement from "./pages/sales/Reimbursement.jsx";
 import UserProfile from "./pages/sales/Profile.jsx";
+import VerifyOtp from "./components/VerifyOtp.jsx";
+import PdfManager from "./pages/admin/PdfManager.jsx";
 
 // Wrapper for Sales Routes
 const SalesLayout = () => (
@@ -54,7 +56,7 @@ export default function App() {
       {/* Public Sales Pages */}
       <Route path="/login" element={<MainLayout><SalesLogin /></MainLayout>} />
       <Route path="/signup" element={<MainLayout><SignupPage /></MainLayout>} />
-
+      <Route path="/verify-otp" element={<VerifyOtp />} />
       {/* Protected Sales Routes */}
       <Route element={<SalesLayout />}>
         <Route path="/" element={<SalesIndex />} />
@@ -73,6 +75,7 @@ export default function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/salesmen" element={<SalesTeam />} />
         <Route path="/admin/salesman/:id" element={<SalesmanDetails />} />
+        <Route path="/admin/pdf-manager" element={<PdfManager />} />
       </Route>
 
     </Routes>

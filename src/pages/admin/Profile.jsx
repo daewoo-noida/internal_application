@@ -1,294 +1,88 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from "react";
+import { authAPI } from "../../utils/api";
 
-const Profile = () => {
-  const defaultSettings = {
-    profile: {
-      fullName: 'Aayan Bansal',
-      role: 'Administrator',
-      avatar: ''
-    }
-  };
-
-  const [profileData, setProfileData] = useState(defaultSettings.profile);
-  const [successMessage, setSuccessMessage] = useState('');
-
-  // Load profile data from localStorage
-  const loadProfileData = () => {
-    try {
-      const savedSettings = localStorage.getItem('ebgSettings');
-      if (savedSettings) {
-        const parsed = JSON.parse(savedSettings);
-        if (parsed.profile) {
-          setProfileData({
-            fullName: parsed.profile.fullName || defaultSettings.profile.fullName,
-            role: parsed.profile.role || defaultSettings.profile.role,
-            avatar: parsed.profile.avatar || ''
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error loading profile data:', error);
-    }
-  };
+export default function UserProfile() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [showResetModal, setShowResetModal] = useState(false);
 
   useEffect(() => {
-    loadProfileData();
+    const fetchUser = async () => {
+      try {
+        const res = await authAPI.profile();
+        setUser(res.data.user);
+
+        console.log(res.data.user)
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
   }, []);
 
-  // Function to crop image to center 100x100px
-  const cropImageToCenter = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          canvas.width = 100;
-          canvas.height = 100;
 
-          // Calculate source rectangle for center crop
-          const sourceSize = Math.min(img.width, img.height);
-          const sourceX = (img.width - sourceSize) / 2;
-          const sourceY = (img.height - sourceSize) / 2;
 
-          // Draw cropped and resized image
-          ctx.drawImage(
-            img,
-            sourceX, sourceY, sourceSize, sourceSize,
-            0, 0, 100, 100
-          );
-
-          // Convert to base64
-          const base64 = canvas.toDataURL('image/png');
-          resolve(base64);
-        };
-        img.onerror = reject;
-        img.src = e.target.result;
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image size should be less than 5MB');
-      return;
-    }
-
-    try {
-      const croppedImage = await cropImageToCenter(file);
-      setProfileData({ ...profileData, avatar: croppedImage });
-    } catch (error) {
-      console.error('Error processing image:', error);
-      alert('Error processing image. Please try again.');
-    }
-  };
-
-  const handleRemoveImage = () => {
-    setProfileData({ ...profileData, avatar: '' });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    try {
-      // Load existing settings
-      const savedSettings = localStorage.getItem('ebgSettings');
-      let settings = savedSettings ? JSON.parse(savedSettings) : defaultSettings;
-      
-      // Update profile data
-      settings.profile = {
-        fullName: profileData.fullName,
-        role: profileData.role,
-        avatar: profileData.avatar
-      };
-      
-      // Save to localStorage
-      localStorage.setItem('ebgSettings', JSON.stringify(settings));
-      
-      // Dispatch custom event to update header
-      window.dispatchEvent(new CustomEvent('settingsUpdated'));
-      
-      // Show success message
-      setSuccessMessage('Profile updated successfully!');
-      setTimeout(() => setSuccessMessage(''), 3000);
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      alert('Error saving profile. Please try again.');
-    }
-  };
-
-  const getInitials = (name) => {
-    if (!name) return 'AB';
-    const parts = name.trim().split(' ');
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-    return name.substring(0, 2).toUpperCase();
-  };
+  if (loading) return <div className="text-center py-10">Loading...</div>;
+  if (!user) return <div className="text-center py-10">No user found</div>;
 
   return (
-    <div className="fade-in-up">
-      <div className="page-header">
-        <h1 className="page-title">Profile</h1>
-        <p className="page-subtitle">Manage your profile information</p>
-      </div>
+    <div className="w-full flex justify-center py-10 bg-gray-100">
+      <div className="w-[90%] md:w-[70%] bg-white shadow-xl rounded-2xl p-8 border-4 border-[#0070b9]">
 
-      <div className="card">
-        <div className="card-body">
-          {successMessage && (
-            <div className="alert alert-success alert-dismissible fade show" role="alert">
-              {successMessage}
-              <button 
-                type="button" 
-                className="btn-close" 
-                onClick={() => setSuccessMessage('')}
-              ></button>
-            </div>
-          )}
+        <div className="flex items-center justify-center mb-6">
+          <h1 className="text-3xl font-bold text-[#0070b9]">User Profile</h1>
+        </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="row">
-              <div className="col-md-4 text-center mb-4 mb-md-0">
-                <div className="profile-picture-section">
-                  <div className="profile-picture-container mb-3">
-                    {profileData.avatar ? (
-                      <img
-                        src={profileData.avatar}
-                        alt="Profile"
-                        className="profile-picture"
-                        style={{
-                          width: '150px',
-                          height: '150px',
-                          borderRadius: '50%',
-                          objectFit: 'cover',
-                          border: '4px solid #006ec8'
-                        }}
-                      />
-                    ) : (
-                      <div
-                        className="profile-picture-placeholder"
-                        style={{
-                          width: '150px',
-                          height: '150px',
-                          borderRadius: '50%',
-                          backgroundColor: '#006ec8',
-                          color: '#fff',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '3rem',
-                          fontWeight: 'bold',
-                          margin: '0 auto',
-                          border: '4px solid #006ec8'
-                        }}
-                      >
-                        {getInitials(profileData.fullName)}
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      id="profilePictureUpload"
-                      style={{ display: 'none' }}
-                    />
-                    <label htmlFor="profilePictureUpload" className="btn btn-primary">
-                      <i className="bi bi-camera me-2"></i>Change Picture
-                    </label>
-                    {profileData.avatar && (
-                      <button
-                        type="button"
-                        className="btn btn-outline-danger ms-2"
-                        onClick={handleRemoveImage}
-                      >
-                        <i className="bi bi-trash me-2"></i>Remove
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
+        <div className="text-center mt-4">
+          <p className="text-lg text-gray-600">Employee ID</p>
+          <div className="flex justify-center items-center gap-2 bg-[#0070b9] text-white rounded-full w-48 py-2 mx-auto mt-2">
+            <i className="fa fa-user"></i>
+            <span className="font-semibold">{user?.employeeId}</span>
+          </div>
+        </div>
 
-              <div className="col-md-8">
-                <div className="mb-3">
-                  <label htmlFor="fullName" className="form-label">
-                    Full Name <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="fullName"
-                    value={profileData.fullName}
-                    onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
-                    required
-                    placeholder="Enter your full name"
-                  />
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+          <div>
+            <p className="label">Name</p>
+            <input value={user.name} disabled className="input-box" />
 
-                <div className="mb-3">
-                  <label htmlFor="role" className="form-label">
-                    Role <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="role"
-                    value={profileData.role}
-                    onChange={(e) => setProfileData({ ...profileData, role: e.target.value })}
-                    required
-                    placeholder="Enter your role"
-                  />
-                </div>
+            <p className="label">Email</p>
+            <input value={user.email} disabled className="input-box" />
 
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="email"
-                    value={localStorage.getItem('userEmail') || 'admin@ebg.com'}
-                    disabled
-                    placeholder="Email address"
-                  />
-                  <small className="text-muted">Email cannot be changed</small>
-                </div>
+            <p className="label">Designation</p>
+            <input value={user.designation} disabled className="input-box" />
+          </div>
 
-                <div className="d-flex gap-2 mt-4">
-                  <button type="submit" className="btn btn-primary">
-                    <i className="bi bi-check-circle me-2"></i>Save Changes
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => loadProfileData()}
-                  >
-                    <i className="bi bi-arrow-counterclockwise me-2"></i>Reset
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
+          <div>
+            <p className="label">Contact</p>
+            <input value={user.phone} disabled className="input-box" />
+
+            <p className="label">Gender</p>
+            <input value={user.gender} disabled className="input-box" />
+
+            <p className="label">Date of Birth</p>
+            <input value={user.dob?.slice(0, 10)} disabled className="input-box" />
+          </div>
+        </div>
+
+        <div className="mt-10">
+          <h2 className="text-2xl font-semibold text-[#0070b9] mb-4">Security & Password</h2>
+
+          <button
+            onClick={() => setShowResetModal(true)}
+            className="blue-btn"
+          >
+            Reset Password
+          </button>
         </div>
       </div>
+
+      {showResetModal && (
+        <ResetPasswordModal onClose={() => setShowResetModal(false)} />
+      )}
     </div>
   );
-};
-
-export default Profile;
-
+}

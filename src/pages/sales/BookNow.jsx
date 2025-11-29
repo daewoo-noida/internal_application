@@ -371,7 +371,7 @@ export default function BookNow() {
               <div className="grid grid-cols-2 gap-3">
                 {['PAN & Aadhaar', 'Business Registration', 'GST Certificate', 'Rent/Ownership Proof', 'Bank Statement', 'Passport Photos'].map((item, index) => (
                   <div key={index} className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-yellow-50 transition-colors">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                    <div className="w-2 h-2 bg-[#0070b9] rounded-full mr-3"></div>
                     <span className="text-sm font-medium text-gray-700">{item}</span>
                   </div>
                 ))}

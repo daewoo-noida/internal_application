@@ -1,81 +1,133 @@
-export default function Contact_Us() {
-  return (
-    <div className="min-h-screen bg-white contact-us-pages">
+import React from "react";
 
+export default function Contact_Us() {
+
+
+
+  return (
+    <div className="min-h-screen bg-white contact-us-pages " style={{ marginTop: "12vh" }} >
 
       {/* ======================
-         Banner Section
+          Contact Top Banner
       ======================= */}
-      <section className="relative h-96 bg-black overflow-hidden">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0">
-          <img
-            src="/images/herobg.jpg"
-            alt="Contact Background"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-        </div>
+      <section className="relative h-72 md:h-96 m-3 rounded-3xl bg-[#0070b9] overflow-hidden shadow-sm"  >
+
+        {/* Background */}
+        {/* <div className="absolute "></div> */}
 
         {/* Content */}
-        <div className="relative z-10 h-full flex items-center justify-center">
+        <div className="relative z-10 flex items-center justify-center h-full ">
           <div className="text-center text-white px-4">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
               Get in Touch
             </h1>
-            <p className="text-xl md:text-2xl text-gray-200 max-w-2xl mx-auto">
-              We're here to help you with any questions or support you need
+            <p className="text-lg md:text-l opacity-90">
+              A dedicated support window for the Daewoo Sales Team <br /> Helping you move faster, close better, and deliver a seamless experience across all sales channels.
             </p>
           </div>
         </div>
       </section>
 
       {/* ======================
-         Main content (replace with your real sections)
+          Contact Section
       ======================= */}
-      <main>
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-4 grid gap-10 md:grid-cols-2 md:items-start">
-            <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Contact Us
-              </h2>
-              <p className="mt-4 text-gray-600">
-                Replace this section with your original content (address, map, FAQs, etc.).
-              </p>
+      <main className="py-12 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-12">
 
-              {/* Example contact info block */}
-              <div className="mt-8 space-y-2 text-sm">
-                <p><strong>Email:</strong> info@example.com</p>
-                <p><strong>Phone:</strong> +91-00000-00000</p>
-                <p><strong>Office:</strong> Your address line 1, City, State</p>
+          {/* LEFT SIDE */}
+          <div>
+
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Contact Us</h2>
+
+            {/* OFFICE BOXES */}
+            <div className="space-y-6">
+
+
+              <div className="p-6 rounded-2xl border bg-white shadow-sm hover:shadow-md transition">
+                <h3 className="text-xl font-semibold text-[#0070b9] mb-3">
+                  Get in Touch
+                </h3>
+
+                <p className="text-gray-700 mb-1 font-medium">General Enquiries:</p>
+
+                <a
+                  href="mailto:help@daewooappliances.in"
+                  className="block text-[#0070b9] underline"
+                >
+                  help@daewooappliances.in
+                </a>
+
+                <a
+                  href="mailto:support@daewooappliances.in"
+                  className="block text-[#0070b9] underline"
+                >
+                  support@daewooappliances.in
+                </a>
               </div>
+
+
+              {/* Noida Corporate */}
+              <div className="p-6 rounded-2xl border bg-white shadow-sm hover:shadow-md transition">
+                <h3 className="text-xl font-semibold text-[#0070b9] mb-2">
+                  EBG Group Noida Corporate Office
+                </h3>
+                <p className="text-gray-700 leading-relaxed">
+                  BLOCK-C, Office Number 805, A Tower,<br />
+                  Bhutani Cyberpark – Bhutani 62 Avenue,<br />
+                  Phase 2, Industrial Area,<br />
+                  Noida, Uttar Pradesh – 201309.
+                </p>
+              </div>
+
+              {/* Emails */}
+
+
+              {/* Let’s Connect Card */}
+
             </div>
+          </div>
 
-            {/* Example contact form (placeholder) */}
-            <form className="space-y-4 rounded-2xl border p-6 shadow-sm bg-white">
+          {/* RIGHT FORM */}
+          <div>
+            <form className="space-y-5 rounded-2xl border p-8 shadow-md bg-white">
+
               <div>
-                <label htmlFor="name" className="block text-sm font-medium">Your name</label>
-                <input id="name" name="name" className="mt-1 w-full border rounded-lg p-3" placeholder="John Doe" />
+                <label className="block text-sm font-medium">Your Name</label>
+                <input
+                  className="mt-1 w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-600 outline-none"
+                  placeholder="John Doe"
+                />
               </div>
+
               <div>
-                <label htmlFor="email" className="block text-sm font-medium">Email</label>
-                <input id="email" name="email" type="email" className="mt-1 w-full border rounded-lg p-3" placeholder="john@example.com" />
+                <label className="block text-sm font-medium">Email</label>
+                <input
+                  type="email"
+                  className="mt-1 w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-600 outline-none"
+                  placeholder="john@example.com"
+                />
               </div>
+
               <div>
-                <label htmlFor="message" className="block text-sm font-medium">Message</label>
-                <textarea id="message" name="message" rows="5" className="mt-1 w-full border rounded-lg p-3" placeholder="How can we help?" />
+                <label className="block text-sm font-medium">Message</label>
+                <textarea
+                  rows="5"
+                  className="mt-1 w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-600 outline-none"
+                  placeholder="How can we help?"
+                />
               </div>
-              <button type="button" className="inline-flex items-center rounded-lg px-5 py-3 font-medium text-white bg-black hover:opacity-90">
-                Send message
+
+              <button
+                type="button"
+                className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition"
+              >
+                Send Message
               </button>
             </form>
           </div>
-        </section>
+
+        </div>
       </main>
-
-      {/* Footer - Exact Match */}
-
     </div>
   );
 }

@@ -80,7 +80,7 @@ export default function FranchiseCarousel() {
 
                 {/* HEADER */}
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight">
+                    <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
                         Master Franchise Opportunities
                     </h2>
                     <p className="text-gray-600 text-lg mt-3 max-w-2xl mx-auto">

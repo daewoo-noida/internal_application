@@ -18,7 +18,7 @@ He oversees Daewoo’s complete retail wing, ensuring strong distribution channe
         {
             name: "Aryan Sharma",
             title: "Sales Head, Daewoo appliances",
-            img: "images/aryan.jpg",
+            img: "images/aryan.png",
             content: `At DAEWOO, our vision to build a trusted, future-ready electronics brand is brought to life through the leadership of Aryan Sharma. Driving expansion with high-potential franchise partners, Aryan ensures seamless execution across sales, onboarding, store setup, and partner support.
 With a sharp understanding of India’s market potential, he focuses on building profitable franchise ecosystems and high-performance stores. His dedication and direction continue to accelerate Daewoo’s rise as a dominant force in the Indian electronics industry.
 `
@@ -45,7 +45,7 @@ With a sharp understanding of India’s market potential, he focuses on building
                             />
                         </div>
 
-                        <p className="text-gray-700 whitespace-pre-line text-sm leading-relaxed mb-4">
+                        <p className="text-gray-700 whitespace-pre-line text-sm leading-relaxed mb-4 text-center">
                             {leader.content}
                         </p>
 

@@ -35,3 +35,41 @@
 a {
   text-decoration: none !important;
 }
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.18s ease-out;
+}
+
+.bg-desktop {
+  background-image: url('/images/Login_Banner.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@media (max-width: 768px) {
+
+  .bg-desktop {
+    background-image: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .bg-login {
+    background-image: none !important;
+    padding-right: 0 !important;
+    justify-content: center !important;
+  }
+}

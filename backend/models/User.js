@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
+
     name: { type: String, required: true },
 
     designation: { type: String, required: true },
@@ -20,9 +21,9 @@ const userSchema = new mongoose.Schema({
     },
     otp: String,
     otpExpires: Date,
-    gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
-    dob: { type: String, required: true },
-    officeBranch: { type: String, required: true },
+    gender: { type: String },
+    dob: { type: String },
+    officeBranch: { type: String },
     profileImage: String
 });
 

@@ -81,7 +81,7 @@ export default function ClientLogoCarousel() {
                             key={index}
                             src={logo}
                             alt="brand-logo"
-                            className="h-16 md:h-16 object-contain opacity-70 hover:opacity-100 transition duration-300"
+                            className="h-20 md:h-20 object-contain opacity-100 transition duration-300"
                         />
                     ))}
                 </div>

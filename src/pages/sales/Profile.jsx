@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { authAPI } from "../../utils/api";
 import { Image } from "lucide-react";
+import { authAPI } from "../../utils/api";
+
 export default function Profile() {
     const [user, setUser] = useState(null);
     const [form, setForm] = useState({});
@@ -15,14 +16,18 @@ export default function Profile() {
         const res = await authAPI.profile();
         setUser(res.data.user);
         setForm(res.data.user);
-        if (res.data.user.officeBranch && !["Noida", "Zirakpur", "Chandigadh", "Mumbai", "Hyderabad", "Others"].includes(res.data.user.officeBranch)) {
+
+        if (
+            res.data.user.officeBranch &&
+            !["Noida", "Zirakpur", "Chandigadh", "Mumbai", "Hyderabad", "Others"]
+                .includes(res.data.user.officeBranch)
+        ) {
             setCustomBranch(res.data.user.officeBranch);
         }
     };
 
     const saveChanges = async () => {
         const updated = { ...form };
-
         if (form.officeBranch === "Others") {
             updated.officeBranch = customBranch;
         }
@@ -48,25 +53,29 @@ export default function Profile() {
     if (!user) return <div>Loading...</div>;
 
     return (
-        <div className="flex justify-center py-10 bg-gray-100 min-h-screen" style={{ padding: "12vh 0vh" }}>
-            <div className="w-[85%] bg-white rounded-3xl shadow-xl flex overflow-hidden">
+        <div
+            className="flex justify-center bg-gray-100 min-h-screen py-10 md:py-20"
+            style={{ paddingTop: "12vh" }}
+        >
+            <div className="w-[95%] md:w-[85%] bg-white rounded-3xl shadow-xl overflow-hidden 
+                flex flex-col md:flex-row">
 
                 {/* LEFT PANEL */}
-                <div className="w-1/3 bg-[#0066b3] text-center py-16 flex flex-col items-center justify-center">
+                <div className="w-full md:w-1/3 bg-[#0066b3] text-center py-10 md:py-16 
+                    flex flex-col items-center justify-center">
 
                     <div className="relative">
-                        <img
-                            src={user.profileImage}
-                            className={`w-32 h-32 rounded-full object-cover shadow-lg border-4 border-white ${!user.profileImage && "hidden"}`}
-                        />
-
-                        {!user.profileImage && (
-                            <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center text-[#0066b3] text-5xl font-bold shadow-xl">
+                        {user.profileImage ? (
+                            <img
+                                src={user.profileImage}
+                                className="w-28 h-28 md:w-32 md:h-32 rounded-full object-cover shadow-lg border-4 border-white"
+                            />
+                        ) : (
+                            <div className="w-28 h-28 md:w-32 md:h-32 bg-white rounded-full flex items-center justify-center text-[#0066b3] text-4xl md:text-5xl font-bold shadow-xl">
                                 {user.name[0].toUpperCase()}
                             </div>
                         )}
 
-                        {/* Upload Button */}
                         <label className="absolute bottom-0 right-0 bg-white p-2 rounded-full cursor-pointer shadow-md">
                             <input
                                 type="file"
@@ -78,17 +87,23 @@ export default function Profile() {
                         </label>
                     </div>
 
-                    <h2 className="mt-6 text-2xl text-white font-semibold">Let’s get you set up</h2>
-                    <p className="text-white/80 mt-2 w-[70%]">
-                        It should only take a couple of minutes to complete your profile.</p>
+                    <h2 className="mt-6 text-xl md:text-2xl text-white font-semibold">
+                        Let’s get you set up
+                    </h2>
+
+                    <p className="text-white/80 mt-2 w-[80%] text-sm md:text-base">
+                        It should only take a couple of minutes to complete your profile.
+                    </p>
                 </div>
 
                 {/* RIGHT PANEL */}
-                <div className="w-2/3 px-12 py-10">
+                <div className="w-full md:w-2/3 px-6 md:px-12 py-8 md:py-10">
+                    <h2 className="text-2xl md:text-3xl font-bold text-[#0066b3] mb-6 md:mb-8">
+                        User Profile
+                    </h2>
 
-                    <h2 className="text-3xl font-bold text-[#0066b3] mb-8">User Profile</h2>
-
-                    <div className="grid grid-cols-2 gap-6">
+                    {/* FORM GRID */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                         <Input label="Name" disabled={!edit}
                             value={form.name}
@@ -100,29 +115,21 @@ export default function Profile() {
                         {/* Gender */}
                         <div>
                             <label className="block mb-1 text-gray-600">Gender</label>
-                            <div className="flex items-center gap-6 mt-2">
-                                <label className="flex gap-2">
-                                    <input type="radio" value="Male" disabled={!edit}
-                                        checked={form.gender === "Male"}
-                                        onChange={(e) => setForm({ ...form, gender: e.target.value })}
-                                    />
-                                    Male
-                                </label>
-
-                                <label className="flex gap-2">
-                                    <input type="radio" value="Female" disabled={!edit}
-                                        checked={form.gender === "Female"}
-                                        onChange={(e) => setForm({ ...form, gender: e.target.value })}
-                                    />
-                                    Female
-                                </label>
-                                <label className="flex gap-2">
-                                    <input type="radio" value="Other" disabled={!edit}
-                                        checked={form.gender === "Other"}
-                                        onChange={(e) => setForm({ ...form, gender: e.target.value })}
-                                    />
-                                    Other
-                                </label>
+                            <div className="flex items-center gap-4 mt-2">
+                                {["Male", "Female", "Other"].map((g) => (
+                                    <label key={g} className="flex gap-2 text-sm md:text-base">
+                                        <input
+                                            type="radio"
+                                            value={g}
+                                            disabled={!edit}
+                                            checked={form.gender === g}
+                                            onChange={(e) =>
+                                                setForm({ ...form, gender: e.target.value })
+                                            }
+                                        />
+                                        {g}
+                                    </label>
+                                ))}
                             </div>
                         </div>
 
@@ -147,12 +154,14 @@ export default function Profile() {
                             <select
                                 disabled={!edit}
                                 value={
-                                    ["Noida", "Zirakpur", "Chandigadh", "Mumbai", "Hyderabad", "Others"]
-                                        .includes(form.officeBranch)
+                                    ["Noida", "Zirakpur", "Chandigadh", "Mumbai",
+                                        "Hyderabad", "Others"].includes(form.officeBranch)
                                         ? form.officeBranch
                                         : "Others"
                                 }
-                                onChange={(e) => setForm({ ...form, officeBranch: e.target.value })}
+                                onChange={(e) =>
+                                    setForm({ ...form, officeBranch: e.target.value })
+                                }
                                 className="w-full border p-3 rounded-xl bg-gray-100"
                             >
                                 <option>Noida</option>
@@ -175,7 +184,7 @@ export default function Profile() {
                     </div>
 
                     {/* Buttons */}
-                    <div className="flex justify-end mt-10 gap-4">
+                    <div className="flex flex-col md:flex-row justify-end mt-10 gap-4">
                         {edit ? (
                             <>
                                 <button
@@ -183,14 +192,14 @@ export default function Profile() {
                                         setEdit(false);
                                         setForm(user);
                                     }}
-                                    className="px-6 py-2 bg-gray-200 rounded-xl"
+                                    className="px-6 py-2 bg-gray-200 rounded-xl w-full md:w-auto"
                                 >
                                     Cancel
                                 </button>
 
                                 <button
                                     onClick={saveChanges}
-                                    className="px-6 py-2 bg-green-600 text-white rounded-xl"
+                                    className="px-6 py-2 bg-green-600 text-white rounded-xl w-full md:w-auto"
                                 >
                                     Save
                                 </button>
@@ -198,14 +207,13 @@ export default function Profile() {
                         ) : (
                             <button
                                 onClick={() => setEdit(true)}
-                                className="px-6 py-2 bg-[#0066b3] text-white rounded-xl"
+                                className="px-6 py-2 bg-[#0066b3] text-white rounded-xl w-full md:w-auto"
                             >
                                 Edit Profile
                             </button>
                         )}
                     </div>
                 </div>
-
             </div>
         </div>
     );

@@ -189,258 +189,226 @@ const SignupPage = () => {
     };
 
     return (
-        <div
-            className="min-h-screen flex items-center justify-center"
-            style={backgroundStyle}
-        >
-            <div className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-xl p-6 sm:p-8 border border-gray-200 shadow-lg">
+        <div className="min-h-screen flex items-center justify-center">
+            <div
+                style={backgroundStyle}
+                className="w-full flex justify-center lg:justify-end px-4 sm:px-10 lg:pr-20 bg-login"
+            >
+                <div className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl border border-gray-100 p-6 sm:p-8">
 
-                <h2 className="text-2xl sm:text-3xl font-bold text-center mb-1 text-gray-800">
-                    Create Account
-                </h2>
-                <p className="text-center text-gray-500 mb-6 text-sm sm:text-base">
-                    Sign up to continue
-                </p>
-
-                {/* Error message */}
-                {error && (
-                    <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-3 text-sm flex items-center">
-                        <AlertCircle className="mr-2" size={20} />
-                        {error}
-                    </div>
-                )}
-
-                {/* ----------- SIGNUP FORM ----------- */}
-                <form className="space-y-4">
-
-                    {/* Name */}
-                    <div>
-                        <label className="block text-gray-700 font-medium mb-1">Name</label>
-                        <input
-                            type="text"
-                            required
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black"
+                    {/* LOGO */}
+                    <div className="flex justify-center mb-4">
+                        <img
+                            src="/images/logo.png"
+                            alt="App Logo"
+                            className="h-10 w-auto object-contain"
                         />
                     </div>
 
-                    {/* Designation */}
-                    <div>
-                        <label className="block text-gray-700 font-medium mb-1">Designation</label>
-                        <select
-                            required
-                            value={formData.designation}
-                            onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    designation: e.target.value,
-                                    designationOther: "",
-                                })
-                            }
-                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black"
-                        >
-                            <option value="">Select designation</option>
-                            <option value="bda">BDA</option>
-                            <option value="bde">BDE</option>
-                            <option value="bdm">BDM</option>
-                            <option value="operations">Operations</option>
-                            <option value="others">Others</option>
-                        </select>
+                    {/* Header */}
+                    <div className="text-center mb-6">
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Create Account</h1>
+                        <p className="text-gray-600 text-sm sm:text-base">
+                            Sign up to get started
+                        </p>
                     </div>
 
-                    {/* Other designation */}
-                    {formData.designation === "others" && (
-                        <div>
-                            <label className="block text-gray-700 font-medium mb-1">Specify designation</label>
-                            <input
-                                type="text"
-                                required
-                                value={formData.designationOther}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, designationOther: e.target.value })
-                                }
-                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black"
-                            />
+                    {/* Error */}
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                            {error}
                         </div>
                     )}
 
-                    {/* Email */}
-                    <div>
-                        <label className="block text-gray-700 font-medium mb-1">Email</label>
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                required
-                                placeholder="username"
-                                value={formData.emailName || ""}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, emailName: e.target.value })
-                                }
-                                className="w-full sm:w-1/2 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black"
-                            />
-                            <select
-                                required
-                                value={formData.emailDomain || ""}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, emailDomain: e.target.value })
-                                }
-                                className="w-full sm:w-1/2 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black"
-                            >
-                                <option value="">Domain</option>
-                                <option value="@theebg.com">@theebg.com</option>
-                                <option value="@daewooappliances.in">@daewooappliances.in</option>
-                                <option value="@ebikego.in">@ebikego.in</option>
-                            </select>
-                        </div>
-                    </div>
+                    {/* SIGNUP FORM (before OTP) */}
+                    {!otpStep && (
+                        <form className="space-y-4">
 
-                    {/* Phone */}
-                    <div>
-                        <label className="block text-gray-700 font-medium mb-1">Phone</label>
+                            {/* Name */}
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-1">Name</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                />
+                            </div>
 
-                        <input
-                            type="text"
-                            maxLength="10"
-                            required
-                            value={formData.phone}
-                            onChange={(e) => {
-                                const value = e.target.value;
-
-                                if (/^[0-9]*$/.test(value)) {
-                                    setFormData({ ...formData, phone: value });
-
-                                    if (value.length !== 10) {
-                                        setPhoneError("Phone number must be exactly 10 digits.");
-                                    } else {
-                                        setPhoneError("");
+                            {/* Designation */}
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-1">Designation</label>
+                                <select
+                                    value={formData.designation}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            designation: e.target.value,
+                                            designationOther: "",
+                                        })
                                     }
-                                }
-                            }}
-                            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black 
-            ${phoneError ? "border-red-500" : "border-gray-300"}`}
-                        />
+                                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                >
+                                    <option value="">Select designation</option>
+                                    <option value="bda">BDA</option>
+                                    <option value="bde">BDE</option>
+                                    <option value="bdm">BDM</option>
+                                    <option value="operations">Operations</option>
+                                    <option value="others">Others</option>
+                                </select>
+                            </div>
 
-                        {phoneError && (
-                            <p className="text-red-600 text-sm mt-1">{phoneError}</p>
-                        )}
-                    </div>
+                            {/* Other Designation */}
+                            {formData.designation === "others" && (
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-1">Specify Designation</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.designationOther}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, designationOther: e.target.value })
+                                        }
+                                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                    />
+                                </div>
+                            )}
 
-                    {/* Password */}
-                    <div>
-                        <label className="block text-gray-700 font-medium mb-1">Password</label>
+                            {/* Email */}
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-1">Email</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        placeholder="username"
+                                        className="w-1/2 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                        value={formData.emailName}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, emailName: e.target.value })
+                                        }
+                                        required
+                                    />
+                                    <select
+                                        className="w-1/2 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                        value={formData.emailDomain}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, emailDomain: e.target.value })
+                                        }
+                                        required
+                                    >
+                                        <option value="">Domain</option>
+                                        <option value="@theebg.com">@theebg.com</option>
+                                        <option value="@daewooappliances.in">@daewooappliances.in</option>
+                                        <option value="@ebikego.in">@ebikego.in</option>
+                                    </select>
+                                </div>
+                            </div>
 
-                        <div className="relative">
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                required
-                                value={formData.password}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    setFormData({ ...formData, password: value });
+                            {/* Phone */}
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-1">Phone</label>
+                                <input
+                                    type="text"
+                                    maxLength="10"
+                                    value={formData.phone}
+                                    onChange={(e) => {
+                                        if (/^[0-9]*$/.test(e.target.value)) {
+                                            setFormData({ ...formData, phone: e.target.value });
+                                        }
+                                    }}
+                                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                    required
+                                />
+                            </div>
 
-                                    // validate
-                                    if (value.length < 6) {
-                                        setPasswordError("At least 6 characters required.");
-                                    }
-                                    else if (!/[A-Z]/.test(value)) {
-                                        setPasswordError("Must contain at least one uppercase letter.");
-                                    }
-                                    else if (!/[!@#$%^&*(),.?\":{}|<>]/.test(value)) {
-                                        setPasswordError("Must include one special character.");
-                                    }
-                                    else {
-                                        setPasswordError("");
-                                    }
-                                }}
-                                className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-black 
-                ${passwordError ? "border-red-500" : "border-gray-300"}`}
-                            />
+                            {/* Password */}
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-1">Password</label>
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        value={formData.password}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, password: e.target.value })
+                                        }
+                                        className="w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
+                            </div>
 
+                            {/* SEND OTP */}
                             <button
                                 type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
+                                onClick={handleSendOtp}
+                                disabled={loading}
+                                className="w-full bg-black text-white font-semibold py-3 rounded-lg hover:bg-gray-800"
                             >
-                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                {loading ? "Sending OTP..." : "Send OTP"}
                             </button>
-                        </div>
 
-                        {passwordError && (
-                            <p className="text-red-600 text-sm mt-1">{passwordError}</p>
-                        )}
-                    </div>
-
-                    {/* ---------- SEND OTP BUTTON ---------- */}
-                    {!otpStep && (
-                        <button
-                            type="button"
-                            onClick={handleSendOtp}
-                            disabled={loading}
-                            className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-900 transition"
-                        >
-                            {loading ? "Sending OTP..." : "Send OTP"}
-                        </button>
+                        </form>
                     )}
-                </form>
 
-                {/* ---------- OTP SECTION BELOW FORM ---------- */}
-                {otpStep && (
-                    <div className="mt-6 text-center">
+                    {/* OTP SCREEN */}
+                    {otpStep && (
+                        <div className="mt-4 text-center">
 
-                        <p className="text-gray-600 mb-3">
-                            Enter the 6-digit OTP sent to <br />
-                            <strong>{finalEmail}</strong>
-                        </p>
+                            <p className="text-gray-600 mb-4">
+                                Enter OTP sent to<br />
+                                <strong>{finalEmail}</strong>
+                            </p>
 
-                        {/* OTP input boxes */}
-                        <div className="flex justify-center gap-2 mb-4">
-                            {otp.map((digit, index) => (
-                                <input
-                                    key={index}
-                                    ref={(el) => (otpRefs.current[index] = el)}
-                                    type="text"
-                                    maxLength="1"
-                                    value={digit}
-                                    onChange={(e) =>
-                                        handleOtpChange(e.target.value, index)
-                                    }
-                                    className="w-12 h-12 border rounded text-center text-xl font-bold"
-                                />
-                            ))}
+                            <div className="flex justify-center gap-2 mb-4">
+                                {otp.map((digit, idx) => (
+                                    <input
+                                        key={idx}
+                                        value={digit}
+                                        maxLength="1"
+                                        onChange={(e) => handleOtpChange(e.target.value, idx)}
+                                        className="w-12 h-12 border rounded text-center text-xl font-semibold"
+                                    />
+                                ))}
+                            </div>
+
+                            <div className="flex justify-between mt-3">
+                                <button
+                                    disabled={resendTimer > 0}
+                                    onClick={handleResendOtp}
+                                    className="px-4 py-2 border rounded-lg"
+                                >
+                                    {resendTimer > 0 ? `Resend (${resendTimer}s)` : "Resend OTP"}
+                                </button>
+                                <button
+                                    onClick={handleVerifyOtp}
+                                    className="px-6 py-2 bg-black text-white rounded-lg font-semibold"
+                                >
+                                    Verify OTP
+                                </button>
+                            </div>
                         </div>
+                    )}
 
-                        <div className="flex justify-between items-center mt-3">
-                            <button
-                                disabled={resendTimer > 0}
-                                onClick={handleResendOtp}
-                                className="px-4 py-2 border rounded-lg"
-                            >
-                                {resendTimer > 0
-                                    ? `Resend OTP (${resendTimer}s)`
-                                    : "Resend OTP"}
-                            </button>
-
-                            <button
-                                onClick={handleVerifyOtp}
-                                className="px-6 py-2 bg-black text-white rounded-lg font-semibold"
-                            >
-                                Verify OTP
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                <p className="text-center mt-4 text-gray-700">
-                    Already have an account?{" "}
-                    <button onClick={() => navigate("/login")} className="font-semibold underline">
-                        Login
-                    </button>
-                </p>
-
+                    {/* Login instead */}
+                    <p className="text-center mt-4 text-gray-700">
+                        Already have an account?
+                        <button onClick={() => navigate("/login")} className="font-semibold underline ml-1">
+                            Login
+                        </button>
+                    </p>
+                </div>
             </div>
         </div>
     );
+
 };
 
 export default SignupPage;

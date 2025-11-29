@@ -56,12 +56,12 @@ export default function BookNow() {
             {/* -------------------------------------------------- */}
             {/*  HERO SECTION */}
             {/* -------------------------------------------------- */}
-            <section className="pt-[220px] pb-[150px] bg-gradient-to-b from-blue-700 to-[#0070b9] text-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-blue-900/20 backdrop-blur-sm" />
+            <section className="pt-[100px] pb-[100px] bg-[#0070b9] text-white relative overflow-hidden rounded-2xl " style={{ margin: "12vh 3vh" }}>
+                <div className="absolute inset-0 backdrop-blur-sm" />
 
                 {/* Floating Highlight */}
-                <div className="absolute w-[400px] h-[400px] rounded-full bg-blue-500/20 blur-[120px] top-20 left-20" />
-                <div className="absolute w-[400px] h-[400px] rounded-full bg-indigo-400/20 blur-[150px] bottom-20 right-20" />
+                <div className="absolute w-[400px] h-[400px] rounded-full bg-[#0070b9]/20 blur-[120px] top-20 left-20" />
+                <div className="absolute w-[400px] h-[400px] rounded-full  blur-[150px] bottom-20 right-20" />
 
                 <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
                     <span className="inline-block px-4 py-1 text-sm tracking-[3px] uppercase bg-white/20 rounded-full">
@@ -81,7 +81,7 @@ export default function BookNow() {
                         <a href="#franchise-booking" className="px-6 py-3 bg-white text-[#0070b9] rounded-lg shadow-lg hover:bg-blue-100 transition">
                             Franchise Options
                         </a>
-                        <a href="#formats" className="px-6 py-3 border border-white rounded-lg hover:bg-white hover:text-[#0070b9] transition">
+                        <a href="#formats" className="px-6 py-3 border border-white text-white rounded-lg hover:text-white transition">
                             Outlet Formats
                         </a>
                     </div>
@@ -194,8 +194,9 @@ export default function BookNow() {
                     </div>
 
                     {/* CTA */}
-                    <div className="p-6 bg-[#0070b9] text-white rounded-2xl flex flex-col md:flex-row justify-between items-center">
-                        <div>
+                    <div className="p-6 bg-[#0070b9] text-white rounded-2xl flex flex-col md:flex-row justify-between items-center md:items-center text-center md:text-left">
+
+                        <div className="w-full md:w-auto mb-4 md:mb-0">
                             <h3 className="text-2xl font-semibold">Ready to apply?</h3>
                             <p className="text-white/80 text-sm">
                                 Submit your details & preferred format — our franchise desk will reach out.
@@ -204,11 +205,13 @@ export default function BookNow() {
 
                         <button
                             onClick={() => navigate("/sales/addclients")}
-                            className="px-6 py-3 bg-white text-[#0070b9] rounded-lg font-medium hover:bg-gray-100 mt-4 md:mt-0"
+                            className="px-6 py-3 bg-white text-[#0070b9] rounded-lg font-medium hover:bg-gray-100 w-full md:w-auto"
                         >
                             Submit Interest
                         </button>
+
                     </div>
+
                 </div>
             </section>
 
@@ -216,26 +219,35 @@ export default function BookNow() {
             {/* -------------------------------------------------- */}
             {/* OUTLET FORMATS */}
             {/* -------------------------------------------------- */}
-            <section id="formats" className="bg-[#0a1124] text-white py-20 px-6">
+            <section id="formats" className="bg-[#0070b9] text-white py-20 px-6">
                 <h2 className="text-3xl font-bold text-center mb-4">Outlet Format Options</h2>
-                <p className="text-center text-gray-400 max-w-2xl mx-auto mb-12">
+                <p className="text-center text-gray-200 max-w-2xl mx-auto mb-12">
                     Discover the most suitable format for your location, investment & expansion goals.
                 </p>
 
-                <div className="max-w-7xl mx-auto grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                     {formats.map((box, i) => (
                         <div
                             key={i}
-                            className="p-6 rounded-2xl bg-[#0f1a33] border border-white/10 space-y-4"
+                            className="p-6 rounded-2xl bg-white border-4 border-[#0466a6] space-y-4 hover:shadow-lg transition"
                         >
-                            <h3 className="text-lg font-semibold">{box.title}</h3>
-                            <p className="text-gray-400 text-sm">{box.desc}</p>
-                            <ul className="space-y-2 text-gray-300 text-sm list-disc pl-5">
-                                {box.list.map((l, idx) => <li key={idx}>{l}</li>)}
+                            <h3 className="text-lg text-[#0070b9] font-semibold">
+                                {box.title}
+                            </h3>
+
+                            <p className="text-[#0070b9] text-sm">
+                                {box.desc}
+                            </p>
+
+                            <ul className="space-y-2 text-[#0070b9] text-sm list-disc pl-5">
+                                {box.list.map((l, idx) => (
+                                    <li key={idx}>{l}</li>
+                                ))}
                             </ul>
                         </div>
                     ))}
                 </div>
+
             </section>
 
             {/* -------------------------------------------------- */}

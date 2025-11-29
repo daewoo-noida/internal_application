@@ -1,277 +1,143 @@
-import React, { useState, useEffect } from 'react';
-import FranchiseCarousel from './Franchises';
-import SignatureStoreCarousel from './SingatureStorecarousel';
-import MapToMarket from './MapToMarket';
-import HeroSection from './HeroSection';
-import LeadersSection from './LeadersSection';
-import ClientLogoCarousel from './ClientLogoCarousel';
-
+import React, { useEffect, useState } from "react";
+import FranchiseCarousel from "./Franchises";
+import SignatureStoreCarousel from "./SingatureStorecarousel";
+import MapToMarket from "./MapToMarket";
+import HeroSection from "./HeroSection";
+import LeadersSection from "./LeadersSection";
+import ClientLogoCarousel from "./ClientLogoCarousel";
+import { Copy } from "lucide-react";
 export default function Index() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [brandSlide, setBrandSlide] = useState(0);
-  const [productSlide, setProductSlide] = useState(0);
-  const [franchiseSlide, setFranchiseSlide] = useState(0);
-  const [storeSlide, setStoreSlide] = useState(0);
-  const [franchiseFilter, setFranchiseFilter] = useState('Available');
-  const [storeFilter, setStoreFilter] = useState('Available');
-  const totalSlides = 9;
-  const totalBrandSlides = 6;
-  const totalProductSlides = 5;
-  const totalFranchiseSlides = 5;
-  const totalStoreSlides = 5;
 
-  // Add CSS for X icon sizing
-  React.useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      a.footer-social-link:last-child img {
-        width: 12px;
-        height: auto;
-      }
-      a.text-gray-400.hover\\:text-white.transition-colors.footer-social-link img {
-        position: relative;
-        top: 6px;
-      }
-      @keyframes smoothScroll {
-        0% { transform: translateX(0%); }
-        100% { transform: translateX(-100%); }
-      }
-      section.hero-section.pt-32.pb-24.bg-white img.h-16.w-auto {
-        height: 3rem;
-      }
-      section.hero-section.pt-32.pb-24.bg-white {
-        background: url(/images/herobg.jpg);
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-position: center center;
-        margin-top: 60px;
-        padding-bottom: 0;
-      }
-      .w-full.px-0.heroCrousel {
-        padding-top: 80px;
-        height: 420px;
-        overflow: hidden;
-      }
-    `;
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-
-  // Auto-play hero carousel functionality - very slow smooth continuous scroll
+  // smooth hero carousel autoplay
   useEffect(() => {
-    const autoPlayInterval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 0.01) % totalSlides);
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 0.01) % 9);
     }, 100);
-
-    return () => clearInterval(autoPlayInterval);
+    return () => clearInterval(interval);
   }, []);
 
-  // Auto-play brands carousel functionality
-  useEffect(() => {
-    const brandAutoPlayInterval = setInterval(() => {
-      setBrandSlide((prev) => (prev + 1) % totalBrandSlides);
-    }, 2500);
 
-    return () => clearInterval(brandAutoPlayInterval);
-  }, []);
+  const [copied, setCopied] = useState(false);
 
-  // Auto-play product showcase carousel functionality
-  useEffect(() => {
-    const productAutoPlayInterval = setInterval(() => {
-      setProductSlide((prev) => (prev + 1) % totalProductSlides);
-    }, 3500);
+  const bankDetailsText = `
+A/C Name: Think eBikeGo Pvt. Ltd.
+Bank: ICICI Bank
+A/C No: 123805009535
+Branch: Andheri, Mumbai
+IFSC: ICIC0001238
+  `.trim();
 
-    return () => clearInterval(productAutoPlayInterval);
-  }, []);
-
-  // Auto-play franchise carousel functionality (reverse direction, slower speed)
-  useEffect(() => {
-    const franchiseAutoPlayInterval = setInterval(() => {
-      setFranchiseSlide((prev) => {
-        const nextSlide = prev - 1;
-        if (nextSlide < 0) {
-          // Reset to end for seamless loop
-          setTimeout(() => setFranchiseSlide(totalFranchiseSlides - 1), 1000);
-          return -1;
-        }
-        return nextSlide;
-      });
-    }, 5000); // Slower speed (5 seconds)
-
-    return () => clearInterval(franchiseAutoPlayInterval);
-  }, []);
-
-  // Auto-play store carousel functionality (faster speed, normal direction)
-  useEffect(() => {
-    const storeAutoPlayInterval = setInterval(() => {
-      setStoreSlide((prev) => {
-        const nextSlide = prev + 1;
-        if (nextSlide >= totalStoreSlides) {
-          // Reset to 0 for seamless loop
-          setTimeout(() => setStoreSlide(0), 1000);
-          return totalStoreSlides;
-        }
-        return nextSlide;
-      });
-    }, 2500); // Faster speed (2.5 seconds)
-
-    return () => clearInterval(storeAutoPlayInterval);
-  }, []);
-
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(bankDetailsText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header Navigation - Exact Match */}
 
-      {/* Hero Section with Auto-Play Carousel */}
-      <HeroSection />
+      {/* 🟢 HERO SECTION (already fixed) */}
+      <HeroSection currentSlide={currentSlide} />
 
-
-
-      {/* Message From Our Founder */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-
-            {/* Text Content */}
+      <section className="py-10 md:py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* TEXT */}
             <div>
-              <h2 className="text-4xl md:text-3xl font-extrabold mb-6 text-gray-900 leading-tight">
-                A NOTE FROM FOUNDER & CEO
-              </h2>
-              {/* <p className="text-lg md:text-xl mb-6 text-gray-700 font-medium">
-                EBG – Where Purpose Meets Performance | Trusted by 40+ Brands
-              </p> */}
-              <p className="text-gray-700 mb-8 leading-relaxed">
-                At EBG Group, we are driven by the vision of solving real-world challenges through purposeful, impactful action. With over 36 Brands under our umbrella, we are committed to transforming industries from energy solutions to advanced manufacturing, creating lasting value and sustainable growth. Our mission is clear, to shape industries that matter, delivering tangible results that improve lives. This is the promise we continue to fulfill every day. Our recent partnership with Daewoo marks a significant milestone in this journey. By aligning with a global leader in engineering and infrastructure, we are enhancing our ability to deliver advanced technologies, expand our market presence, and address India’s most pressing industrial needs with speed, scale, and precision.
+              <h2 className="text-xl md:text-3xl font-bold mb-6 text-gray-900"> A NOTE FROM FOUNDER & CEO </h2>
+              <p className="text-gray-700 mb-8 leading-relaxed text-base md:text-lg">
+                At EBG Group, we are driven by the vision of solving real-world challenges through
+                purposeful, impactful action. With over 36 Brands under our umbrella, we are committed to
+                transforming industries from energy solutions to advanced manufacturing, creating lasting
+                value and sustainable growth. Our mission is clear, to shape industries that matter,
+                delivering tangible results that improve lives. This is the promise we continue to
+                fulfill every day. Our recent partnership with Daewoo marks a significant milestone in
+                this journey. By aligning with a global leader in engineering and infrastructure,
+                we are enhancing our ability to deliver advanced technologies, expand our market presence,
+                and address India’s most pressing industrial needs with speed, scale, and precision.
               </p>
-
-
-
-            </div>
-
-            {/* Founder Image & Info */}
+            </div> {/* IMAGE AREA */}
             <div className="flex flex-col items-center text-center">
-              <div className="h-100 md:w-80 md:h-80 mb-4 rounded-3xl overflow-hidden transform hover:scale-105 transition-transform duration-500">
-                <img
-                  src="/images/irfan.png"
-                  alt="Dr. Irfan - Founder & CEO"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-1">Dr. Irfan</h3>
+              <div className="w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-3xl overflow-hidden transform hover:scale-105 transition duration-500"> <img src="/images/irfan.png" alt="CEO" className="w-full h-full object-contain" /> </div> <h3 className="text-2xl font-semibold text-gray-900 mt-4"> Dr. Irfan </h3>
               <p className="text-gray-600 font-medium">Founder & CEO</p>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* Trusted by 40+ Brands - Auto-Play Carousel */}
+
+      {/* 🟢 CLIENT LOGO CAROUSEL */}
       <ClientLogoCarousel />
 
+      {/* 🟢 LEADERS */}
       <LeadersSection />
 
-      {/* Master Franchise Opportunities - Exact Match */}
+      {/* 🟢 FRANCHISE CAROUSEL */}
       <FranchiseCarousel />
 
-      {/* Signature Store Opportunities - Exact Match */}
+      <MapToMarket />
+      {/* 🟢 SIGNATURE STORE CAROUSEL */}
       <SignatureStoreCarousel />
 
-      {/* The Daewoo Map to Market Leadership - Exact Match */}
-      <MapToMarket />
+      {/* 🟢 MAP2MARKET SECTION */}
 
-      {/* Motivation & Innovations - Exact Match */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4 text-center">Motivation & Innovations</h2>
-          <p className="text-gray-600 mb-12 max-w-3xl mx-auto text-lg text-center">
-            Stay motivated and innovative with our daily insights and resources.
+      {/* 🟢 MOTIVATION SECTION */}
+      <section className="py-10 md:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+
+          <h2 className="text-3xl md:text-3xl font-bold text-gray-900 mb-4 text-center">
+            Motivation & Innovations
+          </h2>
+
+          <p className="text-gray-600 mb-12 max-w-3xl mx-auto text-center text-base md:text-lg">
+            Stay motivated and innovative with our daily insights.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Quote Of The Day</h3>
-              <blockquote className="text-gray-700 italic mb-4 leading-relaxed">
-                "Success is not final, failure is not fatal: it is the courage to continue that counts."
+
+            {/* card 1 */}
+            <div className="bg-gray-50 rounded-xl p-6 border">
+              <h3 className="text-xl font-semibold mb-4">Quote Of The Day</h3>
+              <blockquote className="text-gray-700 italic leading-relaxed">
+                "Success is not final, failure is not fatal..."
               </blockquote>
-              <cite className="text-sm text-gray-500">- Zig Ziglar</cite>
+              <cite className="text-sm text-gray-500 block mt-2">- Zig Ziglar</cite>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Sales Weapon Of The Day</h3>
-              <p className="text-gray-700 mb-2 font-medium">Jeffrey Gitomer</p>
-              <p className="text-sm text-gray-500">Sales expert and motivational speaker</p>
+            {/* card 2 */}
+            <div className="bg-gray-50 rounded-xl p-6 border">
+              <h3 className="text-xl font-semibold mb-4">Sales Weapon</h3>
+              <p className="text-gray-700 font-medium">Jeffrey Gitomer</p>
+              <p className="text-gray-500 text-sm">Sales Expert</p>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Bank Details</h3>
+            {/* card 3 */}
+            <div className="bg-gray-50 rounded-xl p-6 border relative">
+              <h3 className="text-xl font-semibold mb-4">Bank Details</h3>
+
+              {/* Copy Button */}
+              <button
+                onClick={copyToClipboard}
+                className="absolute top-5 right-5 p-2 bg-white border rounded-lg hover:bg-gray-100 transition flex items-center gap-1"
+              >
+                <Copy size={16} />
+                <span className="text-sm">{copied ? "Copied!" : "Copy"}</span>
+              </button>
+
               <div className="space-y-2 text-sm">
-                <p><span className="font-semibold text-gray-900">A/C Name:</span> <span className="text-gray-700">Think eBikeGo Private Limited</span></p>
-                <p><span className="font-semibold text-gray-900">Bank Name:</span> <span className="text-gray-700">ICICI Bank</span></p>
-                <p><span className="font-semibold text-gray-900">A/C No:</span> <span className="text-gray-700">123805009535  </span></p>
-                <p><span className="font-semibold text-gray-900">Branch</span> <span className="text-gray-700">Mumbai – Andheri W.E. Highway  </span></p>
-                <p><span className="font-semibold text-gray-900">IFSC Code:</span> <span className="text-gray-700">ICIC0001238</span></p>
+                <p><b>A/C Name:</b> Think eBikeGo Pvt. Ltd.</p>
+                <p><b>Bank:</b> ICICI Bank</p>
+                <p><b>A/C No:</b> 123805009535</p>
+                <p><b>Branch:</b> Andheri, Mumbai</p>
+                <p><b>IFSC:</b> ICIC0001238</p>
               </div>
-              {/* <button className="mt-4 bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-full font-semibold text-sm transition-colors">
-                Copy Details
-              </button> */}
             </div>
+
           </div>
+
         </div>
       </section>
-
-      {/* Legends Aren't Hired, They're Made - Exact Match */}
-      {/* <section className="py-20 text-black relative overflow-hidden legends-section-bg">
-        <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-5xl md:text-7xl font-bold mb-4 leading-tight">
-            Legends Aren't Hired
-          </h2>
-          <h2 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            They're Made. ★
-          </h2>
-          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            We're saving this space for the Ones who raise the bar.
-          </p>
-          <button className="bg-white hover:bg-gray-100 text-black px-8 py-3 rounded-full font-semibold text-lg transition-colors">
-            Join Our Team
-          </button>
-        </div>
-      </section> */}
-
-      {/* Employee Of The Month - Exact Match */}
-      {/* <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Employee Of The Month</h2>
-          <p className="text-gray-600 mb-12 max-w-3xl mx-auto text-lg">
-            Recognizing our outstanding team members who go above and beyond.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { name: "Sarah Johnson", title: "User Success Coordinator", image: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=300" },
-              { name: "Michael Chen", title: "Senior Dealership Executive", image: "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=300" },
-              { name: "Emily Rodriguez", title: "Sales & Dealership Manager", image: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300" }
-            ].map((employee, index) => (
-              <div key={index} className="text-center">
-                <div className="w-32 h-32 mx-auto rounded-full mb-4 overflow-hidden">
-                  <img
-                    src={employee.image}
-                    alt={employee.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-1">{employee.name}</h3>
-                <p className="text-gray-600">{employee.title}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
-      {/* Footer - Exact Match */}
 
     </div>
   );

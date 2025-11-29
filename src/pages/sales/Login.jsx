@@ -96,22 +96,30 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center">
       <div
         style={backGroundImage}
-        className="w-full flex justify-center lg:justify-end px-4 sm:px-10 lg:pr-20"
+        className="w-full flex justify-center lg:justify-end px-4 sm:px-10 lg:pr-20 bg-login"
       >
-        <div className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl border border-gray-100 p-6 sm:p-8 shadow-lg">
+        <div className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl border border-gray-100 p-6 sm:p-8 ">
+
+          {/* LOGO */}
+          <div className="flex justify-center mb-4">
+            <img
+              src="/images/logo.png"
+              alt="App Logo"
+              className="h-10 w-auto object-contain"
+            />
+          </div>
 
           {/* Header */}
           <div className="text-center mb-6">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Welcome Back</h1>
-            <p className="text-gray-600 text-sm sm:text-base">Sign in to your account to continue</p>
+            <p className="text-gray-600 text-sm sm:text-base">
+              Sign in to your account to continue
+            </p>
           </div>
 
-          {/* Error */}
+
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm flex items-center gap-2">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
               <span>{error}</span>
             </div>
           )}
@@ -137,7 +145,7 @@ export default function Login() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   required
                   value={formData.password}
@@ -145,6 +153,7 @@ export default function Login() {
                   className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
                   placeholder="Enter your password"
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -152,6 +161,7 @@ export default function Login() {
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
+
               </div>
             </div>
 
@@ -165,10 +175,9 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Signup Link */}
           <p className="text-center mt-4 text-gray-700">
-            Don’t have an account?{" "}
-            <button onClick={() => navigate("/signup")} className="font-semibold underline">
+            Don’t have an account?
+            <button onClick={() => navigate("/signup")} className="font-semibold underline ml-1">
               Sign Up
             </button>
           </p>

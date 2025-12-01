@@ -16,7 +16,7 @@ exports.signup = async (req, res) => {
 
     const allowedDomains = [
       "@theebg.com",
-      "@daewooappliances.com",
+      "@daewooappliances.in",
       "@ebikego.in"
     ];
 

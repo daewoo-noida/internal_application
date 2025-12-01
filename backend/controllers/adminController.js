@@ -33,12 +33,7 @@ exports.getAdminStats = async (req, res) => {
     }
 };
 
-// =====================
-// ALL SALESMEN LIST
-// =====================
-// =====================
-// ALL SALESMEN LIST + TOTAL CLIENTS + TOTAL DEAL AMOUNT
-// =====================
+
 exports.getAllSalesmen = async (req, res) => {
     try {
         const salesmen = await User.find({ role: "Sales" })

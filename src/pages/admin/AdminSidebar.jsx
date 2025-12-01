@@ -4,9 +4,9 @@ import { NavLink } from "react-router-dom";
 const menuItems = [
     { path: "/admin/dashboard", label: "Dashboard" },
     { path: "/admin/salesmen", label: "Sales Team" },
-    { path: "/admin/clients", label: "Daewoo Clients" },
+    // { path: "/admin/clients", label: "Daewoo Clients" },
     { path: "/admin/pdf-manager", label: "Pdf Manager" },
-    { path: "/admin/settings", label: "Settings" },
+    // { path: "/admin/settings", label: "Settings" },
 ];
 
 export default function AdminSidebar() {

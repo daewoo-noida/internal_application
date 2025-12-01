@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { adminAPI } from "../../utils/api";
 import { Link } from "react-router-dom";
 
 export default function SalesTeam() {
     const [salesmen, setSalesmen] = useState([]);
     const [openMenu, setOpenMenu] = useState(null);
-    const primary = "#0070b9";
 
     useEffect(() => {
         loadTeam();
@@ -38,98 +37,89 @@ export default function SalesTeam() {
         setOpenMenu(null);
     };
 
+    const getInitials = (name) => {
+        if (!name) return "S";
+        const parts = name.split(" ");
+        return (parts[0][0] + (parts[1]?.[0] || "")).toUpperCase();
+    };
+
     return (
         <div className="p-6">
-            <h1 className="text-3xl font-bold mb-6" style={{ color: primary }}>
+            <h1 className="text-3xl font-bold mb-6 text-blue-700">
                 Sales Team
             </h1>
 
-            <div className="bg-white shadow rounded-xl p-6 overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr className="bg-gray-100 text-gray-700 text-sm">
-                            <th className="p-3">Name</th>
-                            <th className="p-3">Email</th>
-                            <th className="p-3">Designation</th>
-                            <th className="p-3">Phone</th>
-                            <th className="p-3">Status</th>
-                            <th className="p-3 text-right">Action</th>
-                        </tr>
-                    </thead>
+            {salesmen.length === 0 ? (
+                <p className="text-gray-500 text-center p-10">No Sales Team Found</p>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {salesmen.map((s) => (
+                        <div
+                            key={s._id}
+                            className={`relative p-6 rounded-xl shadow-md border bg-white hover:shadow-lg transition`}
+                        >
+                            {/* ACTION BUTTON */}
+                            <button
+                                onClick={() =>
+                                    setOpenMenu(openMenu === s._id ? null : s._id)
+                                }
+                                className="absolute top-3 right-3 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                            >
+                                ⋮
+                            </button>
 
-                    <tbody>
-                        {salesmen.length === 0 ? (
-                            <tr>
-                                <td colSpan="6" className="text-center p-6 text-gray-500">
-                                    No Sales Team Found
-                                </td>
-                            </tr>
-                        ) : (
-                            salesmen.map((s) => (
-                                <tr
-                                    key={s._id}
-                                    className={`border-b transition ${s.isVerified ? "bg-blue-50" : "hover:bg-gray-50"
+                            {/* DROPDOWN */}
+                            {openMenu === s._id && (
+                                <div className="absolute top-10 right-3 w-40 bg-white shadow-lg border rounded-md z-20">
+                                    <button
+                                        onClick={() => toggleVerify(s._id)}
+                                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                                    >
+                                        {s.isVerified ? "Unverify" : "Verify"}
+                                    </button>
+
+                                    <Link
+                                        to={`/admin/salesman/${s._id}`}
+                                        className="block px-4 py-2 hover:bg-gray-100"
+                                    >
+                                        View Details
+                                    </Link>
+
+                                    <button
+                                        onClick={() => handleDelete(s._id)}
+                                        className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* AVATAR */}
+                            <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-semibold mb-4">
+                                {getInitials(s.name)}
+                            </div>
+
+                            {/* INFO */}
+                            <h2 className="text-xl font-semibold">{s.name}</h2>
+                            <p className="text-gray-600 mt-1">{s.email}</p>
+                            <p className="text-gray-500 capitalize">{s.designation || "-"}</p>
+                            <p className="text-gray-500">{s.phone || "-"}</p>
+
+                            {/* STATUS */}
+                            <div className="mt-4">
+                                <span
+                                    className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${s.isVerified
+                                        ? "bg-blue-100 text-blue-700"
+                                        : "bg-yellow-100 text-yellow-700"
                                         }`}
                                 >
-                                    <td className="p-3 font-medium">{s.name}</td>
-                                    <td className="p-3">{s.email}</td>
-                                    <td className="p-3 capitalize">{s.designation || "-"}</td>
-                                    <td className="p-3">{s.phone || "-"}</td>
-
-                                    <td className="p-3">
-                                        <span
-                                            className={`px-3 py-1 rounded text-sm ${s.isVerified
-                                                ? "bg-blue-200 text-blue-800"
-                                                : "bg-yellow-200 text-yellow-800"
-                                                }`}
-                                        >
-                                            {s.isVerified ? "Verified" : "Pending"}
-                                        </span>
-                                    </td>
-
-                                    {/* ACTION DROPDOWN */}
-                                    <td className="p-3 text-right relative">
-                                        <button
-                                            onClick={() =>
-                                                setOpenMenu(openMenu === s._id ? null : s._id)
-                                            }
-                                            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
-                                        >
-                                            ⋮
-                                        </button>
-
-                                        {/* Dropdown Menu */}
-                                        {openMenu === s._id && (
-                                            <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg border rounded-lg z-20">
-                                                <button
-                                                    onClick={() => toggleVerify(s._id)}
-                                                    className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                                                >
-                                                    {s.isVerified ? "Unverify" : "Verify"}
-                                                </button>
-
-                                                <Link
-                                                    to={`/admin/salesman/${s._id}`}
-                                                    className="block px-4 py-2 hover:bg-gray-100"
-                                                >
-                                                    View Details
-                                                </Link>
-
-                                                <button
-                                                    onClick={() => handleDelete(s._id)}
-                                                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                                    {s.isVerified ? "Verified" : "Pending"}
+                                </span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

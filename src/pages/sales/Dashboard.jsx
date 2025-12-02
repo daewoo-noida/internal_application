@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { clientAPI } from "../../utils/api"; // <-- Use your client API
+import { clientAPI } from "../../utils/api";
+import PaymentUpdateModal from "../../components/PaymentUpdateModal";
+import { useNavigate } from "react-router-dom";
 
 export default function SalesDashboard() {
   const [clients, setClients] = useState([]);
@@ -11,7 +13,19 @@ export default function SalesDashboard() {
   });
 
   const [loading, setLoading] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
 
+  const openPaymentModal = (client) => {
+    setSelectedClient(client);
+    setShowPaymentModal(true);
+  };
+
+  const navigate = useNavigate();
+
+  const openDetails = (client) => {
+    navigate(`/sales/client/${client._id}`);
+  };
   // ======================================
   // FETCH CLIENTS OF LOGGED-IN SALES USER
   // ======================================
@@ -52,8 +66,15 @@ export default function SalesDashboard() {
   };
 
   useEffect(() => {
-    fetchClients();
+    fetchClients();  // INITIAL CALL
+
+    const refreshSales = () => fetchClients();
+    window.addEventListener("payment-updated", refreshSales);
+
+    return () => window.removeEventListener("payment-updated", refreshSales);
   }, []);
+
+
 
   const getPaymentStatus = (client) => {
     const percent = Number(client.receivedPercent);
@@ -144,11 +165,22 @@ export default function SalesDashboard() {
 
                     <td className="px-6 py-4">{c.receivedPercent}%</td>
 
-                    <td className="px-6 py-4">
-                      <button className="bg-[#0070b9] text-white px-3 py-1 rounded">
-                        Edit
+                    <td className="px-6 py-4 flex gap-2">
+                      <button
+                        onClick={() => openDetails(c)}
+                        className="bg-[#0070b9] text-white px-3 py-1 rounded"
+                      >
+                        View
+                      </button>
+
+                      <button
+                        onClick={() => openPaymentModal(c)}
+                        className="bg-green-600 text-white px-3 py-1 rounded"
+                      >
+                        Update Payment
                       </button>
                     </td>
+
                   </tr>
                 ))
               )}
@@ -157,6 +189,15 @@ export default function SalesDashboard() {
           </table>
         )}
       </div>
+      {showPaymentModal && (
+        <PaymentUpdateModal
+          client={selectedClient}
+          onClose={() => setShowPaymentModal(false)}
+          onSuccess={() => fetchClients()}
+        />
+      )}
+
     </div>
+
   );
 }

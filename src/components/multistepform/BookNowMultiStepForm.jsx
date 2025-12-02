@@ -26,6 +26,11 @@ export default function BookNowMultiStepForm() {
         bda: "",
         bde: "",
         bdm: "",
+
+        bdaName: "",
+        bdeName: "",
+        bdmName: "",
+
         leadSource: "",
         gst: "",
         dealAmount: "",

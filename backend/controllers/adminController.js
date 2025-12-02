@@ -1,22 +1,16 @@
 const Client = require("../models/ClientMaster");
 const User = require("../models/User");
 
-// =====================
-// DASHBOARD STATS
-// =====================
+/* ===========================
+    ADMIN DASHBOARD STATS
+=========================== */
 exports.getAdminStats = async (req, res) => {
     try {
         const clients = await Client.find();
 
         const totalClients = clients.length;
-
         const totalDealAmount = clients.reduce((sum, c) => sum + (c.dealAmount || 0), 0);
-
-        const totalReceived = clients.reduce(
-            (sum, c) => sum + (c.tokenReceivedAmount || 0),
-            0
-        );
-
+        const totalReceived = clients.reduce((sum, c) => sum + (c.tokenReceivedAmount || 0), 0);
         const totalDue = totalDealAmount - totalReceived;
 
         res.json({
@@ -28,16 +22,20 @@ exports.getAdminStats = async (req, res) => {
                 totalDue
             }
         });
+
     } catch (err) {
         res.status(500).json({ success: false, message: "Server Error", err });
     }
 };
 
 
+/* ===========================
+      ALL SALESMEN LIST
+=========================== */
 exports.getAllSalesmen = async (req, res) => {
     try {
         const salesmen = await User.find({ role: "Sales" })
-            .select("name email phone designation createdAt");
+            .select("name email phone designation isVerified createdAt");
 
         const result = [];
 
@@ -45,16 +43,8 @@ exports.getAllSalesmen = async (req, res) => {
             const clients = await Client.find({ createdBy: salesman._id });
 
             const totalClients = clients.length;
-
-            const totalDealAmount = clients.reduce(
-                (sum, c) => sum + (c.dealAmount || 0),
-                0
-            );
-
-            const totalReceived = clients.reduce(
-                (sum, c) => sum + (c.tokenReceivedAmount || 0),
-                0
-            );
+            const totalDealAmount = clients.reduce((sum, c) => sum + (c.dealAmount || 0), 0);
+            const totalReceived = clients.reduce((sum, c) => sum + (c.tokenReceivedAmount || 0), 0);
 
             result.push({
                 ...salesman._doc,
@@ -73,49 +63,70 @@ exports.getAllSalesmen = async (req, res) => {
 };
 
 
+/* ===========================
+   SALES TEAM AGGREGATED API
+=========================== */
+exports.salesmen = async (req, res) => {
+    try {
+        const salesmen = await User.aggregate([
+            { $match: { role: "Sales" } },
+
+            {
+                $lookup: {
+                    from: "clientmasters",
+                    localField: "_id",
+                    foreignField: "createdBy",
+                    as: "clients"
+                }
+            },
+
+            {
+                $addFields: {
+                    totalClients: { $size: "$clients" },
+                    totalDealAmount: { $sum: "$clients.dealAmount" },
+                    totalReceived: { $sum: "$clients.tokenReceivedAmount" }
+                }
+            },
+
+            {
+                $project: {
+                    name: 1,
+                    designation: 1,
+                    totalClients: 1,
+                    totalDealAmount: 1,
+                    totalReceived: 1
+                }
+            }
+        ]);
+
+        res.json({ success: true, salesmen });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+};
+
+
+/* ===========================
+   SALESMAN → CLIENT LIST
+=========================== */
 exports.getSalesmanClients = async (req, res) => {
     try {
         const clients = await Client.find({ createdBy: req.params.id })
             .populate("createdBy", "name email phone designation");
 
         res.json({ success: true, clients });
+
     } catch (err) {
         res.status(500).json({ success: false, message: "Server Error", err });
     }
 };
 
 
-exports.getAllSalesmen = async (req, res) => {
-    try {
-        const salesmen = await User.find({ role: "Sales" })
-            .select("name email phone designation phone createdAt isVerified");
-
-        const result = [];
-
-        for (const salesman of salesmen) {
-            const clients = await Client.find({ createdBy: salesman._id });
-
-            const totalClients = clients.length;
-            const totalDealAmount = clients.reduce((sum, c) => sum + (c.dealAmount || 0), 0);
-            const totalReceived = clients.reduce((sum, c) => sum + (c.tokenReceivedAmount || 0), 0);
-
-            result.push({
-                ...salesman._doc,
-                totalClients,
-                totalDealAmount,
-                totalReceived,
-                isVerified: salesman.isVerified
-            });
-        }
-
-        res.json({ success: true, salesmen: result });
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ success: false, message: "Server Error", err });
-    }
-};
-
-
+/* ===========================
+    PENDING DOCUMENT CHECK
+=========================== */
 exports.getPendingDocuments = async (req, res) => {
     try {
         const clients = await Client.find();
@@ -130,20 +141,22 @@ exports.getPendingDocuments = async (req, res) => {
         }));
 
         res.json({ success: true, pending });
+
     } catch (err) {
         res.status(500).json({ success: false, message: "Server Error", err });
     }
 };
 
+
+/* ===========================
+        VERIFY SALESMAN
+=========================== */
 exports.verifySalesman = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
-
-        user.isVerified = !user.isVerified; // Toggle verify/unverify
+        user.isVerified = !user.isVerified;
         await user.save();
 
         res.json({
@@ -157,12 +170,124 @@ exports.verifySalesman = async (req, res) => {
     }
 };
 
+
+/* ===========================
+        DELETE SALESMAN
+=========================== */
 exports.deleteSalesman = async (req, res) => {
     try {
         await User.findByIdAndDelete(req.params.id);
-
         res.json({ success: true, message: "Sales user deleted successfully" });
+
     } catch (err) {
         res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+
+/* ===========================
+   APPROVE SECONDARY PAYMENT
+=========================== */
+exports.approvePayment = async (req, res) => {
+    try {
+        const { id, paymentId } = req.params;
+
+        const client = await Client.findById(id);
+        if (!client)
+            return res.status(404).json({ success: false, message: "Client not found" });
+
+        const payment = client.secondPayments.id(paymentId);
+        if (!payment)
+            return res.status(404).json({ success: false, message: "Payment not found" });
+
+        if (payment.status === "approved")
+            return res.json({ success: false, message: "Payment already approved" });
+
+        payment.status = "approved";
+
+        // Update totals
+        client.tokenReceivedAmount += Number(payment.amount);
+
+        const totalDeal = Number(client.dealAmount);
+        const received = Number(client.tokenReceivedAmount);
+
+        client.receivedPercent = ((received / totalDeal) * 100).toFixed(2);
+        client.remainPercent = (100 - client.receivedPercent).toFixed(2);
+        client.balanceAmount = totalDeal - received;
+
+        await client.save();
+
+        res.json({ success: true, message: "Payment approved", client });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+
+exports.getGraphStats = async (req, res) => {
+    try {
+        const clients = await Client.find();
+
+        // 12 months arrays
+        const monthlyDeal = Array(12).fill(0);
+        const monthlyReceived = Array(12).fill(0);
+
+        clients.forEach((c) => {
+            if (!c.createdAt) return;
+
+            const d = new Date(c.createdAt);
+            const m = d.getMonth(); // 0–11
+
+            const deal = Number(c.dealAmount || 0);
+            const received = Number(c.tokenReceivedAmount || 0);
+
+            monthlyDeal[m] += deal;
+            monthlyReceived[m] += received;
+        });
+
+        // YEARLY (last 5 years)
+        const currentYear = new Date().getFullYear();
+        const yearlyLabels = [];
+        const yearlyDeal = [];
+        const yearlyReceived = [];
+
+        for (let y = currentYear - 4; y <= currentYear; y++) {
+            yearlyLabels.push(y);
+
+            let dSum = 0;
+            let rSum = 0;
+
+            clients.forEach((c) => {
+                if (!c.createdAt) return;
+                const cy = new Date(c.createdAt).getFullYear();
+
+                if (cy === y) {
+                    dSum += Number(c.dealAmount || 0);
+                    rSum += Number(c.tokenReceivedAmount || 0);
+                }
+            });
+
+            yearlyDeal.push(dSum);
+            yearlyReceived.push(rSum);
+        }
+
+        res.json({
+            success: true,
+            monthly: {
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                deal: monthlyDeal,
+                received: monthlyReceived,
+            },
+            yearly: {
+                labels: yearlyLabels,
+                deal: yearlyDeal,
+                received: yearlyReceived,
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: "Server Error", err });
     }
 };

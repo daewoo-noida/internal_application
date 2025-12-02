@@ -152,7 +152,7 @@ export default function FileManager() {
             <div className="flex gap-4 mb-10">
 
                 {/* File Upload */}
-                <label className="px-6 py-3 bg-blue-600 text-white rounded cursor-pointer">
+                <label className="px-6 py-3 bg-[#0070b9] text-white rounded cursor-pointer">
                     Upload File
                     <input type="file" className="hidden" onChange={handleFileChange} />
                 </label>
@@ -245,7 +245,7 @@ export default function FileManager() {
                                 <a
                                     href={`${FILE_BASE}/${item.filePath}`}
                                     target="_blank"
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm shadow hover:bg-blue-700"
+                                    className="px-4 py-2 bg-[#0070b9] text-white rounded-lg text-sm shadow hover:bg-blue-700"
                                     onClick={(e) => e.stopPropagation()}
                                 >
                                     Download

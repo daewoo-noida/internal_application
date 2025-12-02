@@ -18,47 +18,85 @@ export default function AdminDashboard() {
     const [stats, setStats] = useState(null);
     const [salesmen, setSalesmen] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [filter, setFilter] = useState("monthly");
+
     const primary = "#0070b9";
 
     useEffect(() => {
-        async function loadData() {
-            try {
-                const [statsRes, salesmenRes] = await Promise.all([
-                    adminAPI.stats(),
-                    adminAPI.salesmen(),
-                ]);
-
-                // backend returns: { success, data: {...} }
-                setStats(statsRes.data.data);
-
-                setSalesmen(salesmenRes.data.salesmen || []);
-            } catch (err) {
-                console.error("Admin Dashboard Error:", err);
-            } finally {
-                setLoading(false);
-            }
-        }
-
         loadData();
+        const refreshStats = () => loadData();
+        window.addEventListener("payment-updated", refreshStats);
+
+        return () => window.removeEventListener("payment-updated", refreshStats);
     }, []);
+
+    const [graph, setGraph] = useState(null);
+
+    const loadData = async () => {
+        try {
+            const [statsRes, salesmenRes, graphRes] = await Promise.all([
+                adminAPI.stats(),
+                adminAPI.salesmen(),
+                adminAPI.graph(),        // <---- NEW
+            ]);
+
+            setStats(statsRes.data.data);
+            setSalesmen(salesmenRes.data.salesmen || []);
+            setGraph(graphRes.data);     // <---- NEW
+
+        } catch (err) {
+            console.error("Admin Dashboard Error:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (!graph) return <div>Loading graph...</div>;
 
     if (loading || !stats) return <div className="p-6 text-center">Loading...</div>;
 
-    // ------------------- Chart -------------------
+    /* ========================================
+        DYNAMIC CHART DATA BUILDER
+    ========================================= */
+    const pastMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const monthlyData = pastMonths.map((m, i) => {
+        const fraction = (i + 1) / 12;
+        return Math.round(stats.totalDealAmount * fraction);
+    });
+
+    const yearlyData = [
+        stats.totalDealAmount * 0.15,
+        stats.totalDealAmount * 0.25,
+        stats.totalDealAmount * 0.45,
+        stats.totalDealAmount * 0.7,
+        stats.totalDealAmount
+    ];
+
     const chartData = {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        labels: filter === "monthly" ? graph.monthly.labels : graph.yearly.labels,
         datasets: [
             {
-                label: "Deal Amount Growth",
-                data: [5, 10, 8, 15, 20, stats.totalDealAmount],
-                borderColor: primary,
+                label: "Deal Amount",
+                data: filter === "monthly" ? graph.monthly.deal : graph.yearly.deal,
+                borderColor: "#0070b9",
                 backgroundColor: "rgba(0,112,185,0.2)",
                 tension: 0.3,
                 fill: true,
                 pointRadius: 4,
             },
-        ],
+            {
+                label: "Payment Received",
+                data: filter === "monthly" ? graph.monthly.received : graph.yearly.received,
+                borderColor: "green",
+                backgroundColor: "rgba(0,150,0,0.2)",
+                tension: 0.3,
+                fill: true,
+                pointRadius: 4,
+            }
+        ]
     };
+
 
     const chartOptions = {
         responsive: true,
@@ -74,34 +112,31 @@ export default function AdminDashboard() {
 
             {/* ---------- KPI CARDS ---------- */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-
-                <div className="p-5 rounded-xl shadow bg-white border-l-4" style={{ borderColor: primary }}>
-                    <p className="text-gray-600 text-sm">Total Clients</p>
-                    <p className="text-2xl font-semibold mt-1">{stats.totalClients}</p>
-                </div>
-
-                <div className="p-5 rounded-xl shadow bg-white border-l-4" style={{ borderColor: primary }}>
-                    <p className="text-gray-600 text-sm">Total Deal Amount</p>
-                    <p className="text-2xl font-semibold mt-1">₹{stats.totalDealAmount}</p>
-                </div>
-
-                <div className="p-5 rounded-xl shadow bg-white border-l-4" style={{ borderColor: primary }}>
-                    <p className="text-gray-600 text-sm">Total Payment Received</p>
-                    <p className="text-2xl font-semibold mt-1">₹{stats.totalReceived}</p>
-                </div>
-
-                <div className="p-5 rounded-xl shadow bg-white border-l-4" style={{ borderColor: primary }}>
-                    <p className="text-gray-600 text-sm">Total Due Amount</p>
-                    <p className="text-2xl font-semibold mt-1">₹{stats.totalDue}</p>
-                </div>
-
+                <KPI title="Total Clients" value={stats.totalClients} color={primary} />
+                <KPI title="Total Deal Amount" value={`₹${Number(stats.totalDealAmount).toLocaleString()}`} color={primary} />
+                <KPI title="Total Payment Received" value={`₹${Number(stats.totalReceived).toLocaleString()}`} color={primary} />
+                <KPI title="Total Due Amount" value={`₹${Number(stats.totalDue).toLocaleString()}`} color={primary} />
             </div>
 
             {/* ---------- CHART CARD ---------- */}
             <div className="bg-white shadow rounded-xl p-6 mb-10">
-                <h2 className="text-xl font-semibold mb-4" style={{ color: primary }}>
-                    Deal Growth Overview
-                </h2>
+
+                <div className="flex justify-between mb-4">
+                    <h2 className="text-xl font-semibold" style={{ color: primary }}>
+                        Deal Growth Overview
+                    </h2>
+
+                    {/* ⭐ Filter: Monthly / Yearly */}
+                    <select
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                        className="border p-2 rounded-lg"
+                    >
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
+
                 <Line data={chartData} options={chartOptions} />
             </div>
 
@@ -124,29 +159,46 @@ export default function AdminDashboard() {
                         </thead>
 
                         <tbody>
-                            {salesmen.map((s) => (
-                                <tr key={s._id} className="border-b hover:bg-gray-50">
-                                    <td className="p-3 font-medium">{s.name}</td>
-                                    <td className="p-3 text-gray-600">{s.designation}</td>
-                                    <td className="p-3">{s.totalClients || 0}</td>
-                                    <td className="p-3">₹{s.totalDealAmount || 0}</td>
-                                    <td className="p-3">
-                                        <a
-                                            href={`/admin/salesman/${s._id}`}
-                                            className="text-white px-4 py-1 rounded"
-                                            style={{ background: primary }}
-                                        >
-                                            View
-                                        </a>
-                                    </td>
-                                </tr>
-                            ))}
+                            {salesmen.map((s) => {
+                                const hasReceived = Number(s.totalReceived || 0) > 0;
+
+                                return (
+                                    <tr
+                                        key={s._id}
+                                        className={`border-b ${hasReceived ? "bg-green-50 hover:bg-green-100" : "hover:bg-gray-50"}`}
+                                    >
+                                        <td className="p-3 font-medium">{s.name}</td>
+                                        <td className="p-3 text-gray-600">{s.designation}</td>
+                                        <td className="p-3">{s.totalClients || 0}</td>
+                                        <td className="p-3">₹{Number(s.totalDealAmount).toLocaleString()}</td>
+                                        <td className="p-3">
+                                            <a
+                                                href={`/admin/salesman/${s._id}`}
+                                                className="text-white px-4 py-1 rounded"
+                                                style={{ background: primary }}
+                                            >
+                                                View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
 
                     </table>
                 </div>
             </div>
 
+        </div>
+    );
+}
+
+// ---------------- KPI COMPONENT ----------------
+function KPI({ title, value, color }) {
+    return (
+        <div className="p-3 rounded-xl bg-white border-l-4" style={{ borderColor: color }}>
+            <p className="text-gray-600 text-sm">{title}</p>
+            <p className="text-2xl font-semibold mt-1">{value}</p>
         </div>
     );
 }

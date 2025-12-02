@@ -4,13 +4,12 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
 
     const [errors, setErrors] = useState({});
 
-    // ----------- VALIDATION -----------
     const validateStep = () => {
         let newErrors = {};
 
-        // Aadhaar must have at least 1 file
+
         if (!formData.adharImages || formData.adharImages.length < 1) {
-            newErrors.adharImages = "At least 1 Aadhaar image is required";
+            newErrors.adharImages = "Both side Aadhaar image is required";
         }
 
         // PAN is required
@@ -28,7 +27,6 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
         }
     };
 
-    // ----------- FILE HANDLERS -----------
     const handleFileChange = (e) => {
         const { name, files } = e.target;
 
@@ -41,13 +39,29 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
                 return;
             }
 
-            setFormData({ ...formData, adharImages: files });
+            setFormData({
+                ...formData,
+                adharImages: Array.from(files)
+            });
+
             setErrors({ ...errors, adharImages: "" });
-        } else {
-            setFormData({ ...formData, [name]: files[0] });
-            setErrors({ ...errors, [name]: "" });
+            return;
+        }
+
+
+        if (files.length > 0) {
+            setFormData({
+                ...formData,
+                [name]: files[0],
+            });
+
+            setErrors({
+                ...errors,
+                [name]: "",
+            });
         }
     };
+
 
     return (
         <div>

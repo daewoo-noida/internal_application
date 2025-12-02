@@ -29,6 +29,9 @@ import Reimbursement from "./pages/sales/Reimbursement.jsx";
 import UserProfile from "./pages/sales/Profile.jsx";
 import VerifyOtp from "./components/VerifyOtp.jsx";
 import PdfManager from "./pages/admin/PdfManager.jsx";
+import ClientDetails from "./pages/admin/ClientDetails.jsx";
+import SalesClientDetails from "./pages/sales/SalesClientDetails.jsx";
+import EditClient from "./pages/admin/EditClient.jsx";
 
 // Wrapper for Sales Routes
 const SalesLayout = () => (
@@ -67,6 +70,7 @@ export default function App() {
         <Route path="/sales/booknow" element={<BookNow />} />
         <Route path="/sales/reimbursement" element={<Reimbursement />} />
         <Route path="/sales/profile" element={<UserProfile />} />
+        <Route path="/sales/client/:id" element={<SalesClientDetails />} />
       </Route>
 
       {/* Admin Routes */}
@@ -76,6 +80,9 @@ export default function App() {
         <Route path="/admin/salesmen" element={<SalesTeam />} />
         <Route path="/admin/salesman/:id" element={<SalesmanDetails />} />
         <Route path="/admin/pdf-manager" element={<PdfManager />} />
+        <Route path="/admin/client/:id" element={<ClientDetails />} />
+        <Route path="/admin/client/edit/:id" element={<EditClient />} />
+
       </Route>
 
     </Routes>

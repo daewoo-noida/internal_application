@@ -10,18 +10,27 @@ export default function Contact_Us() {
       {/* ======================
           Contact Top Banner
       ======================= */}
-      <section className="relative h-72 md:h-96 m-3 rounded-3xl bg-[#0070b9] overflow-hidden shadow-sm"  >
-
+      <section
+        className=" relative overflow-hidden rounded-2xl flex items-center justify-center"
+        style={{
+          margin: "12vh 3vh",
+          backgroundImage: "url('/images/contact.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          minHeight: "70vh",
+        }}
+      >
         {/* Background */}
         {/* <div className="absolute "></div> */}
 
         {/* Content */}
         <div className="relative z-10 flex items-center justify-center h-full ">
-          <div className="text-center text-white px-4">
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+          <div className="text-center text-[#0070b9] px-4">
+            <h1 className="text-3xl md:text-5xl font-extrabold mb-4">
               Get in Touch
             </h1>
-            <p className="text-lg md:text-l opacity-90">
+            <p className="text-lg text-[#0070b9] mt-4">
               A dedicated support window for the Daewoo Sales Team <br /> Helping you move faster, close better, and deliver a seamless experience across all sales channels.
             </p>
           </div>

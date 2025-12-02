@@ -4,16 +4,14 @@ import axios from "axios";
 export default function Step4Office({ formData, setFormData, next, prev }) {
     const API_URL = import.meta.env.VITE_API_URL;
 
-
     const user = JSON.parse(localStorage.getItem("userData"));
-    const role = user?.designation?.toLowerCase();   // ⭐ FIX: Always lowercase
+    const role = user?.designation?.toLowerCase();
 
     const [errors, setErrors] = useState({});
     const [bdaList, setBdaList] = useState([]);
     const [bdeList, setBdeList] = useState([]);
     const [bdmList, setBdmList] = useState([]);
 
-    // FETCH USERS
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -37,7 +35,6 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
         fetchUsers();
     }, []);
 
-    // VALIDATION
     const validateStep = () => {
         let newErrors = {};
 
@@ -59,6 +56,24 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
 
     const handleNext = () => {
         if (validateStep()) next();
+    };
+
+    // ⭐ NEW: Save ID + NAME
+    const handleSelect = (e, name) => {
+        const id = e.target.value;
+        const selectedList =
+            name === "bda" ? bdaList :
+                name === "bde" ? bdeList : bdmList;
+
+        const userName = selectedList.find((u) => u._id === id)?.name || "";
+
+        setFormData({
+            ...formData,
+            [name]: id,
+            [`${name}Name`]: userName, // save label
+        });
+
+        setErrors({ ...errors, [name]: "" });
     };
 
     const handleChange = (e) => {
@@ -95,7 +110,7 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                     {errors.officeBranch && <p className="text-red-500 text-sm">{errors.officeBranch}</p>}
                 </div>
 
-                {/* ⭐ BDM LOGIN → BDA + BDE + HIS OWN NAME */}
+                {/* ⭐ BDM LOGIN */}
                 {role === "bdm" && (
                     <>
                         {/* BDA */}
@@ -104,7 +119,7 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                             <select
                                 name="bda"
                                 value={formData.bda}
-                                onChange={handleChange}
+                                onChange={(e) => handleSelect(e, "bda")}
                                 className={`w-full border p-3 rounded-lg 
                                     ${errors.bda ? "border-red-500" : "border-gray-300 focus:border-[#0070b9]"}`}
                             >
@@ -122,7 +137,7 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                             <select
                                 name="bde"
                                 value={formData.bde}
-                                onChange={handleChange}
+                                onChange={(e) => handleSelect(e, "bde")}
                                 className={`w-full border p-3 rounded-lg 
                                     ${errors.bde ? "border-red-500" : "border-gray-300 focus:border-[#0070b9]"}`}
                             >
@@ -146,7 +161,7 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                     </>
                 )}
 
-                {/* ⭐ BDE LOGIN → SELECT BDA + SHOW OWN NAME + SELECT BDM */}
+                {/* ⭐ BDE LOGIN */}
                 {role === "bde" && (
                     <>
                         {/* SELECT BDA */}
@@ -155,7 +170,7 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                             <select
                                 name="bda"
                                 value={formData.bda}
-                                onChange={handleChange}
+                                onChange={(e) => handleSelect(e, "bda")}
                                 className={`w-full border p-3 rounded-lg 
                                     ${errors.bda ? "border-red-500" : "border-gray-300 focus:border-[#0070b9]"}`}
                             >
@@ -183,7 +198,7 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                             <select
                                 name="bdm"
                                 value={formData.bdm}
-                                onChange={handleChange}
+                                onChange={(e) => handleSelect(e, "bdm")}
                                 className={`w-full border p-3 rounded-lg 
                                     ${errors.bdm ? "border-red-500" : "border-gray-300 focus:border-[#0070b9]"}`}
                             >
@@ -199,7 +214,7 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                     </>
                 )}
 
-                {/* ⭐ BDA LOGIN → ONLY SHOW OWN NAME */}
+                {/* ⭐ BDA LOGIN */}
                 {role === "bda" && (
                     <div className="col-span-2">
                         <label className="block text-gray-700 font-medium mb-1">Your BDA Name</label>

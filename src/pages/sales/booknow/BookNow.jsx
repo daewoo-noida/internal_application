@@ -43,6 +43,18 @@ export default function BookNow() {
         },
     ];
 
+
+
+    // const backGroundImage = {
+    //     backgroundImage: `url(/images/booknow.jpg)`,
+    //     backgroundSize: "cover",
+    //     backgroundPosition: "center",
+    //     backgroundRepeat: "no-repeat",
+    //     display: 'flex',
+    //     alignItems: 'center',
+
+    // };
+
     const steps = [
         { title: "Submit your preferred format", desc: "Share location & details using the form below." },
         { title: "Consultation & feasibility", desc: "Experts evaluate store potential & market alignment." },
@@ -50,29 +62,42 @@ export default function BookNow() {
         { title: "Launch & Growth", desc: "Activate marketing, merchandising & quarterly reviews." },
     ];
 
+
+
     return (
         <main className="w-full overflow-hidden">
 
             {/* -------------------------------------------------- */}
             {/*  HERO SECTION */}
             {/* -------------------------------------------------- */}
-            <section className="pt-[100px] pb-[100px] bg-[#0070b9] text-white relative overflow-hidden rounded-2xl " style={{ margin: "12vh 3vh" }}>
-                <div className="absolute inset-0 backdrop-blur-sm" />
+            <section
+                className="text-[#0070b9] relative overflow-hidden rounded-2xl flex items-center justify-center"
+                style={{
+                    margin: "12vh 3vh",
+                    backgroundImage: "url('/images/booknow.jpg')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    minHeight: "70vh",
+                }}
+            >
 
-                {/* Floating Highlight */}
-                <div className="absolute w-[400px] h-[400px] rounded-full bg-[#0070b9]/20 blur-[120px] top-20 left-20" />
-                <div className="absolute w-[400px] h-[400px] rounded-full  blur-[150px] bottom-20 right-20" />
+
+
+                {/* <div className="absolute w-[400px] h-[400px] rounded-full bg-[#0070b9]/20 blur-[120px] top-20 left-20" />
+                <div className="absolute w-[400px] h-[400px] rounded-full  blur-[150px] bottom-20 right-20" /> */}
 
                 <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+
                     <span className="inline-block px-4 py-1 text-sm tracking-[3px] uppercase bg-white/20 rounded-full">
                         Franchise & Outlet
                     </span>
 
                     <h1 className="text-4xl md:text-5xl font-bold mt-5 leading-tight">
-                        Book Your Franchise & Brand Outlet with Daewoo
+                        Book Franchise & Brand Outlet with Daewoo
                     </h1>
 
-                    <p className="text-lg text-white/80 mt-4">
+                    <p className="text-lg text-[#0070b9] mt-4">
                         Discover franchise models engineered for modern retail success.
                         Choose your preferred pathway — our onboarding team will contact you within 48 hours.
                     </p>

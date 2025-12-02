@@ -3,16 +3,31 @@ import { clientAPI } from "../../../utils/api";
 
 export default function Step5Summary({ formData, prev }) {
 
-    // SUBMIT HANDLER
     const handleSubmit = async () => {
         const fd = new FormData();
 
+        if (Array.isArray(formData.adharImages)) {
+            formData.adharImages.forEach((file) => {
+                if (file) fd.append("adharImages", file);
+            });
+        }
+
+        if (formData.panImage)
+            fd.append("panImage", formData.panImage);
+
+        if (formData.companyPanImage)
+            fd.append("companyPanImage", formData.companyPanImage);
+
+        if (formData.addressProof)
+            fd.append("addressProof", formData.addressProof);
+
         Object.keys(formData).forEach((key) => {
-            if (key === "adharImages") {
-                Array.from(formData.adharImages).forEach((file) => {
-                    fd.append("adharImages", file);
-                });
-            } else {
+            if (
+                key !== "adharImages" &&
+                key !== "panImage" &&
+                key !== "companyPanImage" &&
+                key !== "addressProof"
+            ) {
                 fd.append(key, formData[key]);
             }
         });
@@ -21,13 +36,13 @@ export default function Step5Summary({ formData, prev }) {
             await clientAPI.create(fd);
             alert("Client added successfully!");
         } catch (error) {
+            console.log(error);
             alert("Error while submitting client");
         }
     };
 
     return (
         <div>
-            {/* TITLE */}
             <h2 className="text-2xl font-bold text-[#0070b9] mb-6">
                 Review & Submit
             </h2>
@@ -36,10 +51,8 @@ export default function Step5Summary({ formData, prev }) {
                 Please review the information below before submitting.
             </p>
 
-            {/* SUMMARY CARD */}
             <div className="bg-[#f4f9ff] border border-[#d2e7f7] rounded-2xl p-6 mb-10">
 
-                {/* PERSONAL */}
                 <h3 className="text-lg font-semibold text-[#0070b9] mb-3">
                     Personal Details
                 </h3>
@@ -56,7 +69,6 @@ export default function Step5Summary({ formData, prev }) {
                     <SummaryItem label="PIN" value={formData.pin} />
                 </div>
 
-                {/* PAYMENT */}
                 <h3 className="text-lg font-semibold text-[#0070b9] mb-3">
                     Payment Details
                 </h3>
@@ -70,20 +82,21 @@ export default function Step5Summary({ formData, prev }) {
                     <SummaryItem label="Token Date" value={formData.tokenDate} />
                 </div>
 
-                {/* OFFICE */}
                 <h3 className="text-lg font-semibold text-[#0070b9] mb-3">
                     Office & Allocation
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <SummaryItem label="Office Branch" value={formData.officeBranch} />
-                    <SummaryItem label="BDA" value={formData.bda} />
-                    <SummaryItem label="BDE" value={formData.bde} />
-                    <SummaryItem label="BDM" value={formData.bdm} />
+
+                    {/* ⭐ USE NAMES HERE */}
+                    <SummaryItem label="BDA" value={formData.bdaName} />
+                    <SummaryItem label="BDE" value={formData.bdeName} />
+                    <SummaryItem label="BDM" value={formData.bdmName} />
+
                     <SummaryItem label="Lead Source" value={formData.leadSource} />
                     <SummaryItem label="GST Number" value={formData.gst} />
                 </div>
 
-                {/* REMARK */}
                 {formData.remark && (
                     <>
                         <h3 className="text-lg font-semibold text-[#0070b9] mb-2">Remark</h3>
@@ -94,7 +107,6 @@ export default function Step5Summary({ formData, prev }) {
                 )}
             </div>
 
-            {/* BUTTONS */}
             <div className="flex justify-between">
                 <button
                     onClick={prev}
@@ -114,9 +126,6 @@ export default function Step5Summary({ formData, prev }) {
     );
 }
 
-/* ---------------------------
-   SMALL SUMMARY ITEM COMPONENT
----------------------------- */
 const SummaryItem = ({ label, value }) => (
     <div className="bg-white p-3 rounded-lg border border-gray-300">
         <div className="text-xs font-semibold text-gray-500">{label}</div>

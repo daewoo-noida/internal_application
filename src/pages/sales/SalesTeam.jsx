@@ -45,7 +45,7 @@ export default function SalesTeam() {
 
     return (
         <div className="p-6">
-            <h1 className="text-3xl font-bold mb-6 text-blue-700">
+            <h1 className="text-3xl font-bold mb-6 text-[#0070b9]">
                 Sales Team
             </h1>
 
@@ -95,7 +95,7 @@ export default function SalesTeam() {
                             )}
 
                             {/* AVATAR */}
-                            <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-semibold mb-4">
+                            <div className="w-16 h-16 rounded-full bg-[#0070b9] text-white flex items-center justify-center text-xl font-semibold mb-4">
                                 {getInitials(s.name)}
                             </div>
 
@@ -109,7 +109,7 @@ export default function SalesTeam() {
                             <div className="mt-4">
                                 <span
                                     className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${s.isVerified
-                                        ? "bg-blue-100 text-blue-700"
+                                        ? "bg-blue-100 text-[#0070b9]"
                                         : "bg-yellow-100 text-yellow-700"
                                         }`}
                                 >

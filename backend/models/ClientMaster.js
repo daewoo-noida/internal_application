@@ -46,6 +46,19 @@ const ClientMasterSchema = new mongoose.Schema({
     // Who created the client (Sales User)
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 
+    secondPayments: [
+        {
+            amount: Number,
+            paymentDate: Date,
+            mode: String,
+            transactionId: String,
+            proof: { filename: String, path: String },
+            status: { type: String, enum: ["pending", "approved"], default: "pending" },
+            createdAt: { type: Date, default: Date.now }
+        }
+    ],
+
+
     createdAt: { type: Date, default: Date.now }
 });
 

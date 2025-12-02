@@ -179,7 +179,7 @@ export default function Downloads() {
                   <a
                     href={`${FILE_BASE}/${item.filePath}`}
                     target="_blank"
-                    className="text-sm px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+                    className="text-sm px-4 py-2 bg-[#0070b9] text-white rounded shadow hover:bg-blue-700"
                   >
                     Download
                   </a>

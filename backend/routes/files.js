@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 /********************************
-  CREATE FOLDER
+ CREATE FOLDER
 ********************************/
 router.post("/folder", async (req, res) => {
     try {
@@ -31,7 +31,7 @@ router.post("/folder", async (req, res) => {
 });
 
 /********************************
-  UPLOAD FILE
+ UPLOAD FILE
 ********************************/
 router.post("/upload", upload.single("file"), async (req, res) => {
     try {
@@ -57,7 +57,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
 });
 
 /********************************
-  GET WHOLE TREE
+ GET WHOLE TREE
 ********************************/
 router.get("/tree", async (req, res) => {
     const nodes = await FileNode.find().lean();
@@ -65,7 +65,7 @@ router.get("/tree", async (req, res) => {
 });
 
 /********************************
-  DELETE FILE / FOLDER RECURSIVE
+ DELETE FILE / FOLDER RECURSIVE
 ********************************/
 async function deleteRecursively(id) {
     const node = await FileNode.findById(id);
@@ -98,7 +98,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 /********************************
-  RENAME FILE / FOLDER
+ RENAME FILE / FOLDER
 ********************************/
 router.put("/rename/:id", async (req, res) => {
     try {

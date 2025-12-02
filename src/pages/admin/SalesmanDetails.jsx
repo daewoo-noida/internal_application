@@ -111,8 +111,10 @@ export default function SalesmanDetails() {
                                 <th className="p-3 text-left">Received</th>
                                 <th className="p-3 text-left">Status</th>
                                 <th className="p-3 text-left">Date</th>
+                                <th className="p-3 text-left">Action</th>
                             </tr>
                         </thead>
+
 
                         <tbody>
                             {clients.length === 0 ? (
@@ -138,6 +140,15 @@ export default function SalesmanDetails() {
                                         <td className="p-3">
                                             {new Date(c.createdAt).toLocaleDateString()}
                                         </td>
+                                        <td className="p-3">
+                                            <Link
+                                                to={`/admin/client/${c._id}`}
+                                                className="px-3 py-1 rounded bg-[#0070b9] text-white text-sm hover:bg-[#005a94]"
+                                            >
+                                                View
+                                            </Link>
+                                        </td>
+
                                     </tr>
                                 ))
                             )}

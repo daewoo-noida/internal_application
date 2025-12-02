@@ -43,11 +43,23 @@ export const authAPI = {
 
 
 export const clientAPI = {
-  create: (data) => api.post("/clients", data),
+  create: (data) =>
+    api.post("/clients", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }),
+
   getAll: () => api.get("/clients"),
   getById: (id) => api.get(`/clients/${id}`),
   update: (id, data) => api.put(`/clients/${id}`, data),
   delete: (id) => api.delete(`/clients/${id}`),
+  addPayment: (id, data) =>
+    api.post(`/clients/${id}/add-payment`, data, {
+      headers: { "Content-Type": "multipart/form-data" }
+    }),
+  approvePayment: (cid, pid) => api.post(`/clients/${cid}/approve-payment/${pid}`),
+  rejectPayment: (cid, pid) => api.post(`/clients/${cid}/reject-payment/${pid}`),
 
 };
 
@@ -60,6 +72,8 @@ export const adminAPI = {
   salesman: (id) => api.get(`/admin/salesman/${id}`),
   verify: (id) => api.put(`/admin/verify/${id}`),
   deleteSalesman: (id) => api.delete(`/admin/salesman/${id}`),
+  graph: () => api.get("/admin/stats-graph"),
+
 
 };
 

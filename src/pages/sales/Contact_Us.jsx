@@ -76,7 +76,7 @@ export default function Contact_Us() {
 
 
               {/* Noida Corporate */}
-              <div className="p-6 rounded-2xl border bg-white shadow-sm hover:shadow-md transition">
+              {/* <div className="p-6 rounded-2xl border bg-white shadow-sm hover:shadow-md transition">
                 <h3 className="text-xl font-semibold text-[#0070b9] mb-2">
                   EBG Group Noida Corporate Office
                 </h3>
@@ -86,7 +86,7 @@ export default function Contact_Us() {
                   Phase 2, Industrial Area,<br />
                   Noida, Uttar Pradesh – 201309.
                 </p>
-              </div>
+              </div> */}
 
               {/* Emails */}
 

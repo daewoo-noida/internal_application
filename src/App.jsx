@@ -32,6 +32,7 @@ import PdfManager from "./pages/admin/PdfManager.jsx";
 import ClientDetails from "./pages/admin/ClientDetails.jsx";
 import SalesClientDetails from "./pages/sales/SalesClientDetails.jsx";
 import EditClient from "./pages/admin/EditClient.jsx";
+import OfferPopup from "./components/LandingPopup.jsx";
 
 // Wrapper for Sales Routes
 const SalesLayout = () => (
@@ -55,36 +56,39 @@ const AdminLayouts = () => (
 
 export default function App() {
   return (
-    <Routes>
-      {/* Public Sales Pages */}
-      <Route path="/login" element={<MainLayout><SalesLogin /></MainLayout>} />
-      <Route path="/signup" element={<MainLayout><SignupPage /></MainLayout>} />
-      <Route path="/verify-otp" element={<VerifyOtp />} />
-      {/* Protected Sales Routes */}
-      <Route element={<SalesLayout />}>
-        <Route path="/" element={<SalesIndex />} />
-        <Route path="/sales/dashboard" element={<SalesDashboard />} />
-        <Route path="/sales/addclients" element={<BookNowMultiStepForm />} />
-        <Route path="/sales/contact" element={<Contact_Us />} />
-        <Route path="/sales/download" element={<Downloads />} />
-        <Route path="/sales/booknow" element={<BookNow />} />
-        <Route path="/sales/reimbursement" element={<Reimbursement />} />
-        <Route path="/sales/profile" element={<UserProfile />} />
-        <Route path="/sales/client/:id" element={<SalesClientDetails />} />
-      </Route>
+    <>
+      <OfferPopup />
+      <Routes>
+        {/* Public Sales Pages */}
+        <Route path="/login" element={<MainLayout><SalesLogin /></MainLayout>} />
+        <Route path="/signup" element={<MainLayout><SignupPage /></MainLayout>} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
+        {/* Protected Sales Routes */}
+        <Route element={<SalesLayout />}>
+          <Route path="/" element={<SalesIndex />} />
+          <Route path="/sales/dashboard" element={<SalesDashboard />} />
+          <Route path="/sales/addclients" element={<BookNowMultiStepForm />} />
+          <Route path="/sales/contact" element={<Contact_Us />} />
+          <Route path="/sales/download" element={<Downloads />} />
+          <Route path="/sales/booknow" element={<BookNow />} />
+          <Route path="/sales/reimbursement" element={<Reimbursement />} />
+          <Route path="/sales/profile" element={<UserProfile />} />
+          <Route path="/sales/client/:id" element={<SalesClientDetails />} />
+        </Route>
 
-      {/* Admin Routes */}
+        {/* Admin Routes */}
 
-      <Route element={<AdminLayouts />}>
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/salesmen" element={<SalesTeam />} />
-        <Route path="/admin/salesman/:id" element={<SalesmanDetails />} />
-        <Route path="/admin/pdf-manager" element={<PdfManager />} />
-        <Route path="/admin/client/:id" element={<ClientDetails />} />
-        <Route path="/admin/client/edit/:id" element={<EditClient />} />
+        <Route element={<AdminLayouts />}>
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/salesmen" element={<SalesTeam />} />
+          <Route path="/admin/salesman/:id" element={<SalesmanDetails />} />
+          <Route path="/admin/pdf-manager" element={<PdfManager />} />
+          <Route path="/admin/client/:id" element={<ClientDetails />} />
+          <Route path="/admin/client/edit/:id" element={<EditClient />} />
 
-      </Route>
+        </Route>
 
-    </Routes>
+      </Routes>
+    </>
   );
 }

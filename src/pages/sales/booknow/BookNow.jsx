@@ -103,11 +103,8 @@ export default function BookNow() {
                     </p>
 
                     <div className="flex flex-wrap gap-4 justify-center mt-8">
-                        <a href="#franchise-booking" className="px-6 py-3 bg-white text-[#0070b9] rounded-lg shadow-lg hover:bg-blue-100 transition">
-                            Franchise Options
-                        </a>
-                        <a href="#formats" className="px-6 py-3 border border-white text-white rounded-lg hover:text-white transition">
-                            Outlet Formats
+                        <a href="/sales/addclients" className="px-6 py-3 bg-[#0070B9] text-white rounded-lg shadow-lg transition">
+                            Book Now
                         </a>
                     </div>
                 </div>

@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -16,50 +15,50 @@ const SignupPage = () => {
         password: "",
     });
 
-    const [error, setError] = useState("");
+    const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [otpStep, setOtpStep] = useState(false);
 
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const otpRefs = useRef([]);
 
+    const [showPassword, setShowPassword] = useState(false);
     const [resendTimer, setResendTimer] = useState(0);
 
     const navigate = useNavigate();
-    const [showPassword, setShowPassword] = useState(false);
-
     const finalEmail = `${formData.emailName}${formData.emailDomain}`;
-
-    const [phoneError, setPhoneError] = useState("");
-    const [passwordError, setPasswordError] = useState("");
 
     // ---------------- SEND OTP ----------------
     const handleSendOtp = async () => {
-        setError("");
+        setErrors({});
 
-        // PHONE VALIDATION
+        // Phone validation
         if (!/^[0-9]{10}$/.test(formData.phone)) {
-            return setError("Phone number must be exactly 10 digits.");
+            setErrors({ phone: "Phone number must be exactly 10 digits." });
+            return;
         }
 
-        // PASSWORD VALIDATION
-        const password = formData.password;
+        // Password validation
+        const pw = formData.password;
 
-        if (password.length < 6) {
-            return setError("Password must be at least 6 characters long.");
+        if (pw.length < 6) {
+            setErrors({ password: "Password must be at least 6 characters long." });
+            return;
+        }
+        if (!/[A-Z]/.test(pw)) {
+            setErrors({ password: "Must contain at least one uppercase letter." });
+            return;
+        }
+        if (!/[!@#$%^&*(),.?\":{}|<>]/.test(pw)) {
+            setErrors({ password: "Must contain at least one special character." });
+            return;
         }
 
-        if (!/[A-Z]/.test(password)) {
-            return setError("Password must contain at least one uppercase letter.");
-        }
-
-        if (!/[!@#$%^&*(),.?\":{}|<>]/.test(password)) {
-            return setError("Password must contain at least one special character.");
-        }
-
+        // Email validation
         const allowedDomains = ["@theebg.com", "@daewooappliances.in", "@ebikego.in"];
-        if (!allowedDomains.some((domain) => finalEmail.endsWith(domain))) {
-            return setError(`Email must be one of: ${allowedDomains.join(", ")}`);
+        if (!allowedDomains.some((d) => finalEmail.endsWith(d))) {
+            setErrors({ email: "Please select a valid company domain." });
+            return;
         }
 
         try {
@@ -84,22 +83,28 @@ const SignupPage = () => {
                 setOtpStep(true);
                 setResendTimer(30);
                 startTimer();
-            } else {
-                setError(data.message);
-            }
 
+                // ⭐ SAVE email + password until OTP verification
+                localStorage.setItem("verifyEmail", finalEmail);
+                localStorage.setItem("tempSignupPassword", formData.password);
+            } else {
+                setErrors({ general: data.message });
+            }
         } catch {
-            setError("Network error.");
+            setErrors({ general: "Network error." });
         } finally {
             setLoading(false);
         }
     };
 
-
     // ---------------- VERIFY OTP ----------------
     const handleVerifyOtp = async () => {
         const enteredOtp = otp.join("");
-        if (enteredOtp.length !== 6) return setError("Please enter a valid OTP");
+
+        if (enteredOtp.length !== 6) {
+            setErrors({ otp: "Please enter 6-digit OTP." });
+            return;
+        }
 
         try {
             setLoading(true);
@@ -107,20 +112,30 @@ const SignupPage = () => {
             const response = await fetch(`${API_URL}/auth/verify-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: finalEmail, otp: enteredOtp }),
+                body: JSON.stringify({
+                    email: finalEmail,
+                    otp: enteredOtp,
+
+                    // ⭐ SEND password to backend for welcome email
+                    password: localStorage.getItem("tempSignupPassword"),
+                }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                alert("Account Verified Successfully!");
+                alert("Account verified successfully!");
+
+                // ⭐ CLEAN temporary stored values
+                localStorage.removeItem("verifyEmail");
+                localStorage.removeItem("tempSignupPassword");
+
                 navigate("/login");
             } else {
-                setError(data.message);
+                setErrors({ otp: data.message });
             }
-
         } catch {
-            setError("Server error.");
+            setErrors({ otp: "Server error." });
         } finally {
             setLoading(false);
         }
@@ -129,116 +144,91 @@ const SignupPage = () => {
     // ---------------- RESEND OTP ----------------
     const handleResendOtp = async () => {
         try {
-            setLoading(true);
-            const response = await fetch(`${API_URL}/auth/resend-otp`, {
+            await fetch(`${API_URL}/auth/resend-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: finalEmail }),
             });
 
-            const data = await response.json();
-            if (response.ok) {
-                setOtp(["", "", "", "", "", ""]);
-                setResendTimer(30);
-                startTimer();
-            } else {
-                setError(data.message);
-            }
+            setOtp(["", "", "", "", "", ""]);
+            setResendTimer(30);
+            startTimer();
         } catch {
-            setError("Server error.");
-        } finally {
-            setLoading(false);
+            setErrors({ otp: "Failed to resend OTP." });
         }
     };
 
     // ---------------- TIMER ----------------
     const startTimer = () => {
         let sec = 30;
-        const interval = setInterval(() => {
+        const timer = setInterval(() => {
             sec--;
             setResendTimer(sec);
-            if (sec === 0) clearInterval(interval);
+            if (sec === 0) clearInterval(timer);
         }, 1000);
     };
 
-    // ---------------- OTP INPUT ----------------
+    // ---------------- OTP HANDLING ----------------
     const handleOtpChange = (value, index) => {
         if (!/^[0-9]?$/.test(value)) return;
 
-        const newOtp = [...otp];
-        newOtp[index] = value;
-        setOtp(newOtp);
+        const updated = [...otp];
+        updated[index] = value;
+        setOtp(updated);
 
-        if (value && index < 5) {
-            otpRefs.current[index + 1].focus();
-        }
+        if (value && index < 5) otpRefs.current[index + 1].focus();
     };
 
-    // Background Image
-    const backgroundStyle = {
-        backgroundImage: `url(/images/Signup_Banner.png)`,
+    const handleOtpKeyDown = (e, index) => {
+        if (e.key === "Backspace" && !otp[index] && index > 0)
+            otpRefs.current[index - 1].focus();
+    };
+
+    // Background image
+    const bgStyle = {
+        backgroundImage: "url(/images/Signup_Banner.png)",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
         minHeight: "100vh",
-        display: "flex",
-        justifyContent: "flex-end",
-        alignItems: "center",
-        paddingRight: "5rem",
-        paddingLeft: "2rem",
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center">
-            <div
-                style={backgroundStyle}
-                className="w-full flex justify-center lg:justify-end px-4 sm:px-10 lg:pr-20 bg-login"
-            >
-                <div className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl border border-gray-100 p-6 sm:p-8">
+            <div style={bgStyle} className="w-full flex justify-center lg:justify-end p-6 lg:pr-20">
+
+                <div className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl border p-8">
 
                     {/* LOGO */}
                     <div className="flex justify-center mb-4">
-                        <img
-                            src="/images/logo.png"
-                            alt="App Logo"
-                            className="h-10 w-auto object-contain"
-                        />
+                        <img src="/images/logo.png" className="h-10" />
                     </div>
 
-                    {/* Header */}
+                    {/* TITLE */}
                     <div className="text-center mb-6">
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Create Account</h1>
-                        <p className="text-gray-600 text-sm sm:text-base">
-                            Sign up to get started
-                        </p>
+                        <h1 className="text-3xl font-bold">Create Account</h1>
+                        <p className="text-gray-600 text-sm mt-1">Sign up to continue</p>
                     </div>
 
-                    {/* Error */}
-                    {error && (
-                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                            {error}
-                        </div>
-                    )}
-
-                    {/* SIGNUP FORM (before OTP) */}
+                    {/* SIGNUP FORM */}
                     {!otpStep && (
                         <form className="space-y-4">
 
-                            {/* Name */}
+                            {/* NAME */}
                             <div>
-                                <label className="block text-gray-700 font-medium mb-1">Name</label>
+                                <label className="font-medium">Name</label>
                                 <input
                                     type="text"
-                                    required
                                     value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, name: e.target.value })
+                                    }
+                                    className="w-full px-4 py-3 border rounded-lg"
                                 />
                             </div>
 
-                            {/* Designation */}
+                            {/* DESIGNATION */}
                             <div>
-                                <label className="block text-gray-700 font-medium mb-1">Designation</label>
+                                <label className="font-medium">Designation</label>
                                 <select
                                     value={formData.designation}
                                     onChange={(e) =>
@@ -248,54 +238,62 @@ const SignupPage = () => {
                                             designationOther: "",
                                         })
                                     }
-                                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                    className="w-full px-4 py-3 border rounded-lg"
                                 >
-                                    <option value="">Select designation</option>
+                                    <option value="">Select</option>
                                     <option value="bda">BDA</option>
                                     <option value="bde">BDE</option>
                                     <option value="bdm">BDM</option>
+                                    <option value="bhead">Bussiness Head</option>
                                     <option value="operations">Operations</option>
                                     <option value="others">Others</option>
                                 </select>
                             </div>
 
-                            {/* Other Designation */}
+                            {/* OTHER DESIGNATION */}
                             {formData.designation === "others" && (
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Specify Designation</label>
+                                    <label className="font-medium">Specify Designation</label>
                                     <input
                                         type="text"
-                                        required
                                         value={formData.designationOther}
                                         onChange={(e) =>
-                                            setFormData({ ...formData, designationOther: e.target.value })
+                                            setFormData({
+                                                ...formData,
+                                                designationOther: e.target.value,
+                                            })
                                         }
-                                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                        className="w-full px-4 py-3 border rounded-lg"
                                     />
                                 </div>
                             )}
 
-                            {/* Email */}
+                            {/* EMAIL */}
                             <div>
-                                <label className="block text-gray-700 font-medium mb-1">Email</label>
+                                <label className="font-medium">Email</label>
                                 <div className="flex gap-2">
                                     <input
                                         type="text"
                                         placeholder="username"
-                                        className="w-1/2 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
                                         value={formData.emailName}
                                         onChange={(e) =>
-                                            setFormData({ ...formData, emailName: e.target.value })
+                                            setFormData({
+                                                ...formData,
+                                                emailName: e.target.value,
+                                            })
                                         }
-                                        required
+                                        className="w-1/2 px-4 py-3 border rounded-lg"
                                     />
+
                                     <select
-                                        className="w-1/2 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
                                         value={formData.emailDomain}
                                         onChange={(e) =>
-                                            setFormData({ ...formData, emailDomain: e.target.value })
+                                            setFormData({
+                                                ...formData,
+                                                emailDomain: e.target.value,
+                                            })
                                         }
-                                        required
+                                        className="w-1/2 px-4 py-3 border rounded-lg"
                                     >
                                         <option value="">Domain</option>
                                         <option value="@theebg.com">@theebg.com</option>
@@ -303,38 +301,53 @@ const SignupPage = () => {
                                         <option value="@ebikego.in">@ebikego.in</option>
                                     </select>
                                 </div>
+
+                                {errors.email && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                                )}
                             </div>
 
-                            {/* Phone */}
+                            {/* PHONE */}
                             <div>
-                                <label className="block text-gray-700 font-medium mb-1">Phone</label>
+                                <label className="font-medium">Phone</label>
                                 <input
                                     type="text"
                                     maxLength="10"
                                     value={formData.phone}
                                     onChange={(e) => {
                                         if (/^[0-9]*$/.test(e.target.value)) {
-                                            setFormData({ ...formData, phone: e.target.value });
+                                            setFormData({
+                                                ...formData,
+                                                phone: e.target.value,
+                                            });
                                         }
+                                        setErrors({ ...errors, phone: "" });
                                     }}
-                                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
-                                    required
+                                    className="w-full px-4 py-3 border rounded-lg"
                                 />
+
+                                {errors.phone && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                                )}
                             </div>
 
-                            {/* Password */}
+                            {/* PASSWORD */}
                             <div>
-                                <label className="block text-gray-700 font-medium mb-1">Password</label>
+                                <label className="font-medium">Password</label>
                                 <div className="relative">
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         value={formData.password}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, password: e.target.value })
-                                        }
-                                        className="w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm"
-                                        required
+                                        onChange={(e) => {
+                                            setFormData({
+                                                ...formData,
+                                                password: e.target.value,
+                                            });
+                                            setErrors({ ...errors, password: "" });
+                                        }}
+                                        className="w-full px-4 py-3 pr-12 border rounded-lg"
                                     />
+
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
@@ -343,6 +356,10 @@ const SignupPage = () => {
                                         {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                     </button>
                                 </div>
+
+                                {errors.password && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                                )}
                             </div>
 
                             {/* SEND OTP */}
@@ -350,46 +367,64 @@ const SignupPage = () => {
                                 type="button"
                                 onClick={handleSendOtp}
                                 disabled={loading}
-                                className="w-full bg-black text-white font-semibold py-3 rounded-lg hover:bg-gray-800"
+                                className="w-full bg-black text-white py-3 rounded-lg mt-2"
                             >
                                 {loading ? "Sending OTP..." : "Send OTP"}
                             </button>
 
+                            {/* GENERAL ERROR */}
+                            {errors.general && (
+                                <div className="p-3 bg-red-100 text-red-700 rounded-lg mt-3 text-sm flex gap-2 items-center">
+                                    <AlertCircle size={16} />
+                                    {errors.general}
+                                </div>
+                            )}
                         </form>
                     )}
 
-                    {/* OTP SCREEN */}
+                    {/* OTP STEP */}
                     {otpStep && (
                         <div className="mt-4 text-center">
 
                             <p className="text-gray-600 mb-4">
-                                Enter OTP sent to<br />
-                                <strong>{finalEmail}</strong>
+                                OTP sent to <strong>{finalEmail}</strong>
                             </p>
 
-                            <div className="flex justify-center gap-2 mb-4">
-                                {otp.map((digit, idx) => (
+                            {/* OTP BOXES */}
+                            <div className="flex justify-center gap-2 mb-2">
+                                {otp.map((d, i) => (
                                     <input
-                                        key={idx}
-                                        value={digit}
+                                        key={i}
+                                        ref={(el) => (otpRefs.current[i] = el)}
+                                        value={d}
                                         maxLength="1"
-                                        onChange={(e) => handleOtpChange(e.target.value, idx)}
-                                        className="w-12 h-12 border rounded text-center text-xl font-semibold"
+                                        onChange={(e) =>
+                                            handleOtpChange(e.target.value, i)
+                                        }
+                                        onKeyDown={(e) => handleOtpKeyDown(e, i)}
+                                        className="w-12 h-12 border rounded-lg text-center text-xl font-semibold"
                                     />
                                 ))}
                             </div>
 
-                            <div className="flex justify-between mt-3">
+                            {errors.otp && (
+                                <p className="text-red-500 text-sm mb-3">{errors.otp}</p>
+                            )}
+
+                            <div className="flex justify-between mt-4">
                                 <button
                                     disabled={resendTimer > 0}
                                     onClick={handleResendOtp}
-                                    className="px-4 py-2 border rounded-lg"
+                                    className="px-4 py-2 border rounded-lg text-sm"
                                 >
-                                    {resendTimer > 0 ? `Resend (${resendTimer}s)` : "Resend OTP"}
+                                    {resendTimer > 0
+                                        ? `Resend (${resendTimer}s)`
+                                        : "Resend OTP"}
                                 </button>
+
                                 <button
                                     onClick={handleVerifyOtp}
-                                    className="px-6 py-2 bg-black text-white rounded-lg font-semibold"
+                                    className="px-6 py-2 bg-black text-white rounded-lg"
                                 >
                                     Verify OTP
                                 </button>
@@ -397,10 +432,13 @@ const SignupPage = () => {
                         </div>
                     )}
 
-                    {/* Login instead */}
-                    <p className="text-center mt-4 text-gray-700">
+                    {/* LOGIN LINK */}
+                    <p className="text-center mt-6">
                         Already have an account?
-                        <button onClick={() => navigate("/login")} className="font-semibold underline ml-1">
+                        <button
+                            onClick={() => navigate("/login")}
+                            className="underline ml-1 font-semibold"
+                        >
                             Login
                         </button>
                     </p>
@@ -408,7 +446,6 @@ const SignupPage = () => {
             </div>
         </div>
     );
-
 };
 
 export default SignupPage;

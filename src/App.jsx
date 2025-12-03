@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 
 // Layouts
@@ -32,7 +32,7 @@ import PdfManager from "./pages/admin/PdfManager.jsx";
 import ClientDetails from "./pages/admin/ClientDetails.jsx";
 import SalesClientDetails from "./pages/sales/SalesClientDetails.jsx";
 import EditClient from "./pages/admin/EditClient.jsx";
-import OfferPopup from "./components/LandingPopup.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 // Wrapper for Sales Routes
 const SalesLayout = () => (
@@ -43,7 +43,7 @@ const SalesLayout = () => (
   </SalesProtectedRoute>
 );
 
-
+// Wrapper for Admin Routes
 const AdminLayouts = () => (
   <AdminProtectedRoute>
     <AdminLayout>
@@ -52,17 +52,43 @@ const AdminLayouts = () => (
   </AdminProtectedRoute>
 );
 
-
-
 export default function App() {
+
+  // ✅ AUTO LOGOUT (MUST BE INSIDE APP FUNCTION!)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const loginTime = localStorage.getItem("loginTime");
+      const token = localStorage.getItem("authToken");
+
+      if (token && loginTime) {
+        const fiveHours = 5 * 60 * 60 * 1000;
+
+        if (Date.now() - Number(loginTime) > fiveHours) {
+          // Clear user session
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("userData");
+          localStorage.removeItem("userRole");
+          localStorage.removeItem("isAuthenticated");
+          localStorage.removeItem("loginTime");
+
+          window.location.href = "/login";
+        }
+      }
+    }, 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
-      <OfferPopup />
+      <ScrollToTop />
+
       <Routes>
         {/* Public Sales Pages */}
         <Route path="/login" element={<MainLayout><SalesLogin /></MainLayout>} />
         <Route path="/signup" element={<MainLayout><SignupPage /></MainLayout>} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
+
         {/* Protected Sales Routes */}
         <Route element={<SalesLayout />}>
           <Route path="/" element={<SalesIndex />} />
@@ -77,7 +103,6 @@ export default function App() {
         </Route>
 
         {/* Admin Routes */}
-
         <Route element={<AdminLayouts />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/salesmen" element={<SalesTeam />} />
@@ -85,7 +110,6 @@ export default function App() {
           <Route path="/admin/pdf-manager" element={<PdfManager />} />
           <Route path="/admin/client/:id" element={<ClientDetails />} />
           <Route path="/admin/client/edit/:id" element={<EditClient />} />
-
         </Route>
 
       </Routes>

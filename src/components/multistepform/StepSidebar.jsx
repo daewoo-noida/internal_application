@@ -2,6 +2,7 @@ import React from "react";
 
 export default function StepSidebar({ step }) {
     const steps = [
+        "Franchise Details",
         "Personal Details",
         "Documents Upload",
         "Payment Details",

@@ -6,6 +6,9 @@ import HeroSection from "./HeroSection";
 import LeadersSection from "./LeadersSection";
 import ClientLogoCarousel from "./ClientLogoCarousel";
 import { Copy } from "lucide-react";
+import OfferPopup from "../../components/LandingPopup";
+import DDPFranchise from "./DDPFranchise";
+import MotivationSection from "./MotivationSection";
 export default function Index() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -37,6 +40,7 @@ IFSC: ICIC0001238
   return (
     <div className="min-h-screen bg-white">
 
+      <OfferPopup />
       {/* 🟢 HERO SECTION (already fixed) */}
       <HeroSection currentSlide={currentSlide} />
 
@@ -72,7 +76,7 @@ IFSC: ICIC0001238
 
       {/* 🟢 LEADERS */}
       <LeadersSection />
-
+      <DDPFranchise />
       {/* 🟢 FRANCHISE CAROUSEL */}
       <FranchiseCarousel />
 
@@ -82,10 +86,13 @@ IFSC: ICIC0001238
 
       {/* 🟢 MAP2MARKET SECTION */}
 
+
+
       {/* 🟢 MOTIVATION SECTION */}
       <section className="py-10 md:py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4">
 
+          {/* HEADER */}
           <h2 className="text-3xl md:text-3xl font-bold text-gray-900 mb-4 text-center">
             Motivation & Innovations
           </h2>
@@ -94,25 +101,13 @@ IFSC: ICIC0001238
             Stay motivated and innovative with our daily insights.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* GRID - ONLY TWO CARDS */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-            {/* card 1 */}
-            <div className="bg-gray-50 rounded-xl p-6 border">
-              <h3 className="text-xl font-semibold mb-4">Quote Of The Day</h3>
-              <blockquote className="text-gray-700 italic leading-relaxed">
-                "Success is not final, failure is not fatal..."
-              </blockquote>
-              <cite className="text-sm text-gray-500 block mt-2">- Zig Ziglar</cite>
-            </div>
+            {/* CARD 1 – Motivation Carousel */}
+            <MotivationSection />
 
-            {/* card 2 */}
-            <div className="bg-gray-50 rounded-xl p-6 border">
-              <h3 className="text-xl font-semibold mb-4">Sales Weapon</h3>
-              <p className="text-gray-700 font-medium">Jeffrey Gitomer</p>
-              <p className="text-gray-500 text-sm">Sales Expert</p>
-            </div>
-
-            {/* card 3 */}
+            {/* CARD 2 – Bank Details */}
             <div className="bg-gray-50 rounded-xl p-6 border relative">
               <h3 className="text-xl font-semibold mb-4">Bank Details</h3>
 
@@ -125,7 +120,7 @@ IFSC: ICIC0001238
                 <span className="text-sm">{copied ? "Copied!" : "Copy"}</span>
               </button>
 
-              <div className="space-y-2 text-sm">
+              <div className="space-y-2 text-sm mt-2">
                 <p><b>A/C Name:</b> Think eBikeGo Pvt. Ltd.</p>
                 <p><b>Bank:</b> ICICI Bank</p>
                 <p><b>A/C No:</b> 123805009535</p>
@@ -135,9 +130,9 @@ IFSC: ICIC0001238
             </div>
 
           </div>
-
         </div>
       </section>
+
 
     </div>
   );

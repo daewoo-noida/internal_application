@@ -156,7 +156,16 @@ export default function Step3Payment({ formData, setFormData, next, prev }) {
                         className="w-full border border-gray-300 p-3 rounded-lg focus:border-[#0070b9]"
                     />
                 </div>
-
+                <div>
+                    <label className="block text-gray-700 font-medium mb-1">Proof</label>
+                    <input
+                        type="text"
+                        name="proofOfPayment"
+                        value={formData.proofOfPayment}
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 p-3 rounded-lg focus:border-[#0070b9]"
+                    />
+                </div>
             </div>
 
             {/* BUTTONS */}

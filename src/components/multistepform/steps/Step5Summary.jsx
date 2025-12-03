@@ -35,6 +35,7 @@ export default function Step5Summary({ formData, prev }) {
         try {
             await clientAPI.create(fd);
             alert("Client added successfully!");
+            window.location.reload();
         } catch (error) {
             console.log(error);
             alert("Error while submitting client");
@@ -109,18 +110,22 @@ export default function Step5Summary({ formData, prev }) {
 
             <div className="flex justify-between">
                 <button
+                    type="button"
                     onClick={prev}
                     className="bg-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-400"
                 >
                     ← Back
                 </button>
 
+
                 <button
+                    type="button"
                     onClick={handleSubmit}
                     className="bg-[#0070b9] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#005a94]"
                 >
-                    Submit Form ✔
+                    Submit Form
                 </button>
+
             </div>
         </div>
     );

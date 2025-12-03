@@ -24,6 +24,7 @@ export const Header = () => {
     if (!user) return null;
 
     const mainNav = [
+        { href: "/sales/dashboard", label: "Dashboard" },
         { href: "/sales/booknow", label: "Book Now" },
         { href: "/sales/download", label: "Downloads" },
         { href: "/sales/reimbursement", label: "Reimbursement" },
@@ -110,13 +111,7 @@ export const Header = () => {
                             >
                                 Profile
                             </Link>
-                            <Link
-                                to="/sales/dashboard"
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                onClick={() => setDropdownOpen(false)}
-                            >
-                                Dashboard
-                            </Link>
+
                             <button
                                 onClick={() => {
                                     setDropdownOpen(false);

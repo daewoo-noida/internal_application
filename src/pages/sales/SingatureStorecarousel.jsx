@@ -8,9 +8,21 @@ export default function SignatureStoreCarousel() {
     const carouselRef = useRef(null);
 
     const stores = [
-        { title: "Ahemdabad", status: "Booked", image: "/images/signature/41.png" },
-        { title: "Jaipur", status: "Booked", image: "/images/signature/55.png" },
-        { title: "Delhi", status: "Booked", image: "/images/signature/66.png" },
+        {
+            title: "Ahemdabad", status: "Booked", desc: `Unit No. 26, 27 & 28, The crown
+Gangotri Circle, opp. Kalhar Bunglow,
+Nikol, Ahmedabad, Gujarat - 380049`, image: "/images/signature/41.png"
+        },
+        {
+            title: "Jaipur", status: "Booked", desc: `Shop no. 1,2 & 3 scheme number 27, NH
+11 Main Sikar Road, Opposite
+Vidhyadhar Nagar Depot, Jaipur,
+Rajasthan - 302039`, image: "/images/signature/55.png"
+        },
+        {
+            title: "Delhi", status: "Booked", desc: `1st Floor, Plot No. 1083, Niti Khand 1,
+Indirapuram, Ghaziabad, UP - 201014`, image: "/images/signature/66.png"
+        },
     ];
 
     // ⭐ AUTO SELECT BOOKED ON LOAD
@@ -103,36 +115,38 @@ export default function SignatureStoreCarousel() {
                     {/* CARD LIST */}
                     <div
                         ref={carouselRef}
-                        className="flex gap-6 overflow-x-hidden scroll-smooth scrollbar-hide snap-x pb-3"
+                        className="flex gap-6 overflow-x-hidden scroll-smooth snap-x pb-3"
                     >
                         {filteredStores.map((item, index) => (
                             <div
                                 key={index}
-                                className="min-w-[260px] snap-start bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden"
+                                className="min-w-[300px] max-w-[300px] snap-start bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden"
                             >
-                                <div className="h-40">
+                                {/* IMAGE */}
+                                <div className="h-48">
                                     <img
                                         src={item.image}
                                         alt={item.title}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-none"
                                     />
                                 </div>
 
-                                <div className="p-3">
+                                {/* CONTENT */}
+                                <div className="p-4">
                                     <span className="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
                                         Booked
                                     </span>
 
-                                    <h3 className="text-[18px] font-small text-gray-900 mt-3 mb-4 leading-snug">
+                                    <h3 className="text-lg font-semibold text-gray-900 mt-3 leading-snug">
                                         {item.title}
                                     </h3>
 
-                                    <button
-                                        onClick={() => navigate("/sales/addclients")}
-                                        className="w-full bg-[#0070b9] hover:bg-[#005f99] text-white px-4 py-2 rounded-lg font-medium shadow-sm transition"
-                                    >
-                                        Enquire Now
-                                    </button>
+                                    {/* DESCRIPTION FIXED */}
+                                    {item.desc && (
+                                        <p className="text-gray-600 text-sm mt-2 line-clamp-5">
+                                            {item.desc}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         ))}

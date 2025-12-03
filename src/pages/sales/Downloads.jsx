@@ -155,7 +155,7 @@ export default function Downloads() {
           {currentNodes.map((item) => (
             <div
               key={item._id}
-              className="bg-white p-6 rounded-2xl hover:shadow-xl transition cursor-pointer min-h-[200px] flex flex-col justify-between"
+              className="bg-white p-6 rounded-2xl hover:shadow-xl transition cursor-pointer min-h-[150px] flex flex-col justify-between"
               onClick={() => item.type === "folder" && enterFolder(item)}
             >
               <div className="flex justify-center">
@@ -167,7 +167,7 @@ export default function Downloads() {
               </div>
 
               <h3
-                className={`text-center font-semibold break-words ${item.type === "folder" ? "text-lg" : "text-sm"
+                className={`text-center font-semibold break-words py-3 ${item.type === "folder" ? "text-lg" : "text-sm"
                   }`}
                 style={{ wordBreak: "break-word" }}
               >

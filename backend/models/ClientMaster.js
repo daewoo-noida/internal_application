@@ -6,6 +6,8 @@ const ClientMasterSchema = new mongoose.Schema({
     phone: { type: String, required: true },
     altPhone: { type: String },
 
+    franchiseType: { type: String, required: true },
+
     territory: { type: String },
     country: { type: String, default: "India" },
     state: { type: String },
@@ -26,6 +28,7 @@ const ClientMasterSchema = new mongoose.Schema({
     bda: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     bde: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     bdm: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    bhead: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 
     leadSource: { type: String },
 
@@ -36,7 +39,7 @@ const ClientMasterSchema = new mongoose.Schema({
     receivedPercent: { type: Number, default: 0 },
     remainPercent: { type: Number, default: 100 },
     balanceAmount: { type: Number, default: 0 },
-
+    proofOfPayment: { type: String },
     paymentProof: { filename: String, path: String },
     modeOfPayment: { type: String },
 

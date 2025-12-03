@@ -42,6 +42,10 @@ exports.createClient = async (req, res) => {
         let bda = null,
             bde = null,
             bdm = null;
+        bhead = null;
+
+
+        if (designation === "bhead") bhead = req.user._id;
 
         if (designation === "bda") bda = req.user._id;
         if (designation === "bde") bde = req.user._id;
@@ -52,6 +56,7 @@ exports.createClient = async (req, res) => {
             email: body.email,
             phone: body.phone,
             altPhone: body.altPhone,
+            franchiseType: body.franchiseType,
             territory: body.territory,
             country: "India",
             state: body.state,
@@ -84,7 +89,7 @@ exports.createClient = async (req, res) => {
             bda,
             bde,
             bdm,
-
+            bhead,
             leadSource: body.leadSource,
             tokenDate: body.tokenDate,
 
@@ -92,6 +97,7 @@ exports.createClient = async (req, res) => {
             tokenReceivedAmount: Number(body.tokenReceivedAmount),
 
             modeOfPayment: body.modeOfPayment,
+            proofOfPayment: body.proofOfPayment,
             additionalCommitment: body.additionalCommitment,
             remark: body.remark,
 
@@ -143,6 +149,7 @@ exports.getClientById = async (req, res) => {
             .populate("bda", "name email designation")
             .populate("bde", "name email designation")
             .populate("bdm", "name email designation")
+            .populate("bhead", "name email designation")
             .populate("createdBy", "name email designation");
 
         if (!client)

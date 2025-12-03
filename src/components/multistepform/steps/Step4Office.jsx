@@ -12,6 +12,11 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
     const [bdeList, setBdeList] = useState([]);
     const [bdmList, setBdmList] = useState([]);
 
+    // Input fields for custom values
+    const [customOffice, setCustomOffice] = useState("");
+    const [customLeadSource, setCustomLeadSource] = useState("");
+
+    // -------------------- FETCH USERS --------------------
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -26,7 +31,6 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                 setBdaList(users.filter((u) => u.designation?.toLowerCase() === "bda"));
                 setBdeList(users.filter((u) => u.designation?.toLowerCase() === "bde"));
                 setBdmList(users.filter((u) => u.designation?.toLowerCase() === "bdm"));
-
             } catch (error) {
                 console.error("User fetch error", error);
             }
@@ -35,11 +39,27 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
         fetchUsers();
     }, []);
 
+    // -------------------- VALIDATION --------------------
     const validateStep = () => {
         let newErrors = {};
 
+        // Office branch required
         if (!formData.officeBranch) newErrors.officeBranch = "Office branch is required";
 
+        // Validate custom office
+        if (formData.officeBranch === "Others" && !customOffice.trim()) {
+            newErrors.customOffice = "Please specify office branch";
+        }
+
+        // Lead source required
+        if (!formData.leadSource) newErrors.leadSource = "Lead Source is required";
+
+        // Validate custom lead source
+        if (formData.leadSource === "other" && !customLeadSource.trim()) {
+            newErrors.customLeadSource = "Please enter lead source";
+        }
+
+        // Role based validation
         if (role === "bdm") {
             if (!formData.bda) newErrors.bda = "Select BDA";
             if (!formData.bde) newErrors.bde = "Select BDE";
@@ -50,35 +70,54 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
             if (!formData.bdm) newErrors.bdm = "Select BDM";
         }
 
+        if (role === "bhead") {
+            if (!formData.bda) newErrors.bda = "Select BDA";
+            if (!formData.bde) newErrors.bede = "Select BDE";
+            if (!formData.bdm) newErrors.bdm = "Select BDM";
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
+    // -------------------- NEXT BUTTON --------------------
     const handleNext = () => {
+        let updatedData = { ...formData };
+
+        // If office = Others → Replace with custom value
+        if (formData.officeBranch === "Others") {
+            updatedData.officeBranch = customOffice;
+        }
+
+        // If lead source = other → Replace with custom value
+        if (formData.leadSource === "other") {
+            updatedData.leadSource = customLeadSource;
+        }
+
+        setFormData(updatedData);
+
         if (validateStep()) next();
     };
 
-    // ⭐ NEW: Save ID + NAME
+    // -------------------- SELECT HANDLER --------------------
     const handleSelect = (e, name) => {
         const id = e.target.value;
-        const selectedList =
-            name === "bda" ? bdaList :
-                name === "bde" ? bdeList : bdmList;
+        const list =
+            name === "bda"
+                ? bdaList
+                : name === "bde"
+                    ? bdeList
+                    : bdmList;
 
-        const userName = selectedList.find((u) => u._id === id)?.name || "";
+        const userName = list.find((u) => u._id === id)?.name || "";
 
         setFormData({
             ...formData,
             [name]: id,
-            [`${name}Name`]: userName, // save label
+            [`${name}Name`]: userName,
         });
 
         setErrors({ ...errors, [name]: "" });
-    };
-
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: "" });
     };
 
     return (
@@ -89,15 +128,20 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                {/* OFFICE BRANCH */}
+                {/* ============ OFFICE BRANCH ============ */}
                 <div className="col-span-2">
-                    <label className="block text-gray-700 font-medium mb-1">Office Branch *</label>
+                    <label className="block text-gray-700 font-medium mb-1">
+                        Office Branch *
+                    </label>
+
                     <select
                         name="officeBranch"
                         value={formData.officeBranch}
-                        onChange={handleChange}
+                        onChange={(e) =>
+                            setFormData({ ...formData, officeBranch: e.target.value })
+                        }
                         className={`w-full border p-3 rounded-lg 
-                            ${errors.officeBranch ? "border-red-500" : "border-gray-300 focus:border-[#0070b9]"}`}
+                            ${errors.officeBranch ? "border-red-500" : "border-gray-300"}`}
                     >
                         <option value="">Select Office Branch</option>
                         <option>Noida</option>
@@ -105,23 +149,46 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                         <option>Chandigadh</option>
                         <option>Mumbai</option>
                         <option>Hyderabad</option>
-                        <option>Others</option>
+                        <option value="Others">Others</option>
                     </select>
-                    {errors.officeBranch && <p className="text-red-500 text-sm">{errors.officeBranch}</p>}
+
+                    {errors.officeBranch && (
+                        <p className="text-red-500 text-sm">{errors.officeBranch}</p>
+                    )}
                 </div>
 
-                {/* ⭐ BDM LOGIN */}
+                {/* ===== SHOW CUSTOM OFFICE INPUT ===== */}
+                {formData.officeBranch === "Others" && (
+                    <div className="col-span-2">
+                        <label className="block text-gray-700 font-medium mb-1">
+                            Specify Office Branch *
+                        </label>
+
+                        <input
+                            type="text"
+                            value={customOffice}
+                            onChange={(e) => setCustomOffice(e.target.value)}
+                            placeholder="Enter your office branch"
+                            className={`w-full border p-3 rounded-lg 
+                                ${errors.customOffice ? "border-red-500" : "border-gray-300"}`}
+                        />
+
+                        {errors.customOffice && (
+                            <p className="text-red-500 text-sm">{errors.customOffice}</p>
+                        )}
+                    </div>
+                )}
+
+                {/* ===================== BDM LOGIN ===================== */}
                 {role === "bdm" && (
                     <>
-                        {/* BDA */}
+                        {/* Select BDA */}
                         <div>
                             <label className="block text-gray-700 font-medium mb-1">Select BDA *</label>
                             <select
-                                name="bda"
                                 value={formData.bda}
                                 onChange={(e) => handleSelect(e, "bda")}
-                                className={`w-full border p-3 rounded-lg 
-                                    ${errors.bda ? "border-red-500" : "border-gray-300 focus:border-[#0070b9]"}`}
+                                className={`w-full border p-3 rounded-lg ${errors.bda ? "border-red-500" : "border-gray-300"}`}
                             >
                                 <option value="">Select BDA</option>
                                 {bdaList.map((bda) => (
@@ -131,15 +198,13 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                             {errors.bda && <p className="text-red-500 text-sm">{errors.bda}</p>}
                         </div>
 
-                        {/* BDE */}
+                        {/* Select BDE */}
                         <div>
                             <label className="block text-gray-700 font-medium mb-1">Select BDE *</label>
                             <select
-                                name="bde"
                                 value={formData.bde}
                                 onChange={(e) => handleSelect(e, "bde")}
-                                className={`w-full border p-3 rounded-lg 
-                                    ${errors.bde ? "border-red-500" : "border-gray-300 focus:border-[#0070b9]"}`}
+                                className={`w-full border p-3 rounded-lg ${errors.bde ? "border-red-500" : "border-gray-300"}`}
                             >
                                 <option value="">Select BDE</option>
                                 {bdeList.map((bde) => (
@@ -149,30 +214,28 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                             {errors.bde && <p className="text-red-500 text-sm">{errors.bde}</p>}
                         </div>
 
-                        {/* BDM = himself */}
+                        {/* BDM Name */}
                         <div>
                             <label className="block text-gray-700 font-medium mb-1">BDM Name</label>
                             <input
                                 disabled
                                 value={user.name}
-                                className="w-full border border-gray-200 bg-gray-100 p-3 rounded-lg text-gray-600"
+                                className="w-full border bg-gray-100 p-3 rounded-lg"
                             />
                         </div>
                     </>
                 )}
 
-                {/* ⭐ BDE LOGIN */}
+                {/* ===================== BDE LOGIN ===================== */}
                 {role === "bde" && (
                     <>
-                        {/* SELECT BDA */}
+                        {/* Select BDA */}
                         <div>
                             <label className="block text-gray-700 font-medium mb-1">Select BDA *</label>
                             <select
-                                name="bda"
                                 value={formData.bda}
                                 onChange={(e) => handleSelect(e, "bda")}
-                                className={`w-full border p-3 rounded-lg 
-                                    ${errors.bda ? "border-red-500" : "border-gray-300 focus:border-[#0070b9]"}`}
+                                className={`w-full border p-3 rounded-lg ${errors.bda ? "border-red-500" : "border-gray-300"}`}
                             >
                                 <option value="">Select BDA</option>
                                 {bdaList.map((bda) => (
@@ -182,31 +245,27 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                             {errors.bda && <p className="text-red-500 text-sm">{errors.bda}</p>}
                         </div>
 
-                        {/* SHOW OWN NAME */}
+                        {/* BDE Name */}
                         <div>
                             <label className="block text-gray-700 font-medium mb-1">Your BDE Name</label>
                             <input
                                 disabled
                                 value={user.name}
-                                className="w-full border border-gray-200 bg-gray-100 p-3 rounded-lg text-gray-600"
+                                className="w-full border bg-gray-100 p-3 rounded-lg"
                             />
                         </div>
 
-                        {/* SELECT BDM */}
+                        {/* Select BDM */}
                         <div>
                             <label className="block text-gray-700 font-medium mb-1">Select BDM *</label>
                             <select
-                                name="bdm"
                                 value={formData.bdm}
                                 onChange={(e) => handleSelect(e, "bdm")}
-                                className={`w-full border p-3 rounded-lg 
-                                    ${errors.bdm ? "border-red-500" : "border-gray-300 focus:border-[#0070b9]"}`}
+                                className={`w-full border p-3 rounded-lg ${errors.bdm ? "border-red-500" : "border-gray-300"}`}
                             >
                                 <option value="">Select BDM</option>
                                 {bdmList.map((bdm) => (
-                                    <option key={bdm._id} value={bdm._id}>
-                                        {bdm.name}
-                                    </option>
+                                    <option key={bdm._id} value={bdm._id}>{bdm.name}</option>
                                 ))}
                             </select>
                             {errors.bdm && <p className="text-red-500 text-sm">{errors.bdm}</p>}
@@ -214,44 +273,63 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                     </>
                 )}
 
-                {/* ⭐ BDA LOGIN */}
+                {/* ===================== BDA LOGIN ===================== */}
                 {role === "bda" && (
                     <div className="col-span-2">
                         <label className="block text-gray-700 font-medium mb-1">Your BDA Name</label>
                         <input
                             disabled
                             value={user.name}
-                            className="w-full border border-gray-200 bg-gray-100 p-3 rounded-lg text-gray-600"
+                            className="w-full border bg-gray-100 p-3 rounded-lg"
                         />
                     </div>
                 )}
 
-                {/* LEAD SOURCE */}
-                <div>
-                    <label className="block text-gray-700 font-medium mb-1">Lead Source</label>
+                {/* ============ LEAD SOURCE ============ */}
+                <div className="col-span-2">
+                    <label className="block text-gray-700 font-medium mb-1">Lead Source *</label>
+
                     <select
                         name="leadSource"
                         value={formData.leadSource}
-                        onChange={handleChange}
-                        className="w-full border p-3 rounded-lg border-gray-300 focus:border-[#0070b9]"
+                        onChange={(e) =>
+                            setFormData({ ...formData, leadSource: e.target.value })
+                        }
+                        className={`w-full border p-3 rounded-lg 
+                            ${errors.leadSource ? "border-red-500" : "border-gray-300"}`}
                     >
                         <option value="">Select Lead Source</option>
-                        <option value="Kustard">Kustard Lead</option>
-                        <option value="other">Others</option>
+                        <option value="crm">CRM</option>
+                        <option value="other">Other</option>
                     </select>
+
+                    {errors.leadSource && (
+                        <p className="text-red-500 text-sm">{errors.leadSource}</p>
+                    )}
                 </div>
 
+                {/* ===== CUSTOM LEAD SOURCE INPUT ===== */}
+                {formData.leadSource === "other" && (
+                    <div className="col-span-2">
+                        <label className="block text-gray-700 font-medium mb-1">Specify Lead Source *</label>
+
+                        <input
+                            type="text"
+                            value={customLeadSource}
+                            onChange={(e) => setCustomLeadSource(e.target.value)}
+                            placeholder="Enter lead source"
+                            className={`w-full border p-3 rounded-lg 
+                                ${errors.customLeadSource ? "border-red-500" : "border-gray-300"}`}
+                        />
+
+                        {errors.customLeadSource && (
+                            <p className="text-red-500 text-sm">{errors.customLeadSource}</p>
+                        )}
+                    </div>
+                )}
+
                 {/* GST */}
-                <div>
-                    <label className="block text-gray-700 font-medium mb-1">GST Number</label>
-                    <input
-                        name="gst"
-                        value={formData.gst}
-                        onChange={handleChange}
-                        placeholder="Enter GST"
-                        className="w-full border border-gray-300 p-3 rounded-lg focus:border-[#0070b9]"
-                    />
-                </div>
+
 
                 {/* REMARK */}
                 <div className="col-span-2">
@@ -259,9 +337,9 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                     <textarea
                         name="remark"
                         value={formData.remark}
-                        onChange={handleChange}
+                        onChange={(e) => setFormData({ ...formData, remark: e.target.value })}
                         placeholder="Write remarks…"
-                        className="w-full border border-gray-300 p-3 rounded-lg h-24 focus:border-[#0070b9]"
+                        className="w-full border p-3 rounded-lg h-24 border-gray-300"
                     />
                 </div>
             </div>

@@ -31,7 +31,7 @@ export default function MapToMarket() {
         { name: "North East", status: "Available" },
         { name: "Uttrakhand", status: "Available" },
         { name: "Jharkhand", status: "Available" },
-        { name: "Punjab", status: "Available" },
+        { name: "Punjab", status: "Booked" },
         { name: "Bihar", status: "Available" },
         { name: "Kerala", status: "Available" },
     ];
@@ -47,7 +47,7 @@ export default function MapToMarket() {
                 <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
                     The Daewoo Map to Market Leadership
                 </h2>
-
+                <p className="text-center mb-8 text-lg font-semibold text-gray-700">Master Franchise Availability</p>
                 {/* Legend */}
                 <div className="flex justify-center mb-8 space-x-6">
                     <div className="flex items-center">

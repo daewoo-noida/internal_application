@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 
 export default function SalesProtectedRoute({ children }) {
-    const [loading, setLoading] = useState(true);
-    const [allowed, setAllowed] = useState(false);
+    const token = localStorage.getItem("authToken");
+    const role = localStorage.getItem("userRole");
+    const loginTime = localStorage.getItem("loginTime");
 
-    useEffect(() => {
-        const auth = localStorage.getItem("isAuthenticated") === "true";
-        const role = localStorage.getItem("userRole");
-        if (auth && role === "Sales") {
-            setAllowed(true);
-        }
-        setLoading(false);
-    }, []);
+    if (!token || role?.toLowerCase() !== "sales") {
+        return <Navigate to="/login" />;
+    }
 
-    if (loading) return <div>Loading...</div>;
-    return allowed ? children : <Navigate to="/login" replace />;
+    const fiveHours = 5 * 60 * 60 * 1000;
+
+    if (Date.now() - Number(loginTime) > fiveHours) {
+        localStorage.clear();
+        return <Navigate to="/login" />;
+    }
+
+    return children;
 }

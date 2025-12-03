@@ -13,8 +13,7 @@ exports.welcomeEmail = ({ name, email, password, loginUrl }) => `
 
   <p>
     <strong>Login Link:</strong> <a href="${loginUrl}" target="_blank">${loginUrl}</a><br/>
-    <strong>Email ID:</strong> ${email}<br/>
-    <strong>Password:</strong> ${password}
+    
   </p>
 
   <hr style="border:none;border-top:1px solid #ddd;margin:20px 0;" />

@@ -38,6 +38,21 @@ export default function Step3Payment({ formData, setFormData, next, prev }) {
             next();
         }
     };
+    const handleFileChange = (e) => {
+        const { name, files } = e.target;
+
+        if (name === "paymentImage") {
+            setFormData({
+                ...formData,
+                paymentImage: Array.from(files),
+            });
+            return;
+        }
+        setFormData({
+            ...formData,
+            [name]: files[0],
+        });
+    };
 
     // -------------------- CHANGE HANDLER --------------------
     const handleChange = (e) => {
@@ -165,6 +180,11 @@ export default function Step3Payment({ formData, setFormData, next, prev }) {
                         onChange={handleChange}
                         className="w-full border border-gray-300 p-3 rounded-lg focus:border-[#0070b9]"
                     />
+                </div>
+                <div>
+                    <label className="block text-gray-700 font-medium mb-1">Payment Proof</label>
+                    <input type="file" name="paymentImage" accept="image/*"
+                        onChange={handleFileChange} className="w-full border p-3 rounded-lg bg-white" />
                 </div>
             </div>
 

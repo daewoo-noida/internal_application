@@ -49,6 +49,15 @@ exports.createClient = async (req, res) => {
             return f ? { filename: f.filename, path: f.path } : null;
         };
 
+        const d = req.user.designation?.toLowerCase();
+
+        let bda = null, bde = null, bdm = null, bhead = null;
+
+        if (d.includes("bda")) bda = req.user._id;
+        if (d.includes("bde")) bde = req.user._id;
+        if (d.includes("bdm")) bdm = req.user._id;
+        if (d.includes("head")) bhead = req.user._id;
+
         const client = new ClientMaster({
             name: body.name,
             email: body.email,
@@ -74,6 +83,7 @@ exports.createClient = async (req, res) => {
             panImage: getFile("panImage"),
             companyPanImage: getFile("companyPanImage"),
             gstFile: getFile("gstFile"),
+            paymentImage: getFile("paymentImage"),
 
             dealAmount: Number(body.dealAmount),
             tokenReceivedAmount: Number(body.tokenReceivedAmount),
@@ -83,6 +93,11 @@ exports.createClient = async (req, res) => {
             officeBranch: body.officeBranch,
             leadSource: body.leadSource,
             remark: body.remark,
+
+            bda,
+            bde,
+            bdm,
+            bhead,
 
             createdBy: req.user._id
         });

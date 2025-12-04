@@ -26,7 +26,7 @@ const ClientMasterSchema = new mongoose.Schema({
    franchiseCity: { type: String },
    franchisePin: { type: String },
 
-   territory: { type: String }, // MF + DDP
+   territory: { type: String },
 
    /* ===========================
       DOCUMENTS
@@ -63,7 +63,7 @@ const ClientMasterSchema = new mongoose.Schema({
 
    modeOfPayment: { type: String },
    proofOfPayment: { type: String },
-
+   paymentImage: { filename: String, path: String },
    remark: { type: String },
 
    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },

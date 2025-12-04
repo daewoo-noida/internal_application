@@ -13,14 +13,15 @@ export default function Step5Summary({ formData, prev }) {
         if (formData.panImage) fd.append("panImage", formData.panImage);
         if (formData.companyPanImage) fd.append("companyPanImage", formData.companyPanImage);
         if (formData.gstFile) fd.append("gstFile", formData.gstFile);
-
+        if (formData.paymentImage) fd.append("paymentImage", formData.paymentImage);
         // Text fields
         Object.keys(formData).forEach(key => {
             if (
                 key !== "adharImages" &&
                 key !== "panImage" &&
                 key !== "companyPanImage" &&
-                key !== "gstFile"
+                key !== "gstFile" &&
+                key !== "paymentImage"
             ) {
                 fd.append(key, formData[key]);
             }
@@ -113,7 +114,11 @@ export default function Step5Summary({ formData, prev }) {
                 <SummaryItem label="Received %" value={formData.receivedPercent} />
                 <SummaryItem label="Remaining %" value={formData.remainPercent} />
                 <SummaryItem label="Balance Amount" value={formData.balanceAmount} />
-                <SummaryItem label="Payment Proof" value={formData.proofOfPayment || "No file"} />
+                <SummaryItem label="Payment Proof" value={formData.proofOfPayment} />
+
+                <SummaryItem label="Payment Proof" value={formData.paymentImage ? "Uploaded" : "Missing"} />
+
+
             </SummaryBlock>
 
             {/* ======================== REMARK ======================== */}

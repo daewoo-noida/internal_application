@@ -108,6 +108,7 @@ export default function SalesClientDetails() {
                     {info("Balance Amount", `₹ ${client.balanceAmount}`)}
                     {info("Mode of Payment", client.modeOfPayment)}
                     {info("Token Date", client.tokenDate?.slice(0, 10))}
+                    <FileRow label="Payment Proof" file={client.paymentImage} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
                 </Section>
 
                 {/* ADDITIONAL PAYMENTS */}

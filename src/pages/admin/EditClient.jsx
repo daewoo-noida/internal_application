@@ -100,12 +100,12 @@ export default function EditClient() {
                     <Field label="Alternate Phone" value={client.altPhone} onChange={(v) => setClient({ ...client, altPhone: v })} />
 
                     <Field label="Territory" value={client.territory} onChange={(v) => setClient({ ...client, territory: v })} />
-                    <Field label="State" value={client.state} onChange={(v) => setClient({ ...client, state: v })} />
-                    <Field label="District" value={client.district} onChange={(v) => setClient({ ...client, district: v })} />
-                    <Field label="City" value={client.city} onChange={(v) => setClient({ ...client, city: v })} />
+                    <Field label="State" value={client.personalState} onChange={(v) => setClient({ ...client, personalState: v })} />
+                    <Field label="District" value={client.personalDistrict} onChange={(v) => setClient({ ...client, personalDistrict: v })} />
+                    <Field label="City" value={client.personalCity} onChange={(v) => setClient({ ...client, personalCity: v })} />
 
-                    <Field label="Street Address" value={client.streetAddress} onChange={(v) => setClient({ ...client, streetAddress: v })} />
-                    <Field label="PIN Code" value={client.pin} onChange={(v) => setClient({ ...client, pin: v })} />
+                    <Field label="Street Address" value={client.personalStreetAddress} onChange={(v) => setClient({ ...client, personalStreetAddress: v })} />
+                    <Field label="PIN Code" value={client.personalPin} onChange={(v) => setClient({ ...client, personalPin: v })} />
                 </Grid>
             </Section>
 

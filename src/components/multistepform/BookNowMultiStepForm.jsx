@@ -46,7 +46,7 @@ export default function BookNowMultiStepForm() {
         tokenDate: "",
         modeOfPayment: "",
         proofOfPayment: "",
-
+        paymentImage: null,
         // OFFICE DETAILS
         officeBranch: "",
         bdaName: "",

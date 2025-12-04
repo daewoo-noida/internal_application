@@ -1,62 +1,61 @@
+// ==========================================
+// Client Controller
+// ==========================================
 const ClientMaster = require("../models/ClientMaster");
 
-
+// Build public URL for uploaded file
 const buildFileUrl = (req, filename) => {
     return `${req.protocol}://${req.get("host")}/uploads/${filename}`;
 };
 
+// Convert multer file into DB-friendly object
+const getFile = (req, files, fieldname) => {
+    const f = files.find((x) => x.fieldname === fieldname);
+    if (!f) return null;
 
-/* ===========================================================
-    GLOBAL FUNCTION → Recalculate ALL payment totals
-=========================================================== */
+    return {
+        filename: f.filename,
+        path: `/uploads/${f.filename}`,
+        url: buildFileUrl(req, f.filename)
+    };
+};
+
+// ==========================================
+// PAYMENT CALCULATION
+// ==========================================
 const recalcPayments = (client) => {
     const deal = Number(client.dealAmount) || 0;
-
-    // BASE received = ONLY initial token
     const baseToken = Number(client.tokenReceivedAmount) || 0;
 
-    // Sum of approved additional payments
     const approvedSum = client.secondPayments
         .filter(p => p.status === "approved")
         .reduce((acc, p) => acc + Number(p.amount), 0);
 
-    // FINAL RECEIVED
     const totalReceived = baseToken + approvedSum;
 
-    client.totalReceived = totalReceived; // optional
-
-    client.receivedPercent = deal > 0
-        ? Number(((totalReceived / deal) * 100).toFixed(2))
-        : 0;
-
+    client.totalReceived = totalReceived;
+    client.receivedPercent = deal ? Number(((totalReceived / deal) * 100).toFixed(2)) : 0;
     client.remainPercent = Number((100 - client.receivedPercent).toFixed(2));
-
     client.balanceAmount = Number((deal - totalReceived).toFixed(2));
 
     return client;
 };
 
-/* ===========================================================
-    CREATE CLIENT
-=========================================================== */
+// ==========================================
+// CREATE CLIENT
+// ==========================================
 exports.createClient = async (req, res) => {
     try {
-        const files = req.files;
         const body = req.body;
+        const files = req.files || [];
 
-        const getFile = (name) => {
-            const f = files.find(x => x.fieldname === name);
-            return f ? { filename: f.filename, path: f.path } : null;
-        };
-
-        const d = req.user.designation?.toLowerCase();
+        const userDesignation = req.user.designation?.toLowerCase();
 
         let bda = null, bde = null, bdm = null, bhead = null;
-
-        if (d.includes("bda")) bda = req.user._id;
-        if (d.includes("bde")) bde = req.user._id;
-        if (d.includes("bdm")) bdm = req.user._id;
-        if (d.includes("head")) bhead = req.user._id;
+        if (userDesignation.includes("bda")) bda = req.user._id;
+        if (userDesignation.includes("bde")) bde = req.user._id;
+        if (userDesignation.includes("bdm")) bdm = req.user._id;
+        if (userDesignation.includes("head")) bhead = req.user._id;
 
         const client = new ClientMaster({
             name: body.name,
@@ -77,21 +76,26 @@ exports.createClient = async (req, res) => {
             franchisePin: body.franchisePin,
             territory: body.territory,
 
-            adharImages: files.filter(f => f.fieldname === "adharImages")
-                .map(f => ({ filename: f.filename, path: f.path })),
+            adharImages: files
+                .filter((f) => f.fieldname === "adharImages")
+                .map((f) => ({
+                    filename: f.filename,
+                    path: `/uploads/${f.filename}`,
+                    url: buildFileUrl(req, f.filename),
+                })),
 
-            panImage: getFile("panImage"),
-            companyPanImage: getFile("companyPanImage"),
-            gstFile: getFile("gstFile"),
-            paymentImage: getFile("paymentImage"),
+            panImage: getFile(req, files, "panImage"),
+            companyPanImage: getFile(req, files, "companyPanImage"),
+            gstFile: getFile(req, files, "gstFile"),
+            paymentImage: getFile(req, files, "paymentImage"),
 
             dealAmount: Number(body.dealAmount),
             tokenReceivedAmount: Number(body.tokenReceivedAmount),
             tokenDate: body.tokenDate,
             modeOfPayment: body.modeOfPayment,
 
-            officeBranch: body.officeBranch,
             leadSource: body.leadSource,
+            officeBranch: body.officeBranch,
             remark: body.remark,
 
             bda,
@@ -103,55 +107,42 @@ exports.createClient = async (req, res) => {
         });
 
         await client.save();
-
         res.json({ success: true, client });
 
     } catch (err) {
-        console.log(err);
+        console.log("Create Client Error:", err);
         res.status(500).json({ success: false, error: err.message });
     }
 };
 
-
-
-
-/* ===========================================================
-    GET ALL CLIENTS (ADMIN OR SALESMAN)
-=========================================================== */
+// ==========================================
+// GET ALL CLIENTS
+// ==========================================
 exports.getClients = async (req, res) => {
     try {
         const designation = req.user.designation?.toLowerCase();
 
-        // Admin sees all clients
-        // Others see only THEIR clients
         const filter = designation === "admin" ? {} : { createdBy: req.user._id };
 
-        console.log("Logged in as:", designation);
-        console.log("Client filter:", filter);
-
         const clients = await ClientMaster.find(filter)
-            .populate("createdBy", "name designation email");
+            .populate("createdBy", "name email designation");
 
-        clients.forEach(c => {
+        clients.forEach((c) => {
             recalcPayments(c);
             c.save();
         });
 
         res.json({ success: true, clients });
 
-    } catch (error) {
-        console.error("GET CLIENTS ERROR:", error);
-        res.status(500).json({
-            success: false,
-            message: "Server error in /clients",
-            error: error.message
-        });
+    } catch (err) {
+        console.error("GET CLIENTS ERROR:", err);
+        res.status(500).json({ success: false, message: err.message });
     }
 };
 
-/* ===========================================================
-    GET CLIENT BY ID (ADMIN OR SALESMAN)
-=========================================================== */
+// ==========================================
+// GET CLIENT BY ID
+// ==========================================
 exports.getClientById = async (req, res) => {
     try {
         const client = await ClientMaster.findById(req.params.id)
@@ -164,20 +155,20 @@ exports.getClientById = async (req, res) => {
         if (!client)
             return res.status(404).json({ success: false, message: "Client not found" });
 
-        // AUTO UPDATE TOTALS ON FETCH
         recalcPayments(client);
         await client.save();
 
         res.json({ success: true, client });
+
     } catch (err) {
-        console.log("Get client error:", err);
-        res.status(500).json({ success: false, message: "Server error" });
+        console.log("Get Client Error:", err);
+        res.status(500).json({ success: false, message: err.message });
     }
 };
 
-/* ===========================================================
-    SALES PERSON: ADD SECOND PAYMENT (PENDING)
-=========================================================== */
+// ==========================================
+// ADD SECOND PAYMENT (Sales Role)
+// ==========================================
 exports.addPayment = async (req, res) => {
     try {
         const client = await ClientMaster.findById(req.params.id);
@@ -191,121 +182,109 @@ exports.addPayment = async (req, res) => {
             transactionId: req.body.transactionId,
             status: "pending",
             proof: req.file
-                ? { filename: req.file.filename, path: buildFileUrl(req, req.file.filename) }
+                ? {
+                    filename: req.file.filename,
+                    path: `/uploads/${req.file.filename}`,
+                    url: buildFileUrl(req, req.file.filename)
+                }
                 : null,
             createdAt: new Date(),
         };
 
         client.secondPayments.push(payment);
-
         recalcPayments(client);
         await client.save();
 
-        res.json({ success: true, message: "Payment submitted for approval", client });
+        res.json({ success: true, message: "Payment added (pending approval)", client });
 
     } catch (err) {
-        console.log(err);
-        res.status(500).json({ success: false, message: "Server error" });
+        console.log("Add Payment Error:", err);
+        res.status(500).json({ success: false, message: err.message });
     }
 };
 
-
-/* ===========================================================
-    ADMIN: APPROVE PAYMENT
-=========================================================== */
-
+// ==========================================
+// APPROVE PAYMENT (Admin)
+// ==========================================
 exports.approveSecondPayment = async (req, res) => {
     try {
         const { clientId, paymentId } = req.params;
 
         const client = await ClientMaster.findById(clientId);
-        if (!client)
-            return res.status(404).json({ success: false, message: "Client not found" });
+        if (!client) return res.status(404).json({ success: false, message: "Client not found" });
 
         const payment = client.secondPayments.id(paymentId);
-        if (!payment)
-            return res.status(404).json({ success: false, message: "Payment not found" });
+        if (!payment) return res.status(404).json({ success: false, message: "Payment not found" });
 
-        if (payment.status === "approved") {
+        if (payment.status === "approved")
             return res.json({ success: false, message: "Payment already approved" });
-        }
 
         payment.status = "approved";
-
-        // AUTO RECALCULATE EVERYTHING
         recalcPayments(client);
 
         await client.save();
+        res.json({ success: true, message: "Payment approved", client });
 
-        res.json({
-            success: true,
-            message: "Payment approved & totals updated",
-            client,
-        });
     } catch (err) {
-        console.log(err);
-        res.status(500).json({ success: false, message: "Server Error", err });
+        console.log("Approve Payment Error:", err);
+        res.status(500).json({ success: false, message: err.message });
     }
 };
 
-/* ===========================================================
-    ADMIN: REJECT PAYMENT
-=========================================================== */
+// ==========================================
+// REJECT PAYMENT (Admin)
+// ==========================================
 exports.rejectSecondPayment = async (req, res) => {
     try {
         const { clientId, paymentId } = req.params;
 
         const client = await ClientMaster.findById(clientId);
-        if (!client)
-            return res.status(404).json({ success: false, message: "Client not found" });
+        if (!client) return res.status(404).json({ success: false, message: "Client not found" });
 
         const payment = client.secondPayments.id(paymentId);
-        if (!payment)
-            return res.status(404).json({ success: false, message: "Payment not found" });
+        if (!payment) return res.status(404).json({ success: false, message: "Payment not found" });
 
         payment.status = "rejected";
-
         recalcPayments(client);
-        await client.save();
 
+        await client.save();
         res.json({ success: true, message: "Payment rejected", client });
+
     } catch (err) {
         console.error("Reject Payment Error:", err);
-        res.status(500).json({ success: false, message: "Server error" });
+        res.status(500).json({ success: false, message: err.message });
     }
 };
 
+// ==========================================
+// UPDATE CLIENT
+// ==========================================
 exports.updateClient = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        let client = await ClientMaster.findById(id);
+        const client = await ClientMaster.findById(req.params.id);
         if (!client)
             return res.status(404).json({ success: false, message: "Client not found" });
 
-        const allowedFields = [
+        const allowed = [
             "name", "email", "phone", "altPhone",
             "personalState", "personalDistrict", "personalCity", "personalStreetAddress", "personalPin",
             "franchiseType", "franchiseState", "franchiseDistrict", "franchiseCity", "franchisePin",
             "territory",
-            "dealAmount", "tokenReceivedAmount", "modeOfPayment", "proofOfPayment", "tokenDate",
-            "leadSource", "officeBranch", "gstFile", "remark"
+            "dealAmount", "tokenReceivedAmount", "modeOfPayment", "tokenDate",
+            "leadSource", "officeBranch", "remark"
         ];
 
-        allowedFields.forEach(field => {
-            if (req.body[field] !== undefined) {
-                client[field] = req.body[field];
-            }
+        allowed.forEach((field) => {
+            if (req.body[field] !== undefined) client[field] = req.body[field];
         });
 
         recalcPayments(client);
         await client.save();
 
-        res.json({ success: true, message: "Client updated successfully", client });
+        res.json({ success: true, message: "Client updated", client });
 
     } catch (err) {
-        console.log("Update client error:", err);
-        res.status(500).json({ success: false, message: "Server error", err });
+        console.log("Update Client Error:", err);
+        res.status(500).json({ success: false, message: err.message });
     }
 };
-

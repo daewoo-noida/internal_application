@@ -32,15 +32,15 @@ export default function BookNow() {
                 "Team hiring & training",
             ],
         },
-        {
-            title: "Shop N Shop",
-            desc: "Plug-and-play format for retail chains.",
-            list: [
-                "Fast deployment",
-                "Compact multi-category layout",
-                "Seasonal refresh program",
-            ],
-        },
+        // {
+        //     title: "Shop N Shop",
+        //     desc: "Plug-and-play format for retail chains.",
+        //     list: [
+        //         "Fast deployment",
+        //         "Compact multi-category layout",
+        //         "Seasonal refresh program",
+        //     ],
+        // },
     ];
 
 
@@ -241,13 +241,13 @@ export default function BookNow() {
             {/* -------------------------------------------------- */}
             {/* OUTLET FORMATS */}
             {/* -------------------------------------------------- */}
-            <section id="formats" className="bg-[#0070b9] text-white py-20 px-6">
+            <section id="formats" className="bg-[#0070b9] text-white py-20 px-6 ">
                 <h2 className="text-3xl font-bold text-center mb-4">Outlet Format Options</h2>
                 <p className="text-center text-gray-200 max-w-2xl mx-auto mb-12">
                     Discover the most suitable format for your location, investment & expansion goals.
                 </p>
 
-                <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6r">
                     {formats.map((box, i) => (
                         <div
                             key={i}

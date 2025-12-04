@@ -167,12 +167,12 @@ export default function FranchiseCarousel() {
                                         {item.title}
                                     </h3>
 
-                                    <button
+                                    {/* <button
                                         onClick={() => navigate("/sales/addclients")}
                                         className="w-full bg-[#0070b9] hover:bg-[#0070b9] text-white px-4 py-2 rounded-lg font-medium shadow-sm transition"
                                     >
                                         Enquire Now
-                                    </button>
+                                    </button> */}
                                 </div>
                             </div>
                         ))}

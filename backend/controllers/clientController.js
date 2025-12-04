@@ -73,7 +73,7 @@ exports.createClient = async (req, res) => {
 
             panImage: getFile("panImage"),
             companyPanImage: getFile("companyPanImage"),
-            gst: getFile("gst"),
+            gstFile: getFile("gstFile"),
 
             dealAmount: Number(body.dealAmount),
             tokenReceivedAmount: Number(body.tokenReceivedAmount),
@@ -105,22 +105,32 @@ exports.createClient = async (req, res) => {
 =========================================================== */
 exports.getClients = async (req, res) => {
     try {
-        const filter = req.user.role === "admin" ? {} : { createdBy: req.user._id };
+        const designation = req.user.designation?.toLowerCase();
 
-        const clients = await ClientMaster.find(filter).populate(
-            "createdBy",
-            "name designation email"
-        );
+        // Admin sees all clients
+        // Others see only THEIR clients
+        const filter = designation === "admin" ? {} : { createdBy: req.user._id };
 
-        // AUTO FIX ALL CLIENT TOTALS
-        for (let client of clients) {
-            recalcPayments(client);
-            await client.save();
-        }
+        console.log("Logged in as:", designation);
+        console.log("Client filter:", filter);
+
+        const clients = await ClientMaster.find(filter)
+            .populate("createdBy", "name designation email");
+
+        clients.forEach(c => {
+            recalcPayments(c);
+            c.save();
+        });
 
         res.json({ success: true, clients });
-    } catch (err) {
-        res.status(500).json({ success: false, message: "Server error" });
+
+    } catch (error) {
+        console.error("GET CLIENTS ERROR:", error);
+        res.status(500).json({
+            success: false,
+            message: "Server error in /clients",
+            error: error.message
+        });
     }
 };
 
@@ -264,7 +274,7 @@ exports.updateClient = async (req, res) => {
             "franchiseType", "franchiseState", "franchiseDistrict", "franchiseCity", "franchisePin",
             "territory",
             "dealAmount", "tokenReceivedAmount", "modeOfPayment", "proofOfPayment", "tokenDate",
-            "leadSource", "officeBranch", "gst", "remark"
+            "leadSource", "officeBranch", "gstFile", "remark"
         ];
 
         allowedFields.forEach(field => {

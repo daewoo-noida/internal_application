@@ -50,7 +50,7 @@ export const clientAPI = {
       },
     }),
 
-  getAll: () => api.get("/clients"),
+  getAll: (data) => api.get("/clients", { params: data }),
   getById: (id) => api.get(`/clients/${id}`),
   update: (id, data) => api.put(`/clients/${id}`, data),
   delete: (id) => api.delete(`/clients/${id}`),

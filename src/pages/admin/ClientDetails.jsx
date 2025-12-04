@@ -141,19 +141,20 @@ export default function ClientDetails() {
                     {info("Email", client.email)}
                     {info("Phone", client.phone)}
                     {info("Alternate Phone", client.altPhone)}
-                    {info("State", client.state)}
-                    {info("District", client.district)}
-                    {info("City", client.city)}
-                    {info("Street Address", client.streetAddress)}
-                    {info("PIN Code", client.pin)}
+                    {info("State", client.personalState)}
+                    {info("District", client.personalDistrict)}
+                    {info("City", client.personalCity)}
+                    {info("Street Address", client.personalStreetAddress)}
+                    {info("PIN Code", client.personalPin)}
                 </Section>
+
 
                 {/* DOCUMENTS */}
                 <Section title="Documents">
                     <FileRow label="Aadhaar Card" files={client.adharImages} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
                     <FileRow label="PAN Card" file={client.panImage} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
                     <FileRow label="Company PAN" file={client.companyPanImage} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
-                    <FileRow label="Address Proof" file={client.addressProof} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
+                    <FileRow label="GST" file={client.gstFile} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
                 </Section>
 
                 {/* PAYMENT DETAILS */}

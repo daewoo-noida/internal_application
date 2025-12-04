@@ -135,8 +135,8 @@ exports.getPendingDocuments = async (req, res) => {
             client: c.name,
             missingAadhar: c.adharImages.length < 2,
             missingPan: !c.panImage,
-            missingGST: !c.gst,
-            missingGst: !c.gst,
+            missingGST: !c.gstFile,
+            missingGst: !c.gstFile,
             createdAt: c.createdAt
         }));
 

@@ -7,8 +7,8 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
     const validateStep = () => {
         let newErrors = {};
 
-        if (!formData.adharImages || formData.adharImages.length !== 2) {
-            newErrors.adharImages = "Please upload exactly 2 Aadhaar images";
+        if (!formData.adharImages || formData.adharImages.length !== 1) {
+            newErrors.adharImages = "Atleast 1 Aadhaar image is required";
         }
 
         if (!formData.panImage) {
@@ -34,7 +34,7 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
             return;
         }
 
-        if (name === "gst") {
+        if (name === "gstFile") {
             setFormData({
                 ...formData,
                 gstFile: files[0],   // ← store file properly
@@ -87,7 +87,7 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
                 {/* GST */}
                 <div>
                     <label className="block text-gray-700 font-medium mb-1">GST (Optional)</label>
-                    <input type="file" name="gst" accept="image/*"
+                    <input type="file" name="gstFile" accept="image/*"
                         onChange={handleFileChange} className="w-full border p-3 rounded-lg bg-white" />
                 </div>
 

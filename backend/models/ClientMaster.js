@@ -19,7 +19,7 @@ const ClientMasterSchema = new mongoose.Schema({
    /* ===========================
       FRANCHISE DETAILS
    ============================ */
-   franchiseType: { type: String, required: true },
+   franchiseType: { type: String },
 
    franchiseState: { type: String },
    franchiseDistrict: { type: String },

@@ -51,7 +51,7 @@ const BookingDetailsManagement = () => {
         panCard: { uploaded: true, status: 'Pending', file: 'pan_card.jpg' },
         companyPAN: { uploaded: true, status: 'Pending', file: 'company_pan.jpg' },
         gstNumber: { uploaded: false, status: '', file: null },
-        gst: { uploaded: false, status: 'Pending', file: null },
+        gstFile: { uploaded: false, status: 'Pending', file: null },
         attachedImage: { uploaded: false, status: 'Pending', file: null }
       }
     },
@@ -94,7 +94,7 @@ const BookingDetailsManagement = () => {
         panCard: { uploaded: false, status: 'Pending', file: null },
         companyPAN: { uploaded: false, status: 'Pending', file: null },
         gstNumber: { uploaded: false, status: '', file: null },
-        gst: { uploaded: false, status: 'Pending', file: null },
+        gstFile: { uploaded: false, status: 'Pending', file: null },
         attachedImage: { uploaded: false, status: 'Pending', file: null }
       }
     },
@@ -136,8 +136,8 @@ const BookingDetailsManagement = () => {
         aadhaarBack: { uploaded: true, status: 'Approved', file: 'aadhaar_back.jpg' },
         panCard: { uploaded: true, status: 'Approved', file: 'pan_card.jpg' },
         companyPAN: { uploaded: true, status: 'Approved', file: 'company_pan.jpg' },
-        gstNumber: { uploaded: true, status: 'Approved', file: 'gst.jpg' },
-        gst: { uploaded: true, status: 'Approved', file: 'address_proof.jpg' },
+        gstNumber: { uploaded: true, status: 'Approved', file: 'gstFile.jpg' },
+        gstFile: { uploaded: true, status: 'Approved', file: 'address_proof.jpg' },
         attachedImage: { uploaded: false, status: 'Pending', file: null }
       }
     },
@@ -180,7 +180,7 @@ const BookingDetailsManagement = () => {
         panCard: { uploaded: false, status: 'Pending', file: null },
         companyPAN: { uploaded: false, status: 'Pending', file: null },
         gstNumber: { uploaded: false, status: '', file: null },
-        gst: { uploaded: false, status: 'Pending', file: null },
+        gstFile: { uploaded: false, status: 'Pending', file: null },
         attachedImage: { uploaded: false, status: 'Pending', file: null }
       }
     },
@@ -223,7 +223,7 @@ const BookingDetailsManagement = () => {
         panCard: { uploaded: true, status: 'Pending', file: 'pan_card.jpg' },
         companyPAN: { uploaded: true, status: 'Pending', file: 'company_pan.jpg' },
         gstNumber: { uploaded: false, status: '', file: null },
-        gst: { uploaded: false, status: 'Pending', file: null },
+        gstFile: { uploaded: false, status: 'Pending', file: null },
         attachedImage: { uploaded: false, status: 'Pending', file: null }
       }
     },
@@ -266,7 +266,7 @@ const BookingDetailsManagement = () => {
         panCard: { uploaded: false, status: 'Pending', file: null },
         companyPAN: { uploaded: false, status: 'Pending', file: null },
         gstNumber: { uploaded: false, status: '', file: null },
-        gst: { uploaded: false, status: 'Pending', file: null },
+        gstFile: { uploaded: false, status: 'Pending', file: null },
         attachedImage: { uploaded: false, status: 'Pending', file: null }
       }
     },
@@ -308,8 +308,8 @@ const BookingDetailsManagement = () => {
         aadhaarBack: { uploaded: true, status: 'Approved', file: 'aadhaar_back.jpg' },
         panCard: { uploaded: true, status: 'Approved', file: 'pan_card.jpg' },
         companyPAN: { uploaded: true, status: 'Approved', file: 'company_pan.jpg' },
-        gstNumber: { uploaded: true, status: 'Approved', file: 'gst.jpg' },
-        gst: { uploaded: true, status: 'Approved', file: 'address_proof.jpg' },
+        gstNumber: { uploaded: true, status: 'Approved', file: 'gstFile.jpg' },
+        gstFile: { uploaded: true, status: 'Approved', file: 'address_proof.jpg' },
         attachedImage: { uploaded: true, status: 'Approved', file: 'attached_image.jpg' }
       }
     }
@@ -802,18 +802,18 @@ const BookingDetailsManagement = () => {
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <h6 className="mb-0">Address Proof</h6>
-                    {documentStatuses.gst?.status && (
-                      <span className={`badge ${documentStatuses.gst.status === 'Approved' ? 'badge-success' : 'badge-warning'}`}>
-                        {documentStatuses.gst.status}
+                    {documentStatuses.gstFile?.status && (
+                      <span className={`badge ${documentStatuses.gstFile.status === 'Approved' ? 'badge-success' : 'badge-warning'}`}>
+                        {documentStatuses.gstFile.status}
                       </span>
                     )}
                   </div>
-                  {documentStatuses.gst?.uploaded ? (
-                    <div className="text-muted mb-3">File: {documentStatuses.gst.file}</div>
+                  {documentStatuses.gstFile?.uploaded ? (
+                    <div className="text-muted mb-3">File: {documentStatuses.gstFile.file}</div>
                   ) : (
                     <div className="text-muted mb-3">No file uploaded.</div>
                   )}
-                  <button className="btn btn-secondary btn-sm" onClick={() => handleDocumentUpload('gst')}>
+                  <button className="btn btn-secondary btn-sm" onClick={() => handleDocumentUpload('gstFile')}>
                     Upload
                   </button>
                 </div>

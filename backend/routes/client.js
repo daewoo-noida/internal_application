@@ -12,38 +12,28 @@ const {
     addPayment,
     approveSecondPayment,
     rejectSecondPayment,
-    updateClient,
+    updateClient
 } = require("../controllers/clientController");
 
-// FIX — accept ANY number of files and text fields
-router.post("/", protect, allowRoles("Sales", "admin"), upload.any(), createClient);
+// Accept ANY uploaded field to prevent MulterError
+router.post(
+    "/",
+    protect,
+    allowRoles("Sales", "admin"),
+    upload.any(),
+    createClient
+);
 
-
+// Normal routes
 router.get("/", protect, getClients);
 router.get("/:id", protect, getClientById);
 
 router.post("/:id/add-payment", protect, upload.single("proof"), addPayment);
 
-router.post(
-    "/:clientId/approve-payment/:paymentId",
-    protect,
-    allowRoles("admin"),
-    approveSecondPayment
-);
+router.post("/:clientId/approve-payment/:paymentId", protect, allowRoles("admin"), approveSecondPayment);
 
-router.post(
-    "/:clientId/reject-payment/:paymentId",
-    protect,
-    allowRoles("admin"),
-    rejectSecondPayment
-);
+router.post("/:clientId/reject-payment/:paymentId", protect, allowRoles("admin"), rejectSecondPayment);
 
-router.put(
-    "/:id",
-    protect,
-    allowRoles("admin"),
-    upload.any(),
-    updateClient
-);
+router.put("/:id", protect, allowRoles("admin"), upload.any(), updateClient);
 
 module.exports = router;

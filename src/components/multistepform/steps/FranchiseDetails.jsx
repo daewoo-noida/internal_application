@@ -5,7 +5,6 @@ import { mfTerritories } from "../../../stateData/mfTerritories";
 import Select from "react-select";
 
 export default function FranchiseDetails({ formData, setFormData, next }) {
-
     const [errors, setErrors] = useState({});
 
     // ---------------- VALIDATION ----------------
@@ -70,7 +69,12 @@ export default function FranchiseDetails({ formData, setFormData, next }) {
                     >
                         <option value="">Select</option>
                         <option value="Master Franchise">Master Franchise</option>
-                        <option value="Daewoo District Partner Franchise">Daewoo District Partner Franchise</option>
+
+                        {/* FIXED — backend expects "DDP Franchise" */}
+                        <option value="Daewoo District Partner Franchise">
+                            Daewoo District Partner Franchise
+                        </option>
+
                         <option value="Signature">Signature Store</option>
                     </select>
                     {errors.franchiseType && (

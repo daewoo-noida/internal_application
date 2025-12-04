@@ -41,18 +41,12 @@ export default function Step3Payment({ formData, setFormData, next, prev }) {
     const handleFileChange = (e) => {
         const { name, files } = e.target;
 
-        if (name === "paymentImage") {
-            setFormData({
-                ...formData,
-                paymentImage: Array.from(files),
-            });
-            return;
-        }
         setFormData({
             ...formData,
-            [name]: files[0],
+            [name]: files[0],   // ALWAYS store single File object
         });
     };
+
 
     // -------------------- CHANGE HANDLER --------------------
     const handleChange = (e) => {

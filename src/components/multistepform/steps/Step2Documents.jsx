@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 
 export default function Step2Documents({ formData, setFormData, next, prev }) {
+
     const [errors, setErrors] = useState({});
 
     const validateStep = () => {
         let newErrors = {};
 
         if (!formData.adharImages || formData.adharImages.length !== 2) {
-            newErrors.adharImages = "Please upload 2 Aadhaar images (Front + Back)";
+            newErrors.adharImages = "Please upload exactly 2 Aadhaar images";
         }
 
         if (!formData.panImage) {
@@ -26,16 +27,6 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
         const { name, files } = e.target;
 
         if (name === "adharImages") {
-            if (files.length !== 2) {
-                setErrors({
-                    ...errors,
-                    adharImages: "Please upload exactly 2 Aadhaar images",
-                });
-                return;
-            }
-
-            setErrors({ ...errors, adharImages: "" });
-
             setFormData({
                 ...formData,
                 adharImages: Array.from(files),
@@ -43,99 +34,68 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
             return;
         }
 
-        // NEW FIX — handle GST correctly
-        if (name === "gstFile") {
+        if (name === "gst") {
             setFormData({
                 ...formData,
-                gstFile: files[0],
+                gstFile: files[0],   // ← store file properly
             });
             return;
         }
 
-        // PAN, Company PAN etc
-        if (files.length > 0) {
-            setFormData({
-                ...formData,
-                [name]: files[0],
-            });
-
-            setErrors({ ...errors, [name]: "" });
-        }
+        setFormData({
+            ...formData,
+            [name]: files[0],
+        });
     };
 
     return (
         <div>
-            <h2 className="text-2xl font-bold text-[#0070b9] mb-6">
-                Document Uploads
-            </h2>
+            <h2 className="text-2xl font-bold text-[#0070b9] mb-6">Document Uploads</h2>
 
             <div className="grid grid-cols-1 gap-6">
 
-                {/* AADHAAR */}
+                {/* Aadhaar */}
                 <div>
-                    <label className="block font-medium">Aadhaar Card *</label>
-                    <input
-                        type="file"
-                        name="adharImages"
-                        multiple
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className={`w-full border p-3 rounded-lg ${errors.adharImages ? "border-red-500" : "border-gray-300"
-                            }`}
-                    />
-                    {errors.adharImages && (
-                        <p className="text-red-500 text-sm">{errors.adharImages}</p>
+                    <label className="block text-gray-700 font-medium mb-1">Aadhaar Card *</label>
+                    <input type="file" name="adharImages" accept="image/*" multiple
+                        onChange={handleFileChange} className="w-full border p-3 rounded-lg bg-white" />
+
+                    {formData.adharImages?.length > 0 && (
+                        <div className="flex gap-4 mt-3">
+                            {formData.adharImages.map((img, i) => (
+                                <img key={i} src={URL.createObjectURL(img)}
+                                    className="w-28 h-20 object-cover rounded border" />
+                            ))}
+                        </div>
                     )}
                 </div>
 
                 {/* PAN */}
                 <div>
-                    <label className="block font-medium">PAN Card *</label>
-                    <input
-                        type="file"
-                        name="panImage"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className={`w-full border p-3 rounded-lg ${errors.panImage ? "border-red-500" : "border-gray-300"
-                            }`}
-                    />
-                    {errors.panImage && (
-                        <p className="text-red-500 text-sm">{errors.panImage}</p>
-                    )}
+                    <label className="block text-gray-700 font-medium mb-1">PAN Card *</label>
+                    <input type="file" name="panImage" accept="image/*"
+                        onChange={handleFileChange} className="w-full border p-3 rounded-lg bg-white" />
                 </div>
 
-                {/* COMPANY PAN */}
+                {/* Company PAN */}
                 <div>
-                    <label className="block font-medium">Company PAN (Optional)</label>
-                    <input
-                        type="file"
-                        name="companyPanImage"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="w-full border p-3 rounded-lg border-gray-300"
-                    />
+                    <label className="block text-gray-700 font-medium mb-1">Company PAN (Optional)</label>
+                    <input type="file" name="companyPanImage" accept="image/*"
+                        onChange={handleFileChange} className="w-full border p-3 rounded-lg bg-white" />
                 </div>
 
-                {/* GST FIXED FIELD */}
+                {/* GST */}
                 <div>
-                    <label className="block font-medium">GST (Optional)</label>
-                    <input
-                        type="file"
-                        name="gstFile"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="w-full border p-3 rounded-lg border-gray-300"
-                    />
+                    <label className="block text-gray-700 font-medium mb-1">GST (Optional)</label>
+                    <input type="file" name="gst" accept="image/*"
+                        onChange={handleFileChange} className="w-full border p-3 rounded-lg bg-white" />
                 </div>
+
             </div>
 
             <div className="flex justify-between mt-8">
-                <button onClick={prev} className="bg-gray-300 px-6 py-3 rounded-xl">
-                    ← Back
-                </button>
-                <button onClick={handleNext} className="bg-[#0070b9] text-white px-6 py-3 rounded-xl">
-                    Next →
-                </button>
+                <button onClick={prev} className="bg-gray-300 px-6 py-3 rounded-xl">← Back</button>
+                <button onClick={handleNext} className="bg-[#0070b9] text-white px-6 py-3 rounded-xl">Next →</button>
             </div>
         </div>
     );

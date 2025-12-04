@@ -41,36 +41,15 @@ const recalcPayments = (client) => {
 =========================================================== */
 exports.createClient = async (req, res) => {
     try {
+        const files = req.files;
         const body = req.body;
-        const files = req.files || [];
 
-        console.log("RECEIVED BODY:", body);
-        console.log("RECEIVED FILES:", files);
-
-        const userRole = req.user.designation?.toLowerCase();
-
-        let bda = null,
-            bde = null,
-            bdm = null,
-            bhead = null;
-
-        if (userRole === "bda") bda = req.user._id;
-        if (userRole === "bde") bde = req.user._id;
-        if (userRole === "bdm") bdm = req.user._id;
-        if (userRole === "bhead") bhead = req.user._id;
-
-        // HANDLE ALL FILES
-        const extractFile = (field) => {
-            const f = files.find((x) => x.fieldname === field);
+        const getFile = (name) => {
+            const f = files.find(x => x.fieldname === name);
             return f ? { filename: f.filename, path: f.path } : null;
         };
 
-        const adharImages = files
-            .filter((f) => f.fieldname === "adharImages")
-            .map((f) => ({ filename: f.filename, path: f.path }));
-
         const client = new ClientMaster({
-            // PERSONAL
             name: body.name,
             email: body.email,
             phone: body.phone,
@@ -82,7 +61,6 @@ exports.createClient = async (req, res) => {
             personalStreetAddress: body.personalStreetAddress,
             personalPin: body.personalPin,
 
-            // FRANCHISE
             franchiseType: body.franchiseType,
             franchiseState: body.franchiseState,
             franchiseDistrict: body.franchiseDistrict,
@@ -90,41 +68,35 @@ exports.createClient = async (req, res) => {
             franchisePin: body.franchisePin,
             territory: body.territory,
 
-            // FILES
-            adharImages,
-            panImage: extractFile("panImage"),
-            companyPanImage: extractFile("companyPanImage"),
-            gstFile: extractFile("gst"),
-            gstNumber: body.gstNumber,
+            adharImages: files.filter(f => f.fieldname === "adharImages")
+                .map(f => ({ filename: f.filename, path: f.path })),
 
-            // OFFICE
-            officeBranch: body.officeBranch,
-            bda,
-            bde,
-            bdm,
-            bhead,
-            leadSource: body.leadSource,
+            panImage: getFile("panImage"),
+            companyPanImage: getFile("companyPanImage"),
+            gst: getFile("gst"),
 
-            // PAYMENT
             dealAmount: Number(body.dealAmount),
             tokenReceivedAmount: Number(body.tokenReceivedAmount),
             tokenDate: body.tokenDate,
             modeOfPayment: body.modeOfPayment,
-            proofOfPayment: extractFile("proofOfPayment"),
 
+            officeBranch: body.officeBranch,
+            leadSource: body.leadSource,
             remark: body.remark,
-            createdBy: req.user._id,
+
+            createdBy: req.user._id
         });
 
-        recalcPayments(client);
         await client.save();
 
-        res.status(201).json({ success: true, client });
+        res.json({ success: true, client });
+
     } catch (err) {
-        console.error("Create client error:", err);
-        res.status(500).json({ success: false, error: err });
+        console.log(err);
+        res.status(500).json({ success: false, error: err.message });
     }
 };
+
 
 
 

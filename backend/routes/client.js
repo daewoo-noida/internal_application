@@ -16,13 +16,8 @@ const {
 } = require("../controllers/clientController");
 
 // FIX — accept ANY number of files and text fields
-router.post(
-    "/",
-    protect,
-    allowRoles("sales", "admin", "bda", "bde", "bdm", "bhead"),
-    upload.any(),
-    createClient
-);
+router.post("/", protect, allowRoles("Sales", "admin"), upload.any(), createClient);
+
 
 router.get("/", protect, getClients);
 router.get("/:id", protect, getClientById);

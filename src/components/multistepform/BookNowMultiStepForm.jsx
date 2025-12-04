@@ -14,42 +14,49 @@ export default function BookNowMultiStepForm() {
     const [step, setStep] = useState(1);
 
     const [formData, setFormData] = useState({
-        franchiseType: "",
-        state: "",
-        territory: "",
-        district: "",
-        city: "",
-        pin: "",
-
         name: "",
         email: "",
         phone: "",
         altPhone: "",
-        streetAddress: "",
-        officeBranch: "",
-        bda: "",
-        bde: "",
-        bdm: "",
-        bdaName: "",
-        bdeName: "",
-        bdmName: "",
-        leadSource: "",
-        gst: "",
-        dealAmount: "",
-        tokenReceivedAmount: "",
-        receivedPercent: "",
-        remainPercent: "",
-        balanceAmount: "",
-        tokenDate: "",
-        modeOfPayment: "",
-        proofOfPayment: "",
-        additionalCommitment: "",
-        remark: "",
+
+        // PERSONAL DETAILS
+        personalState: "",
+        personalDistrict: "",
+        personalCity: "",
+        personalStreetAddress: "",
+        personalPin: "",
+
+        // FRANCHISE DETAILS
+        franchiseType: "",
+        franchiseState: "",
+        franchiseDistrict: "",
+        franchiseCity: "",
+        franchisePin: "",
+        territory: "",
+
+        // DOCUMENTS
         adharImages: [],
         panImage: null,
         companyPanImage: null,
         addressProof: null,
+
+        // PAYMENT DETAILS
+        dealAmount: "",
+        tokenReceivedAmount: "",
+        tokenDate: "",
+        modeOfPayment: "",
+        proofOfPayment: "",
+
+        // OFFICE DETAILS
+        officeBranch: "",
+        bdaName: "",
+        bdeName: "",
+        bdmName: "",
+        leadSource: "",
+
+        remark: "",
     });
+
 
     const next = () => setStep((s) => s + 1);
     const prev = () => setStep((s) => s - 1);

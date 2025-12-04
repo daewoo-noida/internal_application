@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { clientAPI } from "../../utils/api";
-import axios from "axios";
 
 export default function ClientDetails() {
     const { id } = useParams();
@@ -11,7 +10,6 @@ export default function ClientDetails() {
     const [loading, setLoading] = useState(true);
     const primary = "#0070b9";
 
-    // ⭐ IMAGE PREVIEW STATES
     const [previewImage, setPreviewImage] = useState(null);
     const [showPreview, setShowPreview] = useState(false);
 
@@ -46,10 +44,8 @@ export default function ClientDetails() {
         try {
             await clientAPI.approvePayment(client._id, paymentId);
             alert("Payment approved successfully");
-
-            loadClient(); // refresh data
+            loadClient();
         } catch (err) {
-            console.log(err);
             alert("Error approving payment");
         }
     };
@@ -62,16 +58,11 @@ export default function ClientDetails() {
             alert("Payment rejected");
             loadClient();
         } catch (err) {
-            console.log(err);
             alert("Error rejecting payment");
         }
     };
 
     const user = JSON.parse(localStorage.getItem("userData"));
-
-    // console.log("Logged User:", user);
-    // console.log("Is Admin:", user?.role === "admin");
-
 
     if (loading) return <div className="p-6 text-lg">Loading...</div>;
     if (!client) return <div className="p-6 text-lg">Client not found</div>;
@@ -91,7 +82,6 @@ export default function ClientDetails() {
                     >
                         Edit
                     </button>
-
 
                     <button
                         onClick={handleDelete}
@@ -113,13 +103,44 @@ export default function ClientDetails() {
             {/* MAIN CARD */}
             <div className="bg-white shadow-xl border rounded-xl p-6">
 
+                {/* FRANCHISE DETAILS */}
+                <Section title="Franchise Details">
+
+                    {info("Franchise Type", client.franchiseType)}
+
+                    {/* MASTER FRANCHISE */}
+                    {client.franchiseType === "Master Franchise" && (
+                        <>
+                            {info("Territory", client.territory)}
+                        </>
+                    )}
+
+                    {/* DDP FRANCHISE */}
+                    {client.franchiseType === "Daewoo District Partner Franchise" && (
+                        <>
+                            {info("State", client.franchiseState)}
+                            {info("DDP Territory", client.territory)}
+                        </>
+                    )}
+
+                    {/* SIGNATURE STORE */}
+                    {client.franchiseType === "Signature" && (
+                        <>
+                            {info("State", client.franchiseState)}
+                            {info("District", client.franchiseDistrict)}
+                            {info("City", client.franchiseCity)}
+                            {info("PIN Code", client.franchisePin)}
+                        </>
+                    )}
+
+                </Section>
+
                 {/* PERSONAL */}
                 <Section title="Personal Information">
                     {info("Name", client.name)}
                     {info("Email", client.email)}
                     {info("Phone", client.phone)}
                     {info("Alternate Phone", client.altPhone)}
-                    {info("Territory", client.territory)}
                     {info("State", client.state)}
                     {info("District", client.district)}
                     {info("City", client.city)}
@@ -129,33 +150,13 @@ export default function ClientDetails() {
 
                 {/* DOCUMENTS */}
                 <Section title="Documents">
-                    <FileRow
-                        label="Aadhaar Card"
-                        files={client.adharImages}
-                        setPreviewImage={setPreviewImage}
-                        setShowPreview={setShowPreview}
-                    />
-                    <FileRow
-                        label="PAN Card"
-                        file={client.panImage}
-                        setPreviewImage={setPreviewImage}
-                        setShowPreview={setShowPreview}
-                    />
-                    <FileRow
-                        label="Company PAN"
-                        file={client.companyPanImage}
-                        setPreviewImage={setPreviewImage}
-                        setShowPreview={setShowPreview}
-                    />
-                    <FileRow
-                        label="Address Proof"
-                        file={client.addressProof}
-                        setPreviewImage={setPreviewImage}
-                        setShowPreview={setShowPreview}
-                    />
+                    <FileRow label="Aadhaar Card" files={client.adharImages} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
+                    <FileRow label="PAN Card" file={client.panImage} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
+                    <FileRow label="Company PAN" file={client.companyPanImage} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
+                    <FileRow label="Address Proof" file={client.addressProof} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
                 </Section>
 
-                {/* PAYMENT */}
+                {/* PAYMENT DETAILS */}
                 <Section title="Payment Details">
                     {info("Deal Amount", `₹ ${client.dealAmount}`)}
                     {info("Received Amount", `₹ ${client.tokenReceivedAmount}`)}
@@ -165,11 +166,10 @@ export default function ClientDetails() {
                     {info("Mode of Payment", client.modeOfPayment)}
                     {info("Token Date", client.tokenDate?.slice(0, 10))}
                 </Section>
-                {/* PAYMENT HISTORY */}
 
-                {client.secondPayments && client.secondPayments.length > 0 && (
+                {/* ADDITIONAL PAYMENTS */}
+                {client.secondPayments?.length > 0 && (
                     <Section title="Additional Payments">
-
                         <div className="overflow-x-auto">
                             <table className="w-full border-collapse">
                                 <thead>
@@ -192,7 +192,6 @@ export default function ClientDetails() {
                                             ? `${import.meta.env.VITE_API_URL.replace("/api", "")}/uploads/${p.proof.path.split("\\").pop()}`
                                             : null;
 
-                                        // Row background color
                                         const rowColor =
                                             p.status === "approved"
                                                 ? "bg-green-50"
@@ -201,23 +200,18 @@ export default function ClientDetails() {
                                                     : "bg-yellow-50";
 
                                         return (
-                                            <tr key={p._id} className={`${rowColor} border hover:bg-gray-100`}>
+                                            <tr key={p._id} className={`${rowColor} border`}>
                                                 <td className="p-3">{index + 1}</td>
-
                                                 <td className="p-3 font-semibold">₹ {p.amount}</td>
-
                                                 <td className="p-3">{p.paymentDate?.slice(0, 10)}</td>
-
                                                 <td className="p-3">{p.mode}</td>
-
                                                 <td className="p-3">{p.transactionId || "--"}</td>
 
                                                 <td className="p-3">
                                                     {proofURL ? (
                                                         <img
                                                             src={proofURL}
-                                                            alt="proof"
-                                                            className="h-16 w-16 object-cover rounded border cursor-pointer hover:opacity-80"
+                                                            className="h-16 w-16 object-cover rounded border cursor-pointer"
                                                             onClick={() => {
                                                                 setPreviewImage(proofURL);
                                                                 setShowPreview(true);
@@ -228,31 +222,16 @@ export default function ClientDetails() {
                                                     )}
                                                 </td>
 
-                                                {/* STATUS */}
                                                 <td className="p-3 font-medium">
-                                                    {p.status === "approved" && (
-                                                        <span className="bg-green-200 text-green-800 px-3 py-1 rounded">
-                                                            Approved
-                                                        </span>
-                                                    )}
-                                                    {p.status === "pending" && (
-                                                        <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded">
-                                                            Pending
-                                                        </span>
-                                                    )}
-                                                    {p.status === "rejected" && (
-                                                        <span className="bg-red-200 text-red-800 px-3 py-1 rounded">
-                                                            Rejected
-                                                        </span>
-                                                    )}
+                                                    {p.status === "approved" && <span className="bg-green-200 text-green-800 px-3 py-1 rounded">Approved</span>}
+                                                    {p.status === "pending" && <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded">Pending</span>}
+                                                    {p.status === "rejected" && <span className="bg-red-200 text-red-800 px-3 py-1 rounded">Rejected</span>}
                                                 </td>
 
-                                                {/* APPROVED AMOUNT */}
                                                 <td className="p-3 font-semibold">
                                                     {p.status === "approved" ? `₹ ${p.amount}` : "--"}
                                                 </td>
 
-                                                {/* APPROVE / REJECT BUTTONS FOR ADMIN */}
                                                 <td className="p-3">
                                                     {p.status === "pending" && user?.role === "admin" && (
                                                         <div className="flex gap-2">
@@ -262,7 +241,6 @@ export default function ClientDetails() {
                                                             >
                                                                 Approve
                                                             </button>
-
                                                             <button
                                                                 onClick={() => rejectPayment(p._id)}
                                                                 className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
@@ -272,20 +250,14 @@ export default function ClientDetails() {
                                                         </div>
                                                     )}
 
-                                                    {p.status !== "pending" && (
-                                                        <span className="text-gray-500">--</span>
-                                                    )}
+                                                    {p.status !== "pending" && <span className="text-gray-500">--</span>}
                                                 </td>
-
-
                                             </tr>
                                         );
                                     })}
                                 </tbody>
-
                             </table>
                         </div>
-
                     </Section>
                 )}
 
@@ -298,47 +270,19 @@ export default function ClientDetails() {
                     {info("Lead Source", client.leadSource)}
                 </Section>
 
-                {/* REMARKS */}
                 <Section title="Remarks">
                     <div className="p-3 bg-gray-50 rounded border">{client.remark || "--"}</div>
                 </Section>
             </div>
 
-
-            {/* IMAGE PREVIEW MODAL */}
             {showPreview && (
-                <div
-                    className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
-                    onClick={() => setShowPreview(false)}
-                >
-                    <div
-                        className="relative bg-white rounded-xl shadow-2xl p-3 max-w-3xl w-[90%] animate-fadeIn"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* Close Button */}
-                        <button
-                            className="absolute top-2 right-2 bg-gray-800 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition"
-                            onClick={() => setShowPreview(false)}
-                        >
-                            ✕
-                        </button>
-
-                        {/* Image */}
-                        <img
-                            src={previewImage}
-                            alt="preview"
-                            className="w-full max-h-[80vh] object-contain rounded-lg"
-                        />
-                    </div>
-                </div>
+                <ImageModal previewImage={previewImage} setShowPreview={setShowPreview} />
             )}
-
-
         </div>
     );
 }
 
-/* ----------- Helper Components ----------- */
+/* Helper Components */
 
 const info = (label, value) => (
     <div className="grid grid-cols-3 py-2 border-b">
@@ -370,15 +314,12 @@ function FileRow({ label, file, files, setPreviewImage, setShowPreview }) {
             <div className="font-medium text-gray-600">{label}</div>
 
             <div className="mt-2 flex gap-3 flex-wrap">
-
-                {/* Multiple files */}
                 {files &&
                     files.map((f, i) => (
                         <img
                             key={i}
                             src={cleanPath(f.path)}
-                            alt="document"
-                            className="h-20 w-20 object-cover rounded border cursor-pointer hover:opacity-80"
+                            className="h-20 w-20 object-cover rounded border cursor-pointer"
                             onClick={() => {
                                 setPreviewImage(cleanPath(f.path));
                                 setShowPreview(true);
@@ -386,12 +327,10 @@ function FileRow({ label, file, files, setPreviewImage, setShowPreview }) {
                         />
                     ))}
 
-                {/* Single file */}
                 {file && (
                     <img
                         src={cleanPath(file.path)}
-                        alt="document"
-                        className="h-20 w-20 object-cover rounded border cursor-pointer hover:opacity-80"
+                        className="h-20 w-20 object-cover rounded border cursor-pointer"
                         onClick={() => {
                             setPreviewImage(cleanPath(file.path));
                             setShowPreview(true);
@@ -400,8 +339,34 @@ function FileRow({ label, file, files, setPreviewImage, setShowPreview }) {
                 )}
 
                 {!file && (!files || files.length === 0) && (
-                    <span className="text-gray-400">No file uploaded</span>
+                    <span className="text-gray-400">No File</span>
                 )}
+            </div>
+        </div>
+    );
+}
+
+function ImageModal({ previewImage, setShowPreview }) {
+    return (
+        <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
+            onClick={() => setShowPreview(false)}
+        >
+            <div
+                className="relative bg-white rounded-xl shadow-2xl p-3 max-w-3xl w-[90%]"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <button
+                    className="absolute top-2 right-2 bg-gray-800 text-white rounded-full w-8 h-8 flex justify-center items-center"
+                    onClick={() => setShowPreview(false)}
+                >
+                    ✕
+                </button>
+
+                <img
+                    src={previewImage}
+                    className="w-full max-h-[80vh] object-contain rounded"
+                />
             </div>
         </div>
     );

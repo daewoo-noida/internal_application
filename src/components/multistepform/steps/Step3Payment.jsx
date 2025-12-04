@@ -157,7 +157,7 @@ export default function Step3Payment({ formData, setFormData, next, prev }) {
                     />
                 </div>
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">Proof</label>
+                    <label className="block text-gray-700 font-medium mb-1">UTR No.</label>
                     <input
                         type="text"
                         name="proofOfPayment"

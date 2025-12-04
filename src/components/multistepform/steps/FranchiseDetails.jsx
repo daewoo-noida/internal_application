@@ -15,22 +15,22 @@ export default function FranchiseDetails({ formData, setFormData, next }) {
         if (!formData.franchiseType)
             err.franchiseType = "Please select a franchise type";
 
-        // MF
+        // MASTER
         if (formData.franchiseType === "Master Franchise" && !formData.territory)
             err.territory = "Select a territory";
 
         // DDP
-        if (formData.franchiseType === "DDP Franchise") {
-            if (!formData.state) err.state = "State is required";
+        if (formData.franchiseType === "Daewoo District Partner Franchise") {
+            if (!formData.franchiseState) err.franchiseState = "State is required";
             if (!formData.territory) err.territory = "Select DDP territory";
         }
 
         // SIGNATURE
         if (formData.franchiseType === "Signature") {
-            if (!formData.state) err.state = "State is required";
-            if (!formData.district) err.district = "District is required";
-            if (!formData.city) err.city = "City is required";
-            if (!formData.pin) err.pin = "PIN is required";
+            if (!formData.franchiseState) err.franchiseState = "State is required";
+            if (!formData.franchiseDistrict) err.franchiseDistrict = "District is required";
+            if (!formData.franchiseCity) err.franchiseCity = "City is required";
+            if (!formData.franchisePin) err.franchisePin = "PIN is required";
         }
 
         setErrors(err);
@@ -41,7 +41,6 @@ export default function FranchiseDetails({ formData, setFormData, next }) {
         if (validate()) next();
     };
 
-    // ---------------- COMPONENT UI ----------------
     return (
         <div>
             <h2 className="text-2xl font-bold text-[#0070b9] mb-6">Franchise Details</h2>
@@ -58,18 +57,20 @@ export default function FranchiseDetails({ formData, setFormData, next }) {
                             setFormData({
                                 ...formData,
                                 franchiseType: e.target.value,
-                                state: "",
+
+                                // Reset dependent values
+                                franchiseState: "",
                                 territory: "",
-                                district: "",
-                                city: "",
-                                pin: "",
+                                franchiseDistrict: "",
+                                franchiseCity: "",
+                                franchisePin: "",
                             })
                         }
                         className="w-full border p-3 rounded-lg"
                     >
                         <option value="">Select</option>
                         <option value="Master Franchise">Master Franchise</option>
-                        <option value="DDP Franchise">Daewoo District Partner Franchise</option>
+                        <option value="Daewoo District Partner Franchise">Daewoo District Partner Franchise</option>
                         <option value="Signature">Signature Store</option>
                     </select>
                     {errors.franchiseType && (
@@ -100,18 +101,18 @@ export default function FranchiseDetails({ formData, setFormData, next }) {
                 )}
 
                 {/* ---------------- DDP FRANCHISE ---------------- */}
-                {formData.franchiseType === "DDP Franchise" && (
+                {formData.franchiseType === "Daewoo District Partner Franchise" && (
                     <>
                         {/* STATE */}
                         <div>
                             <label className="font-medium">State *</label>
                             <select
-                                name="state"
-                                value={formData.state}
+                                name="franchiseState"
+                                value={formData.franchiseState}
                                 onChange={(e) =>
                                     setFormData({
                                         ...formData,
-                                        state: e.target.value,
+                                        franchiseState: e.target.value,
                                         territory: "",
                                     })
                                 }
@@ -122,18 +123,18 @@ export default function FranchiseDetails({ formData, setFormData, next }) {
                                     <option key={s}>{s}</option>
                                 ))}
                             </select>
-                            {errors.state && (
-                                <p className="text-red-500 text-sm">{errors.state}</p>
+                            {errors.franchiseState && (
+                                <p className="text-red-500 text-sm">{errors.franchiseState}</p>
                             )}
                         </div>
 
-                        {/* TERRITORY (STATE BASED) */}
+                        {/* TERRITORY */}
                         <div className="md:col-span-2">
                             <label className="font-medium">Territory *</label>
                             <Select
                                 options={
-                                    formData.state
-                                        ? ddpTerritories[formData.state].map(t => ({
+                                    formData.franchiseState
+                                        ? (ddpTerritories[formData.franchiseState] || []).map(t => ({
                                             label: t,
                                             value: t
                                         }))
@@ -148,11 +149,11 @@ export default function FranchiseDetails({ formData, setFormData, next }) {
                                     setFormData({ ...formData, territory: selected.value })
                                 }
                                 placeholder={
-                                    formData.state
+                                    formData.franchiseState
                                         ? "Select DDP Territory"
                                         : "Select State First"
                                 }
-                                isDisabled={!formData.state}
+                                isDisabled={!formData.franchiseState}
                             />
                             {errors.territory && (
                                 <p className="text-red-500 text-sm">{errors.territory}</p>
@@ -168,13 +169,13 @@ export default function FranchiseDetails({ formData, setFormData, next }) {
                         <div>
                             <label className="font-medium">State *</label>
                             <select
-                                name="state"
-                                value={formData.state}
+                                name="franchiseState"
+                                value={formData.franchiseState}
                                 onChange={(e) =>
                                     setFormData({
                                         ...formData,
-                                        state: e.target.value,
-                                        district: "",
+                                        franchiseState: e.target.value,
+                                        franchiseDistrict: "",
                                     })
                                 }
                                 className="w-full border p-3 rounded-lg"
@@ -184,8 +185,8 @@ export default function FranchiseDetails({ formData, setFormData, next }) {
                                     <option key={s}>{s}</option>
                                 ))}
                             </select>
-                            {errors.state && (
-                                <p className="text-red-500 text-sm">{errors.state}</p>
+                            {errors.franchiseState && (
+                                <p className="text-red-500 text-sm">{errors.franchiseState}</p>
                             )}
                         </div>
 
@@ -193,22 +194,22 @@ export default function FranchiseDetails({ formData, setFormData, next }) {
                         <div>
                             <label className="font-medium">District *</label>
                             <select
-                                name="district"
-                                disabled={!formData.state}
-                                value={formData.district}
+                                name="franchiseDistrict"
+                                disabled={!formData.franchiseState}
+                                value={formData.franchiseDistrict}
                                 onChange={(e) =>
-                                    setFormData({ ...formData, district: e.target.value })
+                                    setFormData({ ...formData, franchiseDistrict: e.target.value })
                                 }
                                 className="w-full border p-3 rounded-lg"
                             >
                                 <option value="">Select District</option>
-                                {formData.state &&
-                                    stateDistricts[formData.state].map((d) => (
-                                        <option key={d}>{d}</option>
-                                    ))}
+
+                                {(stateDistricts[formData.franchiseState] || []).map((d) => (
+                                    <option key={d}>{d}</option>
+                                ))}
                             </select>
-                            {errors.district && (
-                                <p className="text-red-500 text-sm">{errors.district}</p>
+                            {errors.franchiseDistrict && (
+                                <p className="text-red-500 text-sm">{errors.franchiseDistrict}</p>
                             )}
                         </div>
 
@@ -216,16 +217,16 @@ export default function FranchiseDetails({ formData, setFormData, next }) {
                         <div>
                             <label className="font-medium">City *</label>
                             <input
-                                name="city"
-                                value={formData.city}
+                                name="franchiseCity"
+                                value={formData.franchiseCity}
                                 onChange={(e) =>
-                                    setFormData({ ...formData, city: e.target.value })
+                                    setFormData({ ...formData, franchiseCity: e.target.value })
                                 }
                                 className="w-full border p-3 rounded-lg"
                                 placeholder="Enter city"
                             />
-                            {errors.city && (
-                                <p className="text-red-500 text-sm">{errors.city}</p>
+                            {errors.franchiseCity && (
+                                <p className="text-red-500 text-sm">{errors.franchiseCity}</p>
                             )}
                         </div>
 
@@ -233,18 +234,18 @@ export default function FranchiseDetails({ formData, setFormData, next }) {
                         <div>
                             <label className="font-medium">PIN Code *</label>
                             <input
-                                name="pin"
-                                value={formData.pin}
+                                name="franchisePin"
+                                value={formData.franchisePin}
                                 onChange={(e) => {
                                     const value = e.target.value.replace(/\D/g, "");
                                     if (value.length <= 6)
-                                        setFormData({ ...formData, pin: value });
+                                        setFormData({ ...formData, franchisePin: value });
                                 }}
                                 className="w-full border p-3 rounded-lg"
                                 placeholder="PIN Code"
                             />
-                            {errors.pin && (
-                                <p className="text-red-500 text-sm">{errors.pin}</p>
+                            {errors.franchisePin && (
+                                <p className="text-red-500 text-sm">{errors.franchisePin}</p>
                             )}
                         </div>
                     </>

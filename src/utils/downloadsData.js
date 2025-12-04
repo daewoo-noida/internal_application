@@ -234,7 +234,7 @@ export const downloadsData = [
 
             {
                 id: "DDP_Franchise",
-                title: "DDP Franchise",
+                title: "Daewoo District Partner Franchise",
                 children: [
                     {
                         id: "commercialDeck",

@@ -1,18 +1,15 @@
 import React, { useState } from "react";
 
 export default function Step2Documents({ formData, setFormData, next, prev }) {
-
     const [errors, setErrors] = useState({});
 
     const validateStep = () => {
         let newErrors = {};
 
-        // Aadhaar must be exactly 2 images
         if (!formData.adharImages || formData.adharImages.length !== 2) {
             newErrors.adharImages = "Please upload 2 Aadhaar images (Front + Back)";
         }
 
-        // PAN required
         if (!formData.panImage) {
             newErrors.panImage = "PAN card is required";
         }
@@ -28,34 +25,34 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
     const handleFileChange = (e) => {
         const { name, files } = e.target;
 
-        // Aadhaar field (must be exactly 2)
         if (name === "adharImages") {
-            if (files.length > 2) {
-                setErrors({
-                    ...errors,
-                    adharImages: "You can upload maximum 2 Aadhaar images",
-                });
-                return;
-            }
-
             if (files.length !== 2) {
                 setErrors({
                     ...errors,
                     adharImages: "Please upload exactly 2 Aadhaar images",
                 });
-            } else {
-                setErrors({ ...errors, adharImages: "" });
+                return;
             }
+
+            setErrors({ ...errors, adharImages: "" });
 
             setFormData({
                 ...formData,
                 adharImages: Array.from(files),
             });
-
             return;
         }
 
-        // Other file fields
+        // NEW FIX — handle GST correctly
+        if (name === "gstFile") {
+            setFormData({
+                ...formData,
+                gstFile: files[0],
+            });
+            return;
+        }
+
+        // PAN, Company PAN etc
         if (files.length > 0) {
             setFormData({
                 ...formData,
@@ -76,101 +73,67 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
 
                 {/* AADHAAR */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                        Aadhaar Card *
-                    </label>
-
+                    <label className="block font-medium">Aadhaar Card *</label>
                     <input
                         type="file"
                         name="adharImages"
-                        accept="image/*"
                         multiple
+                        accept="image/*"
                         onChange={handleFileChange}
-                        className={`w-full border p-3 rounded-lg bg-white 
-                            ${errors.adharImages ? "border-red-500" : "border-gray-300 focus:border-[#0070b9]"}`}
+                        className={`w-full border p-3 rounded-lg ${errors.adharImages ? "border-red-500" : "border-gray-300"
+                            }`}
                     />
-
-                    {/* Aadhaar Error */}
                     {errors.adharImages && (
-                        <p className="text-red-500 text-sm mt-1">{errors.adharImages}</p>
-                    )}
-
-                    {/* Aadhaar Image Preview */}
-                    {formData.adharImages && formData.adharImages.length > 0 && (
-                        <div className="flex gap-4 mt-3">
-                            {Array.from(formData.adharImages).map((img, i) => (
-                                <img
-                                    key={i}
-                                    src={URL.createObjectURL(img)}
-                                    className="w-28 h-20 object-cover rounded border"
-                                    alt={`Aadhaar ${i + 1}`}
-                                />
-                            ))}
-                        </div>
+                        <p className="text-red-500 text-sm">{errors.adharImages}</p>
                     )}
                 </div>
 
                 {/* PAN */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                        PAN Card *
-                    </label>
+                    <label className="block font-medium">PAN Card *</label>
                     <input
                         type="file"
                         name="panImage"
                         accept="image/*"
                         onChange={handleFileChange}
-                        className={`w-full border p-3 rounded-lg bg-white 
-                            ${errors.panImage ? "border-red-500" : "border-gray-300 focus:border-[#0070b9]"}`}
+                        className={`w-full border p-3 rounded-lg ${errors.panImage ? "border-red-500" : "border-gray-300"
+                            }`}
                     />
-
                     {errors.panImage && (
-                        <p className="text-red-500 text-sm mt-1">{errors.panImage}</p>
+                        <p className="text-red-500 text-sm">{errors.panImage}</p>
                     )}
                 </div>
 
                 {/* COMPANY PAN */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                        Company PAN (Optional)
-                    </label>
+                    <label className="block font-medium">Company PAN (Optional)</label>
                     <input
                         type="file"
                         name="companyPanImage"
                         accept="image/*"
                         onChange={handleFileChange}
-                        className="w-full border border-gray-300 p-3 rounded-lg bg-white focus:border-[#0070b9]"
+                        className="w-full border p-3 rounded-lg border-gray-300"
                     />
                 </div>
 
-                {/* ADDRESS PROOF */}
+                {/* GST FIXED FIELD */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                        Address Proof (Optional)
-                    </label>
+                    <label className="block font-medium">GST (Optional)</label>
                     <input
                         type="file"
-                        name="addressProof"
+                        name="gstFile"
                         accept="image/*"
                         onChange={handleFileChange}
-                        className="w-full border border-gray-300 p-3 rounded-lg bg-white focus:border-[#0070b9]"
+                        className="w-full border p-3 rounded-lg border-gray-300"
                     />
                 </div>
             </div>
 
-            {/* BUTTONS */}
             <div className="flex justify-between mt-8">
-                <button
-                    onClick={prev}
-                    className="bg-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-400"
-                >
+                <button onClick={prev} className="bg-gray-300 px-6 py-3 rounded-xl">
                     ← Back
                 </button>
-
-                <button
-                    onClick={handleNext}
-                    className="bg-[#0070b9] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#005a94]"
-                >
+                <button onClick={handleNext} className="bg-[#0070b9] text-white px-6 py-3 rounded-xl">
                     Next →
                 </button>
             </div>

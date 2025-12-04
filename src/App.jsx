@@ -21,7 +21,6 @@ import AdminProtectedRoute from "./routes/AdminProtectedRoute.jsx";
 import SignupPage from "./task/SignupPage.jsx";
 import Contact_Us from "./pages/sales/Contact_Us.jsx";
 import Downloads from "./pages/sales/Downloads.jsx";
-import AddClient from "./pages/sales/booknow/BookNowForm.jsx";
 import SalesmanDetails from "./pages/admin/SalesmanDetails.jsx";
 import SalesTeam from "./pages/sales/SalesTeam.jsx";
 import BookNowMultiStepForm from "./components/multistepform/BookNowMultiStepForm.jsx";

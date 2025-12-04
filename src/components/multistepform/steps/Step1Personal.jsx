@@ -1,20 +1,15 @@
 import React, { useState } from "react";
-import { stateDistricts } from "../../../stateData/stateDistrictData";
+import { personalStateDistricts } from "../../../stateData/personalStateDistricts";
 
 export default function Step1Personal({ formData, setFormData, next, prev }) {
     const [errors, setErrors] = useState({});
 
-    // VALIDATION FUNCTION
     const validateStep = () => {
         let newErrors = {};
 
-        // NAME
         if (!formData.name) newErrors.name = "Name is required";
-
-        // EMAIL
         if (!formData.email) newErrors.email = "Email is required";
 
-        // PHONE
         if (!formData.phone) {
             newErrors.phone = "Phone is required";
         } else if (!/^\d+$/.test(formData.phone)) {
@@ -23,27 +18,12 @@ export default function Step1Personal({ formData, setFormData, next, prev }) {
             newErrors.phone = "Phone must be exactly 10 digits";
         }
 
-        // ALT PHONE (optional)
-        if (formData.altPhone) {
-            if (!/^\d+$/.test(formData.altPhone)) {
-                newErrors.altPhone = "Alternate phone must contain only numbers";
-            } else if (formData.altPhone.length !== 10) {
-                newErrors.altPhone = "Alternate phone must be 10 digits";
-            }
-        }
-
-        // ADDRESS VALIDATION
-        if (!formData.state) newErrors.state = "State is required";
-        if (!formData.district) newErrors.district = "District is required";
-        if (!formData.city) newErrors.city = "City is required";
-        if (!formData.pin) newErrors.pin = "PIN Code is required";
-        else if (!/^\d+$/.test(formData.pin))
-            newErrors.pin = "PIN must contain only numbers";
-        else if (formData.pin.length !== 6)
-            newErrors.pin = "PIN Code must be 6 digits";
-
-        if (!formData.streetAddress)
-            newErrors.streetAddress = "Street Address is required";
+        // Personal address validation
+        if (!formData.personalState) newErrors.personalState = "State is required";
+        if (!formData.personalDistrict) newErrors.personalDistrict = "District is required";
+        if (!formData.personalCity) newErrors.personalCity = "City is required";
+        if (!formData.personalStreetAddress) newErrors.personalStreetAddress = "Street Address is required";
+        if (!formData.personalPin) newErrors.personalPin = "PIN is required";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -56,25 +36,17 @@ export default function Step1Personal({ formData, setFormData, next, prev }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // Reset district when state changes
-        if (name === "state") {
+        if (name === "personalState") {
             setFormData({
                 ...formData,
-                state: value,
-                district: "",
+                personalState: value,
+                personalDistrict: "",
             });
-            return;
+        } else {
+            setFormData({ ...formData, [name]: value });
         }
 
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
-
-        setErrors({
-            ...errors,
-            [name]: "",
-        });
+        setErrors({ ...errors, [name]: "" });
     };
 
     return (
@@ -87,204 +59,150 @@ export default function Step1Personal({ formData, setFormData, next, prev }) {
 
                 {/* CLIENT NAME */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                        Client Name *
-                    </label>
+                    <label className="block font-medium">Client Name *</label>
                     <input
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className={`w-full border p-3 rounded-lg ${errors.name ? "border-red-500" : "border-gray-300"
-                            }`}
                         placeholder="Enter client name"
+                        className={`w-full border p-3 rounded-lg ${errors.name ? "border-red-500" : "border-gray-300"}`}
                     />
-                    {errors.name && (
-                        <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-                    )}
+                    {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
                 </div>
 
                 {/* EMAIL */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                        Email *
-                    </label>
+                    <label className="block font-medium">Email *</label>
                     <input
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className={`w-full border p-3 rounded-lg ${errors.email ? "border-red-500" : "border-gray-300"
-                            }`}
                         placeholder="Enter email"
+                        className={`w-full border p-3 rounded-lg ${errors.email ? "border-red-500" : "border-gray-300"}`}
                     />
-                    {errors.email && (
-                        <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                    )}
+                    {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
                 </div>
 
                 {/* PHONE */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                        Phone *
-                    </label>
+                    <label className="block font-medium">Phone *</label>
                     <input
                         name="phone"
                         value={formData.phone}
                         onChange={(e) => {
                             const value = e.target.value.replace(/\D/g, "");
-                            if (value.length <= 10)
-                                setFormData({ ...formData, phone: value });
+                            if (value.length <= 10) setFormData({ ...formData, phone: value });
                         }}
-                        className={`w-full border p-3 rounded-lg ${errors.phone ? "border-red-500" : "border-gray-300"
-                            }`}
                         placeholder="Phone number"
+                        className={`w-full border p-3 rounded-lg ${errors.phone ? "border-red-500" : "border-gray-300"}`}
                     />
-                    {errors.phone && (
-                        <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-                    )}
+                    {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
                 </div>
 
                 {/* ALT PHONE */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                        Alternate Phone
-                    </label>
+                    <label className="block font-medium">Alternate Phone</label>
                     <input
                         name="altPhone"
                         value={formData.altPhone}
                         onChange={(e) => {
                             const value = e.target.value.replace(/\D/g, "");
-                            if (value.length <= 10)
-                                setFormData({ ...formData, altPhone: value });
+                            if (value.length <= 10) setFormData({ ...formData, altPhone: value });
                         }}
-                        className={`w-full border p-3 rounded-lg ${errors.altPhone ? "border-red-500" : "border-gray-300"
-                            }`}
-                        placeholder="Alternate contact number"
+                        placeholder="Optional"
+                        className="w-full border p-3 rounded-lg border-gray-300"
                     />
-                    {errors.altPhone && (
-                        <p className="text-red-500 text-sm mt-1">{errors.altPhone}</p>
-                    )}
                 </div>
 
-                {/* STATE */}
+                {/* PERSONAL STATE */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                        State *
-                    </label>
+                    <label className="block font-medium">State *</label>
                     <select
-                        name="state"
-                        value={formData.state}
+                        name="personalState"
+                        value={formData.personalState}
                         onChange={handleChange}
-                        className={`w-full border p-3 rounded-lg ${errors.state ? "border-red-500" : "border-gray-300"
-                            }`}
+                        className={`w-full border p-3 rounded-lg ${errors.personalState ? "border-red-500" : "border-gray-300"}`}
                     >
                         <option value="">Select State</option>
-                        {Object.keys(stateDistricts).map((s) => (
-                            <option key={s}>{s}</option>
+                        {Object.keys(personalStateDistricts).map((state) => (
+                            <option key={state} value={state}>
+                                {state}
+                            </option>
                         ))}
                     </select>
-                    {errors.state && (
-                        <p className="text-red-500 text-sm mt-1">{errors.state}</p>
-                    )}
+                    {errors.personalState && <p className="text-red-500 text-sm">{errors.personalState}</p>}
                 </div>
 
-                {/* DISTRICT */}
+                {/* PERSONAL DISTRICT */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                        District *
-                    </label>
+                    <label className="block font-medium">District *</label>
                     <select
-                        name="district"
-                        disabled={!formData.state}
-                        value={formData.district}
+                        name="personalDistrict"
+                        value={formData.personalDistrict}
                         onChange={handleChange}
-                        className={`w-full border p-3 rounded-lg ${errors.district ? "border-red-500" : "border-gray-300"
-                            }`}
+                        disabled={!formData.personalState}
+                        className={`w-full border p-3 rounded-lg ${errors.personalDistrict ? "border-red-500" : "border-gray-300"}`}
                     >
                         <option value="">Select District</option>
-                        {formData.state &&
-                            stateDistricts[formData.state].map((d) => (
-                                <option key={d}>{d}</option>
+                        {formData.personalState &&
+                            personalStateDistricts[formData.personalState].map((d) => (
+                                <option key={d} value={d}>{d}</option>
                             ))}
                     </select>
-                    {errors.district && (
-                        <p className="text-red-500 text-sm mt-1">{errors.district}</p>
-                    )}
+                    {errors.personalDistrict && <p className="text-red-500 text-sm">{errors.personalDistrict}</p>}
                 </div>
 
-                {/* CITY */}
+                {/* PERSONAL CITY */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                        City *
-                    </label>
+                    <label className="block font-medium">City *</label>
                     <input
-                        name="city"
-                        value={formData.city}
+                        name="personalCity"
+                        value={formData.personalCity}
                         onChange={handleChange}
-                        className={`w-full border p-3 rounded-lg ${errors.city ? "border-red-500" : "border-gray-300"
-                            }`}
                         placeholder="City"
+                        className={`w-full border p-3 rounded-lg ${errors.personalCity ? "border-red-500" : "border-gray-300"}`}
                     />
-                    {errors.city && (
-                        <p className="text-red-500 text-sm mt-1">{errors.city}</p>
-                    )}
+                    {errors.personalCity && <p className="text-red-500 text-sm">{errors.personalCity}</p>}
                 </div>
 
-                {/* PIN */}
+                {/* PERSONAL PIN */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                        PIN Code *
-                    </label>
+                    <label className="block font-medium">PIN Code *</label>
                     <input
-                        name="pin"
-                        value={formData.pin}
+                        name="personalPin"
+                        value={formData.personalPin}
                         onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, "");
-                            if (value.length <= 6)
-                                setFormData({ ...formData, pin: value });
+                            const val = e.target.value.replace(/\D/g, "");
+                            if (val.length <= 6) setFormData({ ...formData, personalPin: val });
                         }}
-                        className={`w-full border p-3 rounded-lg ${errors.pin ? "border-red-500" : "border-gray-300"
-                            }`}
-                        placeholder="PIN Code"
+                        placeholder="6 digit PIN"
+                        className={`w-full border p-3 rounded-lg ${errors.personalPin ? "border-red-500" : "border-gray-300"}`}
                     />
-                    {errors.pin && (
-                        <p className="text-red-500 text-sm mt-1">{errors.pin}</p>
-                    )}
+                    {errors.personalPin && <p className="text-red-500 text-sm">{errors.personalPin}</p>}
                 </div>
 
                 {/* STREET ADDRESS */}
                 <div className="md:col-span-2">
-                    <label className="block text-gray-700 font-medium mb-1">
-                        Street Address *
-                    </label>
+                    <label className="block font-medium">Street Address *</label>
                     <input
-                        name="streetAddress"
-                        value={formData.streetAddress}
+                        name="personalStreetAddress"
+                        value={formData.personalStreetAddress}
                         onChange={handleChange}
-                        className={`w-full border p-3 rounded-lg ${errors.streetAddress ? "border-red-500" : "border-gray-300"
-                            }`}
                         placeholder="House No / Street / Area"
+                        className={`w-full border p-3 rounded-lg ${errors.personalStreetAddress ? "border-red-500" : "border-gray-300"}`}
                     />
-                    {errors.streetAddress && (
-                        <p className="text-red-500 text-sm mt-1">
-                            {errors.streetAddress}
-                        </p>
+                    {errors.personalStreetAddress && (
+                        <p className="text-red-500 text-sm">{errors.personalStreetAddress}</p>
                     )}
                 </div>
             </div>
 
-            {/* BUTTONS */}
             <div className="flex justify-between mt-8">
-                <button
-                    onClick={prev}
-                    className="bg-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-400"
-                >
+                <button onClick={prev} className="bg-gray-300 text-gray-700 px-6 py-3 rounded-xl">
                     ← Back
                 </button>
 
-                <button
-                    onClick={handleNext}
-                    className="bg-[#0070b9] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#005a94]"
-                >
+                <button onClick={handleNext} className="bg-[#0070b9] text-white px-6 py-3 rounded-xl">
                     Next →
                 </button>
             </div>

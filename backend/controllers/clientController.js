@@ -1,5 +1,11 @@
 const ClientMaster = require("../models/ClientMaster");
 
+
+const buildFileUrl = (req, filename) => {
+    return `${req.protocol}://${req.get("host")}/uploads/${filename}`;
+};
+
+
 /* ===========================================================
     GLOBAL FUNCTION → Recalculate ALL payment totals
 =========================================================== */
@@ -36,85 +42,91 @@ const recalcPayments = (client) => {
 exports.createClient = async (req, res) => {
     try {
         const body = req.body;
-        const files = req.files;
+        const files = req.files || [];
 
-        const designation = req.user.designation;
+        console.log("RECEIVED BODY:", body);
+        console.log("RECEIVED FILES:", files);
+
+        const userRole = req.user.designation?.toLowerCase();
+
         let bda = null,
             bde = null,
-            bdm = null;
-        bhead = null;
+            bdm = null,
+            bhead = null;
 
+        if (userRole === "bda") bda = req.user._id;
+        if (userRole === "bde") bde = req.user._id;
+        if (userRole === "bdm") bdm = req.user._id;
+        if (userRole === "bhead") bhead = req.user._id;
 
-        if (designation === "bhead") bhead = req.user._id;
+        // HANDLE ALL FILES
+        const extractFile = (field) => {
+            const f = files.find((x) => x.fieldname === field);
+            return f ? { filename: f.filename, path: f.path } : null;
+        };
 
-        if (designation === "bda") bda = req.user._id;
-        if (designation === "bde") bde = req.user._id;
-        if (designation === "bdm") bdm = req.user._id;
+        const adharImages = files
+            .filter((f) => f.fieldname === "adharImages")
+            .map((f) => ({ filename: f.filename, path: f.path }));
 
         const client = new ClientMaster({
+            // PERSONAL
             name: body.name,
             email: body.email,
             phone: body.phone,
             altPhone: body.altPhone,
+
+            personalState: body.personalState,
+            personalDistrict: body.personalDistrict,
+            personalCity: body.personalCity,
+            personalStreetAddress: body.personalStreetAddress,
+            personalPin: body.personalPin,
+
+            // FRANCHISE
             franchiseType: body.franchiseType,
+            franchiseState: body.franchiseState,
+            franchiseDistrict: body.franchiseDistrict,
+            franchiseCity: body.franchiseCity,
+            franchisePin: body.franchisePin,
             territory: body.territory,
-            country: "India",
-            state: body.state,
-            district: body.district,
-            city: body.city,
-            streetAddress: body.streetAddress,
-            pin: body.pin,
 
-            adharImages: (files?.adharImages || []).map((f) => ({
-                filename: f.filename,
-                path: f.path,
-            })),
+            // FILES
+            adharImages,
+            panImage: extractFile("panImage"),
+            companyPanImage: extractFile("companyPanImage"),
+            gstFile: extractFile("gst"),
+            gstNumber: body.gstNumber,
 
-            panImage: files?.panImage
-                ? { filename: files.panImage[0].filename, path: files.panImage[0].path }
-                : null,
-
-            companyPanImage: files?.companyPanImage
-                ? { filename: files.companyPanImage[0].filename, path: files.companyPanImage[0].path }
-                : null,
-
-            addressProof: files?.addressProof
-                ? { filename: files.addressProof[0].filename, path: files.addressProof[0].path }
-                : null,
-
-            gst: body.gst,
-
+            // OFFICE
             officeBranch: body.officeBranch,
-
             bda,
             bde,
             bdm,
             bhead,
             leadSource: body.leadSource,
-            tokenDate: body.tokenDate,
 
+            // PAYMENT
             dealAmount: Number(body.dealAmount),
             tokenReceivedAmount: Number(body.tokenReceivedAmount),
-
+            tokenDate: body.tokenDate,
             modeOfPayment: body.modeOfPayment,
-            proofOfPayment: body.proofOfPayment,
-            additionalCommitment: body.additionalCommitment,
-            remark: body.remark,
+            proofOfPayment: extractFile("proofOfPayment"),
 
+            remark: body.remark,
             createdBy: req.user._id,
         });
 
-        // APPLY GLOBAL PAYMENT RECALCULATION
         recalcPayments(client);
-
         await client.save();
 
-        res.status(201).json({ success: true, message: "Client created", client });
+        res.status(201).json({ success: true, client });
     } catch (err) {
-        console.log(err);
-        res.status(500).json({ success: false, message: "Server error", error: err });
+        console.error("Create client error:", err);
+        res.status(500).json({ success: false, error: err });
     }
 };
+
+
 
 /* ===========================================================
     GET ALL CLIENTS (ADMIN OR SALESMAN)
@@ -172,7 +184,6 @@ exports.getClientById = async (req, res) => {
 exports.addPayment = async (req, res) => {
     try {
         const client = await ClientMaster.findById(req.params.id);
-
         if (!client)
             return res.status(404).json({ success: false, message: "Client not found" });
 
@@ -182,25 +193,30 @@ exports.addPayment = async (req, res) => {
             mode: req.body.mode,
             transactionId: req.body.transactionId,
             status: "pending",
-            proof: req.file ? { filename: req.file.filename, path: req.file.path } : null,
+            proof: req.file
+                ? { filename: req.file.filename, path: buildFileUrl(req, req.file.filename) }
+                : null,
             createdAt: new Date(),
         };
 
         client.secondPayments.push(payment);
 
-        recalcPayments(client); // pending doesn't affect totals
+        recalcPayments(client);
         await client.save();
 
         res.json({ success: true, message: "Payment submitted for approval", client });
+
     } catch (err) {
         console.log(err);
         res.status(500).json({ success: false, message: "Server error" });
     }
 };
 
+
 /* ===========================================================
     ADMIN: APPROVE PAYMENT
 =========================================================== */
+
 exports.approveSecondPayment = async (req, res) => {
     try {
         const { clientId, paymentId } = req.params;
@@ -270,24 +286,29 @@ exports.updateClient = async (req, res) => {
         if (!client)
             return res.status(404).json({ success: false, message: "Client not found" });
 
-        // Update all fields from req.body
-        Object.keys(req.body).forEach((key) => {
-            client[key] = req.body[key];
+        const allowedFields = [
+            "name", "email", "phone", "altPhone",
+            "personalState", "personalDistrict", "personalCity", "personalStreetAddress", "personalPin",
+            "franchiseType", "franchiseState", "franchiseDistrict", "franchiseCity", "franchisePin",
+            "territory",
+            "dealAmount", "tokenReceivedAmount", "modeOfPayment", "proofOfPayment", "tokenDate",
+            "leadSource", "officeBranch", "gst", "remark"
+        ];
+
+        allowedFields.forEach(field => {
+            if (req.body[field] !== undefined) {
+                client[field] = req.body[field];
+            }
         });
 
-        // Recalculate payment totals
         recalcPayments(client);
-
         await client.save();
 
-        res.json({
-            success: true,
-            message: "Client updated successfully",
-            client
-        });
+        res.json({ success: true, message: "Client updated successfully", client });
 
     } catch (err) {
         console.log("Update client error:", err);
-        res.status(500).json({ success: false, message: "Server Error", err });
+        res.status(500).json({ success: false, message: "Server error", err });
     }
 };
+

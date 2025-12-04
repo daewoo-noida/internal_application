@@ -136,7 +136,7 @@ exports.getPendingDocuments = async (req, res) => {
             missingAadhar: c.adharImages.length < 2,
             missingPan: !c.panImage,
             missingGST: !c.gst,
-            missingAddressProof: !c.addressProof,
+            missingGst: !c.gst,
             createdAt: c.createdAt
         }));
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { clientAPI } from "../../utils/api";
 
 export default function SalesClientDetails() {
@@ -49,18 +49,46 @@ export default function SalesClientDetails() {
             {/* MAIN DETAILS CARD */}
             <div className="bg-white shadow-xl border rounded-xl p-6">
 
+                {/* FRANCHISE DETAILS */}
+                <Section title="Franchise Details">
+
+                    {info("Franchise Type", client.franchiseType)}
+
+                    {client.franchiseType === "Master Franchise" && (
+                        <>
+                            {info("Territory", client.territory)}
+                        </>
+                    )}
+
+                    {client.franchiseType === "Daewoo District Partner Franchise" && (
+                        <>
+                            {info("State", client.franchiseState)}
+                            {info("DDP Territory", client.territory)}
+                        </>
+                    )}
+
+                    {client.franchiseType === "Signature" && (
+                        <>
+                            {info("State", client.franchiseState)}
+                            {info("District", client.franchiseDistrict)}
+                            {info("City", client.franchiseCity)}
+                            {info("PIN Code", client.franchisePin)}
+                        </>
+                    )}
+
+                </Section>
+
                 {/* PERSONAL INFORMATION */}
                 <Section title="Personal Information">
                     {info("Name", client.name)}
                     {info("Email", client.email)}
                     {info("Phone", client.phone)}
                     {info("Alternate Phone", client.altPhone)}
-                    {info("Territory", client.territory)}
-                    {info("State", client.state)}
-                    {info("District", client.district)}
-                    {info("City", client.city)}
-                    {info("Street Address", client.streetAddress)}
-                    {info("PIN Code", client.pin)}
+                    {info("State", client.persionalState)}
+                    {info("District", client.personalDistrict)}
+                    {info("City", client.personalCity)}
+                    {info("Street Address", client.personalStreetAddress)}
+                    {info("PIN Code", client.personalPin)}
                 </Section>
 
                 {/* DOCUMENTS */}
@@ -121,7 +149,6 @@ export default function SalesClientDetails() {
                                                 <td className="p-3">{p.mode}</td>
                                                 <td className="p-3">{p.transactionId || "--"}</td>
 
-                                                {/* PROOF */}
                                                 <td className="p-3">
                                                     {proofURL ? (
                                                         <img
@@ -137,7 +164,6 @@ export default function SalesClientDetails() {
                                                     )}
                                                 </td>
 
-                                                {/* STATUS */}
                                                 <td className="p-3 font-medium">
                                                     {p.status === "approved" && (
                                                         <span className="bg-green-200 text-green-800 px-3 py-1 rounded">Approved</span>
@@ -196,7 +222,7 @@ export default function SalesClientDetails() {
     );
 }
 
-/* ---------------- Helper Components ---------------- */
+/* Helper Components */
 
 const info = (label, value) => (
     <div className="grid grid-cols-3 py-2 border-b">
@@ -227,7 +253,6 @@ function FileRow({ label, file, files, setPreviewImage, setShowPreview }) {
             <div className="font-medium text-gray-600">{label}</div>
 
             <div className="mt-2 flex gap-3 flex-wrap">
-                {/* MULTIPLE FILES */}
                 {files &&
                     files.map((f, i) => (
                         <img
@@ -241,7 +266,6 @@ function FileRow({ label, file, files, setPreviewImage, setShowPreview }) {
                         />
                     ))}
 
-                {/* SINGLE FILE */}
                 {file && (
                     <img
                         src={clean(file.path)}

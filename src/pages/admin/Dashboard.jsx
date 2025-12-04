@@ -153,7 +153,7 @@ export default function AdminDashboard() {
                   <td className="px-6 py-4">{c.missingAadhar ? "❌ Missing" : "✅ OK"}</td>
                   <td className="px-6 py-4">{c.missingPan ? "❌ Missing" : "✅ OK"}</td>
                   <td className="px-6 py-4">{c.missingGST ? "❌ Missing" : "✅ OK"}</td>
-                  <td className="px-6 py-4">{c.missingAddressProof ? "❌ Missing" : "✅ OK"}</td>
+                  <td className="px-6 py-4">{c.missingGst ? "❌ Missing" : "✅ OK"}</td>
                 </tr>
               ))}
             </tbody>

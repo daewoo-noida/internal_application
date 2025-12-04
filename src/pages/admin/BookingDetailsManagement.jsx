@@ -5,7 +5,7 @@ const BookingDetailsManagement = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('personal-info');
-  
+
   // Extended booking data with all required fields
   const bookingsData = {
     1: {
@@ -51,7 +51,7 @@ const BookingDetailsManagement = () => {
         panCard: { uploaded: true, status: 'Pending', file: 'pan_card.jpg' },
         companyPAN: { uploaded: true, status: 'Pending', file: 'company_pan.jpg' },
         gstNumber: { uploaded: false, status: '', file: null },
-        addressProof: { uploaded: false, status: 'Pending', file: null },
+        gst: { uploaded: false, status: 'Pending', file: null },
         attachedImage: { uploaded: false, status: 'Pending', file: null }
       }
     },
@@ -94,7 +94,7 @@ const BookingDetailsManagement = () => {
         panCard: { uploaded: false, status: 'Pending', file: null },
         companyPAN: { uploaded: false, status: 'Pending', file: null },
         gstNumber: { uploaded: false, status: '', file: null },
-        addressProof: { uploaded: false, status: 'Pending', file: null },
+        gst: { uploaded: false, status: 'Pending', file: null },
         attachedImage: { uploaded: false, status: 'Pending', file: null }
       }
     },
@@ -137,7 +137,7 @@ const BookingDetailsManagement = () => {
         panCard: { uploaded: true, status: 'Approved', file: 'pan_card.jpg' },
         companyPAN: { uploaded: true, status: 'Approved', file: 'company_pan.jpg' },
         gstNumber: { uploaded: true, status: 'Approved', file: 'gst.jpg' },
-        addressProof: { uploaded: true, status: 'Approved', file: 'address_proof.jpg' },
+        gst: { uploaded: true, status: 'Approved', file: 'address_proof.jpg' },
         attachedImage: { uploaded: false, status: 'Pending', file: null }
       }
     },
@@ -180,7 +180,7 @@ const BookingDetailsManagement = () => {
         panCard: { uploaded: false, status: 'Pending', file: null },
         companyPAN: { uploaded: false, status: 'Pending', file: null },
         gstNumber: { uploaded: false, status: '', file: null },
-        addressProof: { uploaded: false, status: 'Pending', file: null },
+        gst: { uploaded: false, status: 'Pending', file: null },
         attachedImage: { uploaded: false, status: 'Pending', file: null }
       }
     },
@@ -223,7 +223,7 @@ const BookingDetailsManagement = () => {
         panCard: { uploaded: true, status: 'Pending', file: 'pan_card.jpg' },
         companyPAN: { uploaded: true, status: 'Pending', file: 'company_pan.jpg' },
         gstNumber: { uploaded: false, status: '', file: null },
-        addressProof: { uploaded: false, status: 'Pending', file: null },
+        gst: { uploaded: false, status: 'Pending', file: null },
         attachedImage: { uploaded: false, status: 'Pending', file: null }
       }
     },
@@ -266,7 +266,7 @@ const BookingDetailsManagement = () => {
         panCard: { uploaded: false, status: 'Pending', file: null },
         companyPAN: { uploaded: false, status: 'Pending', file: null },
         gstNumber: { uploaded: false, status: '', file: null },
-        addressProof: { uploaded: false, status: 'Pending', file: null },
+        gst: { uploaded: false, status: 'Pending', file: null },
         attachedImage: { uploaded: false, status: 'Pending', file: null }
       }
     },
@@ -309,7 +309,7 @@ const BookingDetailsManagement = () => {
         panCard: { uploaded: true, status: 'Approved', file: 'pan_card.jpg' },
         companyPAN: { uploaded: true, status: 'Approved', file: 'company_pan.jpg' },
         gstNumber: { uploaded: true, status: 'Approved', file: 'gst.jpg' },
-        addressProof: { uploaded: true, status: 'Approved', file: 'address_proof.jpg' },
+        gst: { uploaded: true, status: 'Approved', file: 'address_proof.jpg' },
         attachedImage: { uploaded: true, status: 'Approved', file: 'attached_image.jpg' }
       }
     }
@@ -409,7 +409,7 @@ const BookingDetailsManagement = () => {
           <i className="bi bi-arrow-left me-2"></i>Back to List
         </button>
         <h1 className="page-title mb-2">Booking Details - {booking.fullName || booking.customer}</h1>
-        
+
         {/* Tabs */}
         <div className="booking-details-tabs">
           <button
@@ -500,7 +500,7 @@ const BookingDetailsManagement = () => {
             {/* Overall Payment Info */}
             <div className="card mb-3">
               <div className="card-body position-relative">
-                <button 
+                <button
                   className="btn btn-secondary position-absolute top-0 end-0 m-3"
                   onClick={handleMarkAsBooked}
                   style={{ top: '10px', right: '10px' }}
@@ -802,18 +802,18 @@ const BookingDetailsManagement = () => {
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <h6 className="mb-0">Address Proof</h6>
-                    {documentStatuses.addressProof?.status && (
-                      <span className={`badge ${documentStatuses.addressProof.status === 'Approved' ? 'badge-success' : 'badge-warning'}`}>
-                        {documentStatuses.addressProof.status}
+                    {documentStatuses.gst?.status && (
+                      <span className={`badge ${documentStatuses.gst.status === 'Approved' ? 'badge-success' : 'badge-warning'}`}>
+                        {documentStatuses.gst.status}
                       </span>
                     )}
                   </div>
-                  {documentStatuses.addressProof?.uploaded ? (
-                    <div className="text-muted mb-3">File: {documentStatuses.addressProof.file}</div>
+                  {documentStatuses.gst?.uploaded ? (
+                    <div className="text-muted mb-3">File: {documentStatuses.gst.file}</div>
                   ) : (
                     <div className="text-muted mb-3">No file uploaded.</div>
                   )}
-                  <button className="btn btn-secondary btn-sm" onClick={() => handleDocumentUpload('addressProof')}>
+                  <button className="btn btn-secondary btn-sm" onClick={() => handleDocumentUpload('gst')}>
                     Upload
                   </button>
                 </div>

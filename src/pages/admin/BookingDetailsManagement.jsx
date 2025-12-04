@@ -801,7 +801,7 @@ const BookingDetailsManagement = () => {
               <div className="card mb-3">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h6 className="mb-0">Address Proof</h6>
+                    <h6 className="mb-0">GST</h6>
                     {documentStatuses.gstFile?.status && (
                       <span className={`badge ${documentStatuses.gstFile.status === 'Approved' ? 'badge-success' : 'badge-warning'}`}>
                         {documentStatuses.gstFile.status}

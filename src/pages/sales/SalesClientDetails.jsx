@@ -96,7 +96,7 @@ export default function SalesClientDetails() {
                     <FileRow label="Aadhaar Card" files={client.adharImages} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
                     <FileRow label="PAN Card" file={client.panImage} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
                     <FileRow label="Company PAN" file={client.companyPanImage} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
-                    <FileRow label="Address Proof" file={client.addressProof} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
+                    <FileRow label="GST" file={client.gstFile} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
                 </Section>
 
                 {/* PAYMENT SUMMARY */}

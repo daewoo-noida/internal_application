@@ -142,7 +142,6 @@ export default function AdminDashboard() {
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600">Aadhar</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600">PAN</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600">GST</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600">Address Proof</th>
               </tr>
             </thead>
 

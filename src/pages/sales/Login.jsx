@@ -125,7 +125,7 @@ export default function Login() {
             {/* EMAIL SPLIT */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Corporate Email
+                Email
               </label>
 
               <div className="flex gap-2">
@@ -154,6 +154,7 @@ export default function Login() {
                   <option value="@theebg.com">@theebg.com</option>
                   <option value="@daewooappliances.in">@daewooappliances.in</option>
                   <option value="@ebikego.in">@ebikego.in</option>
+                  <option value="@franchiseworld.com">@franchiseworld.com</option>
                 </select>
               </div>
 

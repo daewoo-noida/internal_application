@@ -55,7 +55,7 @@ const SignupPage = () => {
         }
 
         // Email validation
-        const allowedDomains = ["@theebg.com", "@daewooappliances.in", "@ebikego.in"];
+        const allowedDomains = ["@theebg.com", "@daewooappliances.in", "@ebikego.in", "@franchiseworld.com"];
         if (!allowedDomains.some((d) => finalEmail.endsWith(d))) {
             setErrors({ email: "Please select a valid company domain." });
             return;
@@ -299,6 +299,7 @@ const SignupPage = () => {
                                         <option value="@theebg.com">@theebg.com</option>
                                         <option value="@daewooappliances.in">@daewooappliances.in</option>
                                         <option value="@ebikego.in">@ebikego.in</option>
+                                        <option value="@franchiseworld.com">@franchiseworld.com</option>
                                     </select>
                                 </div>
 

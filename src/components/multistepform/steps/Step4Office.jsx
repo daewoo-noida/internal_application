@@ -4,13 +4,11 @@ import axios from "axios";
 export default function Step4Office({ formData, setFormData, next, prev }) {
     const API_URL = import.meta.env.VITE_API_URL;
 
-    const user = JSON.parse(localStorage.getItem("userData"));
-    const role = user?.designation?.toLowerCase();
-
     const [errors, setErrors] = useState({});
     const [bdaList, setBdaList] = useState([]);
     const [bdeList, setBdeList] = useState([]);
     const [bdmList, setBdmList] = useState([]);
+    const [bheadList, setBheadList] = useState([]); // ⭐ ADDED BHEAD
 
     // Input fields for custom values
     const [customOffice, setCustomOffice] = useState("");
@@ -31,6 +29,7 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                 setBdaList(users.filter((u) => u.designation?.toLowerCase() === "bda"));
                 setBdeList(users.filter((u) => u.designation?.toLowerCase() === "bde"));
                 setBdmList(users.filter((u) => u.designation?.toLowerCase() === "bdm"));
+                setBheadList(users.filter((u) => u.designation?.toLowerCase() === "bhead")); // ⭐ ADDED
             } catch (error) {
                 console.error("User fetch error", error);
             }
@@ -53,27 +52,13 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
 
         // Lead source required
         if (!formData.leadSource) newErrors.leadSource = "Lead Source is required";
-
+        if (!formData.bda) newErrors.bda = "BDA is required";
+        if (!formData.bde) newErrors.bde = "BDE is required";
+        if (!formData.bdm) newErrors.bdm = "BDM is required";
+        if (!formData.bhead) newErrors.bhead = "Business Head is required";
         // Validate custom lead source
         if (formData.leadSource === "other" && !customLeadSource.trim()) {
             newErrors.customLeadSource = "Please enter lead source";
-        }
-
-        // Role based validation
-        if (role === "bdm") {
-            if (!formData.bda) newErrors.bda = "Select BDA";
-            if (!formData.bde) newErrors.bde = "Select BDE";
-        }
-
-        if (role === "bde") {
-            if (!formData.bda) newErrors.bda = "Select BDA";
-            if (!formData.bdm) newErrors.bdm = "Select BDM";
-        }
-
-        if (role === "bhead") {
-            if (!formData.bda) newErrors.bda = "Select BDA";
-            if (!formData.bde) newErrors.bede = "Select BDE";
-            if (!formData.bdm) newErrors.bdm = "Select BDM";
         }
 
         setErrors(newErrors);
@@ -84,7 +69,7 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
     const handleNext = () => {
         let updatedData = { ...formData };
 
-        // If office = Others → Replace with custom value
+
         if (formData.officeBranch === "Others") {
             updatedData.officeBranch = customOffice;
         }
@@ -107,7 +92,9 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                 ? bdaList
                 : name === "bde"
                     ? bdeList
-                    : bdmList;
+                    : name === "bdm"
+                        ? bdmList
+                        : bheadList; // ⭐ ADDED BHEAD
 
         const userName = list.find((u) => u._id === id)?.name || "";
 
@@ -179,111 +166,79 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                     </div>
                 )}
 
-                {/* ===================== BDM LOGIN ===================== */}
-                {role === "bdm" && (
-                    <>
-                        {/* Select BDA */}
-                        <div>
-                            <label className="block text-gray-700 font-medium mb-1">Select BDA *</label>
-                            <select
-                                value={formData.bda}
-                                onChange={(e) => handleSelect(e, "bda")}
-                                className={`w-full border p-3 rounded-lg ${errors.bda ? "border-red-500" : "border-gray-300"}`}
-                            >
-                                <option value="">Select BDA</option>
-                                {bdaList.map((bda) => (
-                                    <option key={bda._id} value={bda._id}>{bda.name}</option>
-                                ))}
-                            </select>
-                            {errors.bda && <p className="text-red-500 text-sm">{errors.bda}</p>}
-                        </div>
+                {/* ⭐ ALL DROPDOWNS - VISIBLE TO EVERYONE */}
 
-                        {/* Select BDE */}
-                        <div>
-                            <label className="block text-gray-700 font-medium mb-1">Select BDE *</label>
-                            <select
-                                value={formData.bde}
-                                onChange={(e) => handleSelect(e, "bde")}
-                                className={`w-full border p-3 rounded-lg ${errors.bde ? "border-red-500" : "border-gray-300"}`}
-                            >
-                                <option value="">Select BDE</option>
-                                {bdeList.map((bde) => (
-                                    <option key={bde._id} value={bde._id}>{bde.name}</option>
-                                ))}
-                            </select>
-                            {errors.bde && <p className="text-red-500 text-sm">{errors.bde}</p>}
-                        </div>
+                {/* Select BDA */}
+                <div>
+                    <label className="block text-gray-700 font-medium mb-1">Select BDA</label>
+                    <select
+                        value={formData.bda || ""}
+                        onChange={(e) => handleSelect(e, "bda")}
+                        className="w-full border p-3 rounded-lg border-gray-300"
+                    >
+                        <option value="">Select BDA</option>
+                        {bdaList.map((bda) => (
+                            <option key={bda._id} value={bda._id}>{bda.name}</option>
+                        ))}
+                    </select>
+                    {errors.bda && (
+                        <p className="text-red-500 text-sm">{errors.bda}</p>
+                    )}
+                </div>
 
-                        {/* BDM Name */}
-                        <div>
-                            <label className="block text-gray-700 font-medium mb-1">BDM Name</label>
-                            <input
-                                disabled
-                                value={user.name}
-                                className="w-full border bg-gray-100 p-3 rounded-lg"
-                            />
-                        </div>
-                    </>
-                )}
+                {/* Select BDE */}
+                <div>
+                    <label className="block text-gray-700 font-medium mb-1">Select BDE</label>
+                    <select
+                        value={formData.bde || ""}
+                        onChange={(e) => handleSelect(e, "bde")}
+                        className="w-full border p-3 rounded-lg border-gray-300"
+                    >
+                        <option value="">Select BDE</option>
+                        {bdeList.map((bde) => (
+                            <option key={bde._id} value={bde._id}>{bde.name}</option>
+                        ))}
+                    </select>
+                    {errors.bde && (
+                        <p className="text-red-500 text-sm">{errors.bde}</p>
+                    )}
+                </div>
 
-                {/* ===================== BDE LOGIN ===================== */}
-                {role === "bde" && (
-                    <>
-                        {/* Select BDA */}
-                        <div>
-                            <label className="block text-gray-700 font-medium mb-1">Select BDA *</label>
-                            <select
-                                value={formData.bda}
-                                onChange={(e) => handleSelect(e, "bda")}
-                                className={`w-full border p-3 rounded-lg ${errors.bda ? "border-red-500" : "border-gray-300"}`}
-                            >
-                                <option value="">Select BDA</option>
-                                {bdaList.map((bda) => (
-                                    <option key={bda._id} value={bda._id}>{bda.name}</option>
-                                ))}
-                            </select>
-                            {errors.bda && <p className="text-red-500 text-sm">{errors.bda}</p>}
-                        </div>
+                {/* Select BDM */}
+                <div>
+                    <label className="block text-gray-700 font-medium mb-1">Select BDM</label>
+                    <select
+                        value={formData.bdm || ""}
+                        onChange={(e) => handleSelect(e, "bdm")}
+                        className="w-full border p-3 rounded-lg border-gray-300"
+                    >
+                        <option value="">Select BDM</option>
+                        {bdmList.map((bdm) => (
+                            <option key={bdm._id} value={bdm._id}>{bdm.name}</option>
+                        ))}
+                    </select>
+                    {errors.bdm && (
+                        <p className="text-red-500 text-sm">{errors.bdm}</p>
+                    )}
+                </div>
 
-                        {/* BDE Name */}
-                        <div>
-                            <label className="block text-gray-700 font-medium mb-1">Your BDE Name</label>
-                            <input
-                                disabled
-                                value={user.name}
-                                className="w-full border bg-gray-100 p-3 rounded-lg"
-                            />
-                        </div>
-
-                        {/* Select BDM */}
-                        <div>
-                            <label className="block text-gray-700 font-medium mb-1">Select BDM *</label>
-                            <select
-                                value={formData.bdm}
-                                onChange={(e) => handleSelect(e, "bdm")}
-                                className={`w-full border p-3 rounded-lg ${errors.bdm ? "border-red-500" : "border-gray-300"}`}
-                            >
-                                <option value="">Select BDM</option>
-                                {bdmList.map((bdm) => (
-                                    <option key={bdm._id} value={bdm._id}>{bdm.name}</option>
-                                ))}
-                            </select>
-                            {errors.bdm && <p className="text-red-500 text-sm">{errors.bdm}</p>}
-                        </div>
-                    </>
-                )}
-
-                {/* ===================== BDA LOGIN ===================== */}
-                {role === "bda" && (
-                    <div className="col-span-2">
-                        <label className="block text-gray-700 font-medium mb-1">Your BDA Name</label>
-                        <input
-                            disabled
-                            value={user.name}
-                            className="w-full border bg-gray-100 p-3 rounded-lg"
-                        />
-                    </div>
-                )}
+                {/* ⭐ NEW: Select BHead */}
+                <div>
+                    <label className="block text-gray-700 font-medium mb-1">Select Bussiness Head</label>
+                    <select
+                        value={formData.bhead || ""}
+                        onChange={(e) => handleSelect(e, "bhead")}
+                        className="w-full border p-3 rounded-lg border-gray-300"
+                    >
+                        <option value="">Select Bussiness Head</option>
+                        {bheadList.map((bhead) => (
+                            <option key={bhead._id} value={bhead._id}>{bhead.name}</option>
+                        ))}
+                    </select>
+                    {errors.bhead && (
+                        <p className="text-red-500 text-sm">{errors.bhead}</p>
+                    )}
+                </div>
 
                 {/* ============ LEAD SOURCE ============ */}
                 <div className="col-span-2">
@@ -327,9 +282,6 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                         )}
                     </div>
                 )}
-
-                {/* GST */}
-
 
                 {/* REMARK */}
                 <div className="col-span-2">

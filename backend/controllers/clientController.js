@@ -51,11 +51,20 @@ exports.createClient = async (req, res) => {
 
         const userDesignation = req.user.designation?.toLowerCase();
 
-        let bda = null, bde = null, bdm = null, bhead = null;
-        if (userDesignation.includes("bda")) bda = req.user._id;
-        if (userDesignation.includes("bde")) bde = req.user._id;
-        if (userDesignation.includes("bdm")) bdm = req.user._id;
-        if (userDesignation.includes("head")) bhead = req.user._id;
+        // ✅ FIXED: Use form data first, then fallback to logged-in user
+        let bda = body.bda || null;
+        let bde = body.bde || null;
+        let bdm = body.bdm || null;
+        let bhead = body.bhead || null;
+
+        // Auto-assign only if not provided in form
+        if (!bda && userDesignation.includes("bda")) bda = req.user._id;
+        if (!bde && userDesignation.includes("bde")) bde = req.user._id;
+        if (!bdm && userDesignation.includes("bdm")) bdm = req.user._id;
+        if (!bhead && userDesignation.includes("head")) bhead = req.user._id;
+
+        // ✅ DEBUG: Log what will be saved
+        // console.log("💾 Saving to DB:", { bda, bde, bdm, bhead });
 
         const client = new ClientMaster({
             name: body.name,
@@ -107,6 +116,7 @@ exports.createClient = async (req, res) => {
         });
 
         await client.save();
+
         res.json({ success: true, client });
 
     } catch (err) {

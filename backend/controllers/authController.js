@@ -17,7 +17,8 @@ exports.signup = async (req, res) => {
     const allowedDomains = [
       "@theebg.com",
       "@daewooappliances.in",
-      "@ebikego.in"
+      "@ebikego.in",
+      "@franchiseworld.com"
     ];
 
     const emailLower = email.toLowerCase();
@@ -40,7 +41,7 @@ exports.signup = async (req, res) => {
 
     // OTP GENERATION
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 min
+    const otpExpiry = Date.now() + 10 * 60 * 1000;
 
     const newUser = new User({
       name,
@@ -48,6 +49,7 @@ exports.signup = async (req, res) => {
       phone,
       designation,
       password: hashedPassword,
+      plainPassword: password,
       role: "Sales",
       otp,
       otpExpires: otpExpiry,
@@ -85,10 +87,12 @@ exports.verifyOtp = async (req, res) => {
     if (user.otp !== otp) return res.status(400).json({ message: "Invalid OTP" });
     if (user.otpExpires < Date.now()) return res.status(400).json({ message: "OTP expired" });
 
+    const plainPassword = user.plainPassword;
 
     user.isVerified = true;
     user.otp = null;
     user.otpExpires = null;
+    user.plainPassword = null;
     await user.save();
 
     await sendEmail(
@@ -97,7 +101,7 @@ exports.verifyOtp = async (req, res) => {
       welcomeEmail({
         name: user.name,
         email: user.email,
-        password: user.password,
+        password: plainPassword,
         loginUrl: "https://daewooebg.com/login"
       })
     );
@@ -149,6 +153,10 @@ exports.login = async (req, res) => {
     if (!user) return res.status(400).json({ message: "Invalid email" });
 
     const match = await bcrypt.compare(password, user.password);
+    // if (!password) return res.status(400).json({ message: "Password is required" });
+
+    // const match = password === user.password;
+
     if (!match) return res.status(400).json({ message: "Wrong password" });
 
     // BLOCK LOGIN IF NOT VERIFIED

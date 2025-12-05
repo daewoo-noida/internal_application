@@ -1,25 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { User, ChevronDown, Menu } from "lucide-react";
+import { authAPI } from "../utils/api";
 
 export const Header = () => {
     const [user, setUser] = useState(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
-
+    const [userProfile, setUserProfile] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
 
     // Load logged user
     useEffect(() => {
         const stored = localStorage.getItem("userData");
+        // const userName = 
         if (stored) setUser(JSON.parse(stored));
     }, []);
+
+    const loadUser = async () => {
+        const userData = await authAPI.profile();
+        // console.log('user data', userData.data.user.name);
+        setUserProfile(userData.data.user.name);
+    }
+
+    // useEffect(() => {
+    //     loadUser();
+    // }, []);
 
     const logout = () => {
         localStorage.clear();
         navigate("/login");
     };
+
+    // console.log("Header User:", user);
 
     if (!user) return null;
 
@@ -84,7 +98,7 @@ export const Header = () => {
                             className="hidden md:flex items-center gap-2 px-3 py-2 rounded-full bg-white shadow hover:bg-gray-100 transition"
                         >
                             <User size={20} className="text-gray-600" />
-                            <span className="font-medium text-gray-800">{user?.name}</span>
+                            <span className="font-medium text-gray-800">{user.name}</span>
                             <ChevronDown size={16} className="text-gray-500" />
                         </button>
 

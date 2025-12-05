@@ -143,7 +143,7 @@ export default function AdminDashboard() {
             {/* ---------- SALESMEN LIST ---------- */}
             <div className="bg-white shadow rounded-xl p-6">
                 <h2 className="text-xl font-semibold mb-4" style={{ color: primary }}>
-                    Sales Team Overview
+                    Users Overview
                 </h2>
 
                 <div className="overflow-x-auto">

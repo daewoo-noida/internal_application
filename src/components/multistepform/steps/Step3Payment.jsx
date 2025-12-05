@@ -28,6 +28,8 @@ export default function Step3Payment({ formData, setFormData, next, prev }) {
         if (!formData.dealAmount) newErrors.dealAmount = "Deal amount is required";
         if (!formData.tokenReceivedAmount) newErrors.tokenReceivedAmount = "Received amount is required";
         if (!formData.modeOfPayment) newErrors.modeOfPayment = "Mode of payment is required";
+        if (!formData.proofOfPayment) newErrors.proofOfPayment = "UTR No. is required";
+        if (!formData.paymentImage) newErrors.paymentImage = "Payment proof is required";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -43,7 +45,7 @@ export default function Step3Payment({ formData, setFormData, next, prev }) {
 
         setFormData({
             ...formData,
-            [name]: files[0],   // ALWAYS store single File object
+            [name]: files[0],
         });
     };
 
@@ -164,9 +166,12 @@ export default function Step3Payment({ formData, setFormData, next, prev }) {
                         onChange={handleChange}
                         className="w-full border border-gray-300 p-3 rounded-lg focus:border-[#0070b9]"
                     />
+                    {errors.tokenDate && (
+                        <p className="text-red-500 text-sm">{errors.tokenDate}</p>
+                    )}
                 </div>
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">UTR No.</label>
+                    <label className="block text-gray-700 font-medium mb-1">UTR No.*</label>
                     <input
                         type="text"
                         name="proofOfPayment"
@@ -174,11 +179,17 @@ export default function Step3Payment({ formData, setFormData, next, prev }) {
                         onChange={handleChange}
                         className="w-full border border-gray-300 p-3 rounded-lg focus:border-[#0070b9]"
                     />
+                    {errors.proofOfPayment && (
+                        <p className="text-red-500 text-sm">{errors.proofOfPayment}</p>
+                    )}
                 </div>
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">Payment Proof</label>
+                    <label className="block text-gray-700 font-medium mb-1">Payment Proof *</label>
                     <input type="file" name="paymentImage" accept="image/*"
                         onChange={handleFileChange} className="w-full border p-3 rounded-lg bg-white" />
+                    {errors.paymentImage && (
+                        <p className="text-red-500 text-sm">{errors.paymentImage}</p>
+                    )}
                 </div>
             </div>
 

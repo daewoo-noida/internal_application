@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
     phone: { type: String, required: true },
 
     password: { type: String, required: true },
-
+    plainPassword: { type: String },
     role: { type: String, enum: ["Sales", "admin"], default: "Sales" },
 
     createdAt: { type: Date, default: Date.now },

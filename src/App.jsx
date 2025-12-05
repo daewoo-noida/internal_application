@@ -32,6 +32,8 @@ import ClientDetails from "./pages/admin/ClientDetails.jsx";
 import SalesClientDetails from "./pages/sales/SalesClientDetails.jsx";
 import EditClient from "./pages/admin/EditClient.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import useAutoLogout from "./utils/useAutoLogout.js";
+import ClientsList from "./pages/admin/ClientList.jsx";
 
 // Wrapper for Sales Routes
 const SalesLayout = () => (
@@ -53,30 +55,7 @@ const AdminLayouts = () => (
 
 export default function App() {
 
-  // ✅ AUTO LOGOUT (MUST BE INSIDE APP FUNCTION!)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const loginTime = localStorage.getItem("loginTime");
-      const token = localStorage.getItem("authToken");
-
-      if (token && loginTime) {
-        const fiveHours = 5 * 60 * 60 * 1000;
-
-        if (Date.now() - Number(loginTime) > fiveHours) {
-          // Clear user session
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("userData");
-          localStorage.removeItem("userRole");
-          localStorage.removeItem("isAuthenticated");
-          localStorage.removeItem("loginTime");
-
-          window.location.href = "/login";
-        }
-      }
-    }, 60 * 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+  useAutoLogout();
 
   return (
     <>
@@ -109,6 +88,7 @@ export default function App() {
           <Route path="/admin/pdf-manager" element={<PdfManager />} />
           <Route path="/admin/client/:id" element={<ClientDetails />} />
           <Route path="/admin/client/edit/:id" element={<EditClient />} />
+          <Route path="/admin/daewoo-clients" element={<ClientsList />} />
         </Route>
 
       </Routes>

@@ -37,7 +37,7 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
         if (name === "gstFile") {
             setFormData({
                 ...formData,
-                gstFile: files[0],   // ← store file properly
+                gstFile: files[0],
             });
             return;
         }
@@ -56,7 +56,7 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
 
                 {/* Aadhaar */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">Aadhaar Card *</label>
+                    <label className="block text-gray-700 font-medium mb-1">Aadhaar (Front and Back) *</label>
                     <input type="file" name="adharImages" accept="image/*" multiple
                         onChange={handleFileChange} className="w-full border p-3 rounded-lg bg-white" />
 

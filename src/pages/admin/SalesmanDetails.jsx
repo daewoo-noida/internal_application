@@ -1,12 +1,15 @@
-// src/pages/admin/SalesmanDetails.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { adminAPI } from "../../utils/api";
+import { authAPI } from "../../utils/api";
 
 export default function SalesmanDetails() {
     const { id } = useParams();
 
     const [salesman, setSalesman] = useState(null);
+
+    const [userProfile, setUserProfile] = useState(null);
+
     const [clients, setClients] = useState([]);
     const [stats, setStats] = useState({
         totalClients: 0,
@@ -20,23 +23,21 @@ export default function SalesmanDetails() {
 
     useEffect(() => {
         loadData();
+        userProfileData()
     }, []);
 
     const loadData = async () => {
         try {
-            // --- 1️⃣ Fetch full list of salesmen ---
             const userRes = await adminAPI.salesmen();
             const allSalesmen = userRes.data.salesmen || [];
 
             const selected = allSalesmen.find((s) => s._id === id);
             setSalesman(selected || {});
 
-            // --- 2️⃣ Fetch clients of this salesman ---
             const res = await adminAPI.salesmanClients(id);
             const data = res.data.clients || [];
             setClients(data);
 
-            // --- 3️⃣ Calculate stats ---
             const totalClients = data.length;
             const totalDealAmount = data.reduce((s, c) => s + Number(c.dealAmount || 0), 0);
             const totalReceived = data.reduce((s, c) => s + Number(c.tokenReceivedAmount || 0), 0);
@@ -56,10 +57,21 @@ export default function SalesmanDetails() {
         }
     };
 
+    const userProfileData = async () => {
+        const userData = await authAPI.profile();
+        setUserProfile(userData.data.user);
+        // console.log('user profile', userData.data.user);
+    }
+
+    // console.log("Salesman:", salesman);
+    // console.log('profile', userProfile)
+
     if (loading) return <div className="p-6 text-lg">Loading...</div>;
 
     return (
         <div className="p-6 space-y-10">
+
+
 
             {/* HEADER */}
             <div className="flex items-center justify-between">
@@ -74,6 +86,36 @@ export default function SalesmanDetails() {
                 >
                     Back
                 </Link>
+            </div>
+
+            <div className="bg-white shadow-md rounded-xl p-6 border border-gray-100 w-full max-w-md">
+                {/* <h2 className="text-xl font-semibold text-gray-800 mb-4">Salesman Details</h2> */}
+
+                <div className="space-y-3 text-gray-700">
+                    <div className="flex">
+                        <span className="font-semibold w-32">Name:</span>
+                        <span>{salesman?.name || "-"}</span>
+                    </div>
+
+                    <div className="flex">
+                        <span className="font-semibold w-32">Email:</span>
+                        <span>{salesman?.email || "-"}</span>
+                    </div>
+
+                    <div className="flex">
+                        <span className="font-semibold w-32">Phone:</span>
+                        <span>{salesman?.phone || "-"}</span>
+                    </div>
+
+                    <div className="flex">
+                        <span className="font-semibold w-32">Designation:</span>
+                        <span className="capitalize">{salesman?.designation || "-"}</span>
+                    </div>
+                    <div className="flex">
+                        <span className="font-semibold w-32">Branch Office:</span>
+                        <span className="capitalize">{salesman?.branchOffice || "-"}</span>
+                    </div>
+                </div>
             </div>
 
             {/* KPI CARDS */}

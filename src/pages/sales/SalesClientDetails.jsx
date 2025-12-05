@@ -20,6 +20,7 @@ export default function SalesClientDetails() {
         try {
             const res = await clientAPI.getById(id);
             setClient(res.data.client);
+            // console.log('client details', res.data.client);
         } catch (err) {
             console.error("Client Details Error:", err);
         } finally {
@@ -84,7 +85,7 @@ export default function SalesClientDetails() {
                     {info("Email", client.email)}
                     {info("Phone", client.phone)}
                     {info("Alternate Phone", client.altPhone)}
-                    {info("State", client.persionalState)}
+                    {info("State", client.personalState)}
                     {info("District", client.personalDistrict)}
                     {info("City", client.personalCity)}
                     {info("Street Address", client.personalStreetAddress)}

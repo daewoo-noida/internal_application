@@ -53,7 +53,7 @@ export const clientAPI = {
   getAll: (data) => api.get("/clients", { params: data }),
   getById: (id) => api.get(`/clients/${id}`),
   update: (id, data) => api.put(`/clients/${id}`, data),
-  delete: (id) => api.delete(`/clients/${id}`),
+  deleteClient: (id) => api.delete(`/clients/${id}`),
   addPayment: (id, data) =>
     api.post(`/clients/${id}/add-payment`, data, {
       headers: { "Content-Type": "multipart/form-data" }

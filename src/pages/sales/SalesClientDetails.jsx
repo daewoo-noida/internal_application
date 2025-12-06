@@ -20,7 +20,7 @@ export default function SalesClientDetails() {
         try {
             const res = await clientAPI.getById(id);
             setClient(res.data.client);
-            // console.log('client details', res.data.client);
+            // console.log('client details', res.data.client.adharImages[0].path);
         } catch (err) {
             console.error("Client Details Error:", err);
         } finally {
@@ -94,6 +94,7 @@ export default function SalesClientDetails() {
 
                 {/* DOCUMENTS */}
                 <Section title="Documents">
+
                     <FileRow label="Aadhaar Card" files={client.adharImages} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
                     <FileRow label="PAN Card" file={client.panImage} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
                     <FileRow label="Company PAN" file={client.companyPanImage} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
@@ -131,59 +132,85 @@ export default function SalesClientDetails() {
                                 </thead>
 
                                 <tbody>
-                                    {client.secondPayments.map((p, i) => {
-                                        const proofURL = p.proof
-                                            ? `${import.meta.env.VITE_API_URL.replace("/api", "")}/uploads/${p.proof.path.split("\\").pop()}`
-                                            : null;
+                                    {
+                                        client.secondPayments.map((p, i) => {
+                                            const fileRoot = import.meta.env.VITE_API_URL;
+                                            const cleanedRoot = fileRoot.replace(/\/api$/, "");
 
-                                        const rowColor =
-                                            p.status === "approved"
-                                                ? "bg-green-50"
-                                                : p.status === "rejected"
-                                                    ? "bg-red-50"
-                                                    : "bg-yellow-50";
+                                            // FIXED: Handle both string and object paths
+                                            const clean = (path) => {
+                                                if (!path) return "";
 
-                                        return (
-                                            <tr key={p._id} className={`${rowColor} border`}>
-                                                <td className="p-3">{i + 1}</td>
-                                                <td className="p-3 font-semibold">₹ {p.amount}</td>
-                                                <td className="p-3">{p.paymentDate?.slice(0, 10)}</td>
-                                                <td className="p-3">{p.mode}</td>
-                                                <td className="p-3">{p.transactionId || "--"}</td>
+                                                // If path is an object with a path property
+                                                if (typeof path === 'object' && path !== null) {
+                                                    path = path.path || path.url || path.filename || "";
+                                                }
 
-                                                <td className="p-3">
-                                                    {proofURL ? (
-                                                        <img
-                                                            src={proofURL}
-                                                            className="h-16 w-16 rounded border cursor-pointer"
-                                                            onClick={() => {
-                                                                setPreviewImage(proofURL);
-                                                                setShowPreview(true);
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        <span className="text-gray-400">No File</span>
-                                                    )}
-                                                </td>
+                                                // If it's still not a string, return empty
+                                                if (typeof path !== 'string') {
+                                                    console.warn('Path is not a string:', path);
+                                                    return "";
+                                                }
 
-                                                <td className="p-3 font-medium">
-                                                    {p.status === "approved" && (
-                                                        <span className="bg-green-200 text-green-800 px-3 py-1 rounded">Approved</span>
-                                                    )}
-                                                    {p.status === "pending" && (
-                                                        <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded">Pending</span>
-                                                    )}
-                                                    {p.status === "rejected" && (
-                                                        <span className="bg-red-200 text-red-800 px-3 py-1 rounded">Rejected</span>
-                                                    )}
-                                                </td>
+                                                return `${cleanedRoot}/uploads/${path.split("\\").pop().split("/").pop()}`;
+                                            };
 
-                                                <td className="p-3 font-semibold">
-                                                    {p.status === "approved" ? `₹ ${p.amount}` : "--"}
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
+                                            // Get the proof URL - p.proof is likely an object
+                                            const proofURL = p.proof ? clean(p.proof) : null;
+
+                                            console.log('Payment proof object:', p.proof);
+                                            console.log('Proof URL:', proofURL);
+
+                                            const rowColor =
+                                                p.status === "approved"
+                                                    ? "bg-green-50"
+                                                    : p.status === "rejected"
+                                                        ? "bg-red-50"
+                                                        : "bg-yellow-50";
+
+                                            return (
+                                                <tr key={p._id} className={`${rowColor} border`}>
+                                                    <td className="p-3">{i + 1}</td>
+                                                    <td className="p-3 font-semibold">₹ {p.amount}</td>
+                                                    <td className="p-3">{p.paymentDate?.slice(0, 10)}</td>
+                                                    <td className="p-3">{p.mode}</td>
+                                                    <td className="p-3">{p.transactionId || "--"}</td>
+
+                                                    <td className="p-3">
+                                                        {proofURL ? (
+                                                            <img
+                                                                src={proofURL}
+                                                                alt={`Payment proof ${i + 1}`}
+                                                                className="h-16 w-16 object-cover rounded border cursor-pointer"
+                                                                onClick={() => {
+                                                                    setPreviewImage(proofURL);
+                                                                    setShowPreview(true);
+                                                                }}
+                                                            />
+                                                        ) : (
+                                                            <span className="text-gray-400">No File</span>
+                                                        )}
+                                                    </td>
+
+                                                    <td className="p-3 font-medium">
+                                                        {p.status === "approved" && (
+                                                            <span className="bg-green-200 text-green-800 px-3 py-1 rounded">Approved</span>
+                                                        )}
+                                                        {p.status === "pending" && (
+                                                            <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded">Pending</span>
+                                                        )}
+                                                        {p.status === "rejected" && (
+                                                            <span className="bg-red-200 text-red-800 px-3 py-1 rounded">Rejected</span>
+                                                        )}
+                                                    </td>
+
+                                                    <td className="p-3 font-semibold">
+                                                        {p.status === "approved" ? `₹ ${p.amount}` : "--"}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    }
                                 </tbody>
                             </table>
                         </div>
@@ -243,11 +270,12 @@ function Section({ title, children }) {
 }
 
 function FileRow({ label, file, files, setPreviewImage, setShowPreview }) {
-    const fileRoot = import.meta.env.VITE_API_URL.replace("/api", "");
-
+    const fileRoot = import.meta.env.VITE_API_URL;
+    const cleanedRoot = fileRoot.replace(/\/api$/, "");
+    console.log(cleanedRoot);
     const clean = (p) => {
         if (!p) return "";
-        return `${fileRoot}/uploads/${p.split("\\").pop().split("/").pop()}`;
+        return `${cleanedRoot}/uploads/${p.split("\\").pop().split("/").pop()}`;
     };
 
     return (

@@ -21,10 +21,10 @@ const userSchema = new mongoose.Schema({
     },
     otp: String,
     otpExpires: Date,
-    gender: { type: String },
-    dob: { type: String },
-    officeBranch: { type: String },
-    profileImage: String
+    gender: { type: String, default: "" },
+    dob: { type: String, default: "" },
+    officeBranch: { type: String, default: "" },
+    profileImage: { type: String, default: "" }
 });
 
 module.exports = mongoose.model("User", userSchema);

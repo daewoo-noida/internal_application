@@ -12,7 +12,8 @@ const {
     addPayment,
     approveSecondPayment,
     rejectSecondPayment,
-    updateClient
+    updateClient,
+    deleteClient
 } = require("../controllers/clientController");
 
 // Accept ANY uploaded field to prevent MulterError
@@ -35,5 +36,7 @@ router.post("/:clientId/approve-payment/:paymentId", protect, allowRoles("admin"
 router.post("/:clientId/reject-payment/:paymentId", protect, allowRoles("admin"), rejectSecondPayment);
 
 router.put("/:id", protect, allowRoles("admin"), upload.any(), updateClient);
+
+router.delete("/:id", protect, allowRoles("Sales", "admin"), deleteClient);
 
 module.exports = router;

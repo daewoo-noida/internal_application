@@ -62,6 +62,26 @@ export default function ClientDetails() {
         }
     };
 
+    // Download function - ADDED THIS
+    const downloadImage = (imageUrl, fileName = "image") => {
+        fetch(imageUrl)
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName.includes('.') ? fileName : `${fileName}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Download error:', error);
+                alert('Failed to download image');
+            });
+    };
+
     const user = JSON.parse(localStorage.getItem("userData"));
 
     if (loading) return <div className="p-6 text-lg">Loading...</div>;
@@ -151,10 +171,34 @@ export default function ClientDetails() {
 
                 {/* DOCUMENTS */}
                 <Section title="Documents">
-                    <FileRow label="Aadhaar Card" files={client.adharImages} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
-                    <FileRow label="PAN Card" file={client.panImage} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
-                    <FileRow label="Company PAN" file={client.companyPanImage} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
-                    <FileRow label="GST" file={client.gstFile} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
+                    <FileRow
+                        label="Aadhaar Card"
+                        files={client.adharImages}
+                        setPreviewImage={setPreviewImage}
+                        setShowPreview={setShowPreview}
+                        downloadImage={downloadImage}
+                    />
+                    <FileRow
+                        label="PAN Card"
+                        file={client.panImage}
+                        setPreviewImage={setPreviewImage}
+                        setShowPreview={setShowPreview}
+                        downloadImage={downloadImage}
+                    />
+                    <FileRow
+                        label="Company PAN"
+                        file={client.companyPanImage}
+                        setPreviewImage={setPreviewImage}
+                        setShowPreview={setShowPreview}
+                        downloadImage={downloadImage}
+                    />
+                    <FileRow
+                        label="GST"
+                        file={client.gstFile}
+                        setPreviewImage={setPreviewImage}
+                        setShowPreview={setShowPreview}
+                        downloadImage={downloadImage}
+                    />
                 </Section>
 
                 {/* PAYMENT DETAILS */}
@@ -166,7 +210,13 @@ export default function ClientDetails() {
                     {info("Balance Amount", `₹ ${client.balanceAmount}`)}
                     {info("Mode of Payment", client.modeOfPayment)}
                     {info("Token Date", client.tokenDate?.slice(0, 10))}
-                    <FileRow label="Payment Proof" file={client.paymentImage} setPreviewImage={setPreviewImage} setShowPreview={setShowPreview} />
+                    <FileRow
+                        label="Payment Proof"
+                        file={client.paymentImage}
+                        setPreviewImage={setPreviewImage}
+                        setShowPreview={setShowPreview}
+                        downloadImage={downloadImage} // ADDED THIS
+                    />
                 </Section>
 
                 {/* ADDITIONAL PAYMENTS */}
@@ -190,9 +240,15 @@ export default function ClientDetails() {
 
                                 <tbody>
                                     {client.secondPayments.map((p, index) => {
-                                        const proofURL = p.proof
-                                            ? `${import.meta.env.VITE_API_URL.replace("/api", "")}/uploads/${p.proof.path.split("\\").pop()}`
-                                            : null;
+                                        // Get proof URL
+                                        const getProofURL = () => {
+                                            if (!p.proof || !p.proof.path) return null;
+                                            const fileRoot = import.meta.env.VITE_API_URL.replace("/api", "");
+                                            const filename = p.proof.path.split("\\").pop().split("/").pop();
+                                            return `${fileRoot}/uploads/${filename}`;
+                                        };
+
+                                        const proofURL = getProofURL();
 
                                         const rowColor =
                                             p.status === "approved"
@@ -211,14 +267,34 @@ export default function ClientDetails() {
 
                                                 <td className="p-3">
                                                     {proofURL ? (
-                                                        <img
-                                                            src={proofURL}
-                                                            className="h-16 w-16 object-cover rounded border cursor-pointer"
-                                                            onClick={() => {
-                                                                setPreviewImage(proofURL);
-                                                                setShowPreview(true);
-                                                            }}
-                                                        />
+                                                        <div className="flex items-center gap-2">
+                                                            {/* Image with download button - ADDED THIS */}
+                                                            <div className="relative group">
+                                                                <img
+                                                                    src={proofURL}
+                                                                    alt={`Payment proof ${index + 1}`}
+                                                                    className="h-16 w-16 object-cover rounded border cursor-pointer"
+                                                                    onClick={() => {
+                                                                        setPreviewImage(proofURL);
+                                                                        setShowPreview(true);
+                                                                    }}
+                                                                />
+                                                                {/* Download button - ADDED THIS */}
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        const fileName = p.proof.path?.split("\\").pop().split("/").pop();
+                                                                        downloadImage(proofURL, fileName);
+                                                                    }}
+                                                                    className="absolute bottom-0 right-0 bg-blue-600 text-white p-1 rounded-tl-md opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                    title="Download image"
+                                                                >
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                                                        <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     ) : (
                                                         <span className="text-gray-400">No File</span>
                                                     )}
@@ -239,13 +315,13 @@ export default function ClientDetails() {
                                                         <div className="flex gap-2">
                                                             <button
                                                                 onClick={() => approvePayment(p._id)}
-                                                                className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                                                                className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
                                                             >
                                                                 Approve
                                                             </button>
                                                             <button
                                                                 onClick={() => rejectPayment(p._id)}
-                                                                className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                                                                className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
                                                             >
                                                                 Reject
                                                             </button>
@@ -278,13 +354,16 @@ export default function ClientDetails() {
             </div>
 
             {showPreview && (
-                <ImageModal previewImage={previewImage} setShowPreview={setShowPreview} />
+                <ImageModal
+                    previewImage={previewImage}
+                    setShowPreview={setShowPreview}
+                    downloadImage={downloadImage} // ADDED THIS
+                />
             )}
         </div>
     );
 }
 
-/* Helper Components */
 
 const info = (label, value) => (
     <div className="grid grid-cols-3 py-2 border-b">
@@ -302,7 +381,7 @@ function Section({ title, children }) {
     );
 }
 
-function FileRow({ label, file, files, setPreviewImage, setShowPreview }) {
+function FileRow({ label, file, files, setPreviewImage, setShowPreview, downloadImage }) {
     const fileBase = import.meta.env.VITE_API_URL.replace("/api", "");
 
     const cleanPath = (p) => {
@@ -318,26 +397,59 @@ function FileRow({ label, file, files, setPreviewImage, setShowPreview }) {
             <div className="mt-2 flex gap-3 flex-wrap">
                 {files &&
                     files.map((f, i) => (
-                        <img
-                            key={i}
-                            src={cleanPath(f.path)}
-                            className="h-20 w-20 object-cover rounded border cursor-pointer"
-                            onClick={() => {
-                                setPreviewImage(cleanPath(f.path));
-                                setShowPreview(true);
-                            }}
-                        />
+                        // Wrapped in div with download button - ADDED THIS
+                        <div key={i} className="relative group">
+                            <img
+                                src={cleanPath(f.path)}
+                                className="h-20 w-20 object-cover rounded border cursor-pointer"
+                                onClick={() => {
+                                    setPreviewImage(cleanPath(f.path));
+                                    setShowPreview(true);
+                                }}
+                            />
+                            {/* Download button - ADDED THIS */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    const fileName = f.path?.split("\\").pop().split("/").pop();
+                                    downloadImage(cleanPath(f.path), fileName);
+                                }}
+                                className="absolute bottom-0 right-0 bg-blue-600 text-white p-1 rounded-tl-md opacity-0 group-hover:opacity-100 transition-opacity"
+                                title="Download image"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
                     ))}
 
                 {file && (
-                    <img
-                        src={cleanPath(file.path)}
-                        className="h-20 w-20 object-cover rounded border cursor-pointer"
-                        onClick={() => {
-                            setPreviewImage(cleanPath(file.path));
-                            setShowPreview(true);
-                        }}
-                    />
+                    // Wrapped in div with download button - ADDED THIS
+                    <div className="relative group">
+                        <img
+                            src={cleanPath(file.path)}
+                            className="h-20 w-20 object-cover rounded border cursor-pointer"
+                            onClick={() => {
+                                setPreviewImage(cleanPath(file.path));
+                                setShowPreview(true);
+                            }}
+                        />
+                        {/* Download button - ADDED THIS */}
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                const fileName = file.path?.split("\\").pop().split("/").pop();
+                                downloadImage(cleanPath(file.path), fileName);
+                            }}
+                            className="absolute bottom-0 right-0 bg-blue-600 text-white p-1 rounded-tl-md opacity-0 group-hover:opacity-100 transition-opacity"
+                            title="Download image"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
                 )}
 
                 {!file && (!files || files.length === 0) && (
@@ -348,7 +460,7 @@ function FileRow({ label, file, files, setPreviewImage, setShowPreview }) {
     );
 }
 
-function ImageModal({ previewImage, setShowPreview }) {
+function ImageModal({ previewImage, setShowPreview, downloadImage }) {
     return (
         <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
@@ -358,6 +470,22 @@ function ImageModal({ previewImage, setShowPreview }) {
                 className="relative bg-white rounded-xl shadow-2xl p-3 max-w-3xl w-[90%]"
                 onClick={(e) => e.stopPropagation()}
             >
+                {/* Added download button - ADDED THIS */}
+                <div className="absolute top-2 right-10 flex gap-2">
+                    <button
+                        onClick={() => {
+                            const fileName = previewImage?.split('/').pop() || "image.png";
+                            downloadImage(previewImage, fileName);
+                        }}
+                        className="bg-blue-600 text-white rounded-full w-8 h-8 flex justify-center items-center hover:bg-blue-700"
+                        title="Download image"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+
                 <button
                     className="absolute top-2 right-2 bg-gray-800 text-white rounded-full w-8 h-8 flex justify-center items-center"
                     onClick={() => setShowPreview(false)}

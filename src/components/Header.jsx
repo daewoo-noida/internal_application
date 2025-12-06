@@ -42,7 +42,7 @@ export const Header = () => {
         { href: "/sales/booknow", label: "Book Now" },
         { href: "/sales/download", label: "Downloads" },
         { href: "/sales/reimbursement", label: "Reimbursement" },
-        { href: "/sales/contact", label: "Support" },
+        { href: "/sales/contact", label: "Contact Us" },
     ];
 
     const mobileNav = mainNav;

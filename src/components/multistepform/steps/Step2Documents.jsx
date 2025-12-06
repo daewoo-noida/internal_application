@@ -48,6 +48,7 @@ export default function Step2Documents({ formData, setFormData, next, prev }) {
         });
     };
 
+
     return (
         <div>
             <h2 className="text-2xl font-bold text-[#0070b9] mb-6">Document Uploads</h2>

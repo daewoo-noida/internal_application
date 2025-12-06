@@ -8,7 +8,7 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
     const [bdaList, setBdaList] = useState([]);
     const [bdeList, setBdeList] = useState([]);
     const [bdmList, setBdmList] = useState([]);
-    const [bheadList, setBheadList] = useState([]); // ⭐ ADDED BHEAD
+    const [bheadList, setBheadList] = useState([]);
 
     // Input fields for custom values
     const [customOffice, setCustomOffice] = useState("");
@@ -39,6 +39,8 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
     }, []);
 
     // -------------------- VALIDATION --------------------
+
+
     const validateStep = () => {
         let newErrors = {};
 
@@ -94,7 +96,7 @@ export default function Step4Office({ formData, setFormData, next, prev }) {
                     ? bdeList
                     : name === "bdm"
                         ? bdmList
-                        : bheadList; // ⭐ ADDED BHEAD
+                        : bheadList;
 
         const userName = list.find((u) => u._id === id)?.name || "";
 

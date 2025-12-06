@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { clientAPI } from "../../utils/api";
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { Eye } from "lucide-react";
+import { Delete, Eye, LucideDelete } from "lucide-react";
 
 // Simple icon components (using text/emoji as fallback)
 const SearchIcon = () => <span className="text-gray-400">🔍</span>;
@@ -15,6 +15,8 @@ const EyeIcon = () => <span className="text-green-600"><Eye /></span>;
 const EyeOffIcon = () => <span className="text-gray-400">🚫</span>;
 const ExcelIcon = () => <span className="text-white">📊</span>;
 const CSVIcon = () => <span className="text-white">📄</span>;
+
+const DeleteIcon = () => <span className="text-red-600"><LucideDelete /></span>;
 
 export default function ClientsList() {
     const [clients, setClients] = useState([]);
@@ -33,7 +35,7 @@ export default function ClientsList() {
         { key: 'territory', label: 'Territory', visible: true, category: 'basic' },
         { key: 'officeBranch', label: 'Branch', visible: true, category: 'basic' },
         { key: 'createdBy.name', label: 'Created By', visible: true, category: 'basic' },
-
+        { key: 'delete', label: 'Delete', visible: true, category: 'basic' },
         { key: 'dealAmount', label: 'Deal Amount', visible: false, category: 'financial' },
         { key: 'tokenReceivedAmount', label: 'Token Received', visible: false, category: 'financial' },
         { key: 'balanceAmount', label: 'Balance Amount', visible: false, category: 'financial' },
@@ -423,8 +425,54 @@ export default function ClientsList() {
     // Get visible columns
     const visibleColumns = tableColumns.filter(col => col.visible);
 
+
+    const handleDeleteClient = async (clientId) => {
+        if (!window.confirm("Are you sure you want to delete this client? This action cannot be undone.")) {
+            return;
+        }
+
+        console.log("Attempting to delete client with ID:", clientId);
+        console.log("Full client object:", clients.find(c => c._id === clientId));
+
+        try {
+            // Try with different ID formats if needed
+            const response = await clientAPI.deleteClient(clientId);
+
+            if (response.data && response.data.success) {
+                alert("Client deleted successfully");
+                loadClients(); // Refresh the client list
+            } else {
+                alert(response.data?.message || "Failed to delete client");
+            }
+        } catch (err) {
+            console.error("Error deleting client", err);
+            console.error("Error response:", err.response?.data);
+
+            // Check if it's a 404 error
+            if (err.response?.status === 404) {
+                alert("Client not found. It may have already been deleted.");
+            } else {
+                alert("Failed to delete client. Please try again.");
+            }
+        }
+    };
+
+    // Get cell value for display
     // Get cell value for display
     const getCellValue = (client, columnKey) => {
+        // Handle delete column - render delete button
+        if (columnKey === 'delete') {
+            return (
+                <button
+                    onClick={() => handleDeleteClient(client._id)}
+                    className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
+                    title="Delete client"
+                >
+                    <DeleteIcon />
+                </button>
+            );
+        }
+
         if (columnKey.includes('.')) {
             const keys = columnKey.split('.');
             let value = client;
@@ -462,7 +510,6 @@ export default function ClientsList() {
                 return value.toString();
         }
     };
-
     // Pagination component
     const renderPagination = () => {
         if (totalPages <= 1) return null;

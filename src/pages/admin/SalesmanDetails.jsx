@@ -12,10 +12,15 @@ export default function SalesmanDetails() {
 
     const [clients, setClients] = useState([]);
     const [stats, setStats] = useState({
+        officeBranch: "",
+        dob: "",
+        profileImage: null,
         totalClients: 0,
         totalDealAmount: 0,
         totalReceived: 0,
         totalDue: 0
+        ,
+        gender: ""
     });
     const [loading, setLoading] = useState(true);
 
@@ -23,21 +28,20 @@ export default function SalesmanDetails() {
 
     useEffect(() => {
         loadData();
-        userProfileData()
-    }, []);
+    }, [id]);
 
     const loadData = async () => {
         try {
-            const userRes = await adminAPI.salesmen();
-            const allSalesmen = userRes.data.salesmen || [];
+            // 1) Get full salesman profile
+            const userRes = await adminAPI.salesman(id);
+            setSalesman(userRes.data.user);
 
-            const selected = allSalesmen.find((s) => s._id === id);
-            setSalesman(selected || {});
-
+            // 2) Get clients of this salesman
             const res = await adminAPI.salesmanClients(id);
             const data = res.data.clients || [];
             setClients(data);
 
+            // 3) Compute stats in one go
             const totalClients = data.length;
             const totalDealAmount = data.reduce((s, c) => s + Number(c.dealAmount || 0), 0);
             const totalReceived = data.reduce((s, c) => s + Number(c.tokenReceivedAmount || 0), 0);
@@ -47,7 +51,7 @@ export default function SalesmanDetails() {
                 totalClients,
                 totalDealAmount,
                 totalReceived,
-                totalDue,
+                totalDue
             });
 
         } catch (err) {
@@ -57,14 +61,7 @@ export default function SalesmanDetails() {
         }
     };
 
-    const userProfileData = async () => {
-        const userData = await authAPI.profile();
-        setUserProfile(userData.data.user);
-        // console.log('user profile', userData.data.user);
-    }
-
-    // console.log("Salesman:", salesman);
-    // console.log('profile', userProfile)
+    console.log("Salesman:", salesman);
 
     if (loading) return <div className="p-6 text-lg">Loading...</div>;
 
@@ -88,35 +85,65 @@ export default function SalesmanDetails() {
                 </Link>
             </div>
 
-            <div className="bg-white shadow-md rounded-xl p-6 border border-gray-100 w-full max-w-md">
-                {/* <h2 className="text-xl font-semibold text-gray-800 mb-4">Salesman Details</h2> */}
+            <div className="bg-white shadow-md rounded-xl p-8 border border-gray-100 w-full max-w-4xl">
+                <div className="flex ">
 
-                <div className="space-y-3 text-gray-700">
-                    <div className="flex">
-                        <span className="font-semibold w-32">Name:</span>
-                        <span>{salesman?.name || "-"}</span>
+                    {/* Profile Image */}
+                    <div className="flex flex-col items-center w-1/3">
+                        {salesman?.profileImage ? (
+                            <img
+                                src={salesman.profileImage}
+                                alt="Profile"
+                                className="w-36 h-36 object-cover rounded-full border shadow-sm"
+                            />
+                        ) : (
+                            <div className="w-36 h-36 flex items-center justify-center bg-gray-200 rounded-full border text-gray-500">
+                                No Image
+                            </div>
+                        )}
+
+                        <h2 className="text-xl font-semibold mt-4">{salesman?.name || "-"}</h2>
+                        <p className="text-gray-500 capitalize">{salesman?.designation || "-"}</p>
                     </div>
 
-                    <div className="flex">
-                        <span className="font-semibold w-32">Email:</span>
-                        <span>{salesman?.email || "-"}</span>
-                    </div>
+                    {/* Details Section */}
+                    <div className="grid grid-cols-3 gap-y-6 gap-x-10 w-2/3 text-gray-700">
 
-                    <div className="flex">
-                        <span className="font-semibold w-32">Phone:</span>
-                        <span>{salesman?.phone || "-"}</span>
-                    </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">Email</p>
+                            <p className="text-gray-900">{salesman?.email || "-"}</p>
+                        </div>
 
-                    <div className="flex">
-                        <span className="font-semibold w-32">Designation:</span>
-                        <span className="capitalize">{salesman?.designation || "-"}</span>
-                    </div>
-                    <div className="flex">
-                        <span className="font-semibold w-32">Branch Office:</span>
-                        <span className="capitalize">{salesman?.branchOffice || "-"}</span>
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">Phone</p>
+                            <p className="text-gray-900">{salesman?.phone || "-"}</p>
+                        </div>
+
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">Branch Office</p>
+                            <p className="text-gray-900 capitalize">{salesman?.officeBranch || "-"}</p>
+                        </div>
+
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">Date of Birth</p>
+                            <p className="text-gray-900">{salesman?.dob || "-"}</p>
+                        </div>
+
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">Gender</p>
+                            <p className="text-gray-900">{salesman?.gender || "-"}</p>
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">Joined On</p>
+                            <p className="text-gray-900">
+                                {salesman?.createdAt ? new Date(salesman.createdAt).toLocaleDateString() : "-"}
+                            </p>
+                        </div>
+
                     </div>
                 </div>
             </div>
+
 
             {/* KPI CARDS */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

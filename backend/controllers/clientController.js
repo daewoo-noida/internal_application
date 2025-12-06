@@ -8,7 +8,8 @@ const buildFileUrl = (req, filename) => {
     return `${req.protocol}://${req.get("host")}/uploads/${filename}`;
 };
 
-// Convert multer file into DB-friendly object
+
+
 const getFile = (req, files, fieldname) => {
     const f = files.find((x) => x.fieldname === fieldname);
     if (!f) return null;
@@ -298,3 +299,18 @@ exports.updateClient = async (req, res) => {
         res.status(500).json({ success: false, message: err.message });
     }
 };
+
+
+exports.deleteClient = async (req, res) => {
+    try {
+        const client = await ClientMaster.findByIdAndDelete(req.params.id);
+        if (!client)
+            return res.status(404).json({ success: false, message: "Client not found" });
+
+        res.json({ success: true, message: "Client deleted" });
+
+    } catch (err) {
+        console.log("Delete Client Error:", err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+}

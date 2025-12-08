@@ -28,6 +28,36 @@ export default function SalesClientDetails() {
         }
     };
 
+    // Function to calculate payment details
+    const calculatePaymentDetails = (client) => {
+        if (!client) return {
+            totalReceived: 0,
+            receivedPercent: 0,
+            remainPercent: 100,
+            balanceAmount: 0
+        };
+
+        const dealAmount = Number(client.dealAmount) || 0;
+        const baseToken = Number(client.tokenReceivedAmount) || 0;
+
+        // Calculate approved second payments
+        const approvedSecondPayments = client.secondPayments
+            ?.filter(p => p.status === "approved")
+            .reduce((sum, p) => sum + Number(p.amount || 0), 0) || 0;
+
+        const totalReceived = baseToken + approvedSecondPayments;
+        const receivedPercent = dealAmount > 0 ? ((totalReceived / dealAmount) * 100).toFixed(2) : 0;
+        const remainPercent = (100 - Number(receivedPercent)).toFixed(2);
+        const balanceAmount = dealAmount - totalReceived;
+
+        return {
+            totalReceived,
+            receivedPercent,
+            remainPercent,
+            balanceAmount
+        };
+    };
+
     // Check if file is PDF
     const isPdfFile = (filepath) => {
         if (!filepath) return false;
@@ -68,6 +98,9 @@ export default function SalesClientDetails() {
 
     if (loading) return <div className="p-6 text-lg">Loading...</div>;
     if (!client) return <div className="p-6 text-lg">Client not found</div>;
+
+    // Calculate payment details
+    const paymentDetails = calculatePaymentDetails(client);
 
     return (
         <div className="p-6 space-y-10 mt-5">
@@ -173,11 +206,11 @@ export default function SalesClientDetails() {
 
                 {/* PAYMENT SUMMARY */}
                 <Section title="Payment Summary">
-                    {info("Deal Amount", `₹ ${client.dealAmount}`)}
-                    {info("Received Amount", `₹ ${client.totalReceived}`)}
-                    {info("Received %", `${client.receivedPercent}%`)}
-                    {info("Remaining %", `${client.remainPercent}%`)}
-                    {info("Balance Amount", `₹ ${client.balanceAmount}`)}
+                    {info("Deal Amount", `₹ ${client.dealAmount ? Number(client.dealAmount).toLocaleString() : '0'}`)}
+                    {info("Received Amount", `₹ ${paymentDetails.totalReceived.toLocaleString()}`)}
+                    {info("Received %", `${paymentDetails.receivedPercent}%`)}
+                    {info("Remaining %", `${paymentDetails.remainPercent}%`)}
+                    {info("Balance Amount", `₹ ${paymentDetails.balanceAmount.toLocaleString()}`)}
                     {info("Mode of Payment", client.modeOfPayment)}
                     {info("Token Date", client.tokenDate?.slice(0, 10))}
                     <FileRow

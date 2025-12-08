@@ -8,7 +8,7 @@ export default function SalesDashboard() {
   const [stats, setStats] = useState({
     totalSubmissions: 0,
     totalDealAmount: 0,
-    totalPaymentReceived: 0,  // This should include approved second payments
+    totalPaymentReceived: 0,
     totalDueAmount: 0,
     totalApprovedSecondPayments: 0,
     collectionPercentage: 0
@@ -138,6 +138,12 @@ export default function SalesDashboard() {
     return "Partial";
   };
 
+  // Fix for .toLocaleString() error - add safe number formatting
+  const safeFormatNumber = (num) => {
+    if (num === undefined || num === null) return "0";
+    return Number(num).toLocaleString();
+  };
+
   return (
     <div className="min-h-screen bg-white p-6" style={{ marginTop: "10vh" }}>
       {/* ======================= */}
@@ -151,14 +157,14 @@ export default function SalesDashboard() {
 
         <div className="bg-white p-6 rounded-lg shadow border-l-4 border-purple-500">
           <p className="text-sm text-gray-600">Total Deal Amount</p>
-          <p className="text-3xl font-bold">₹{stats.totalDealAmount.toLocaleString()}</p>
+          <p className="text-3xl font-bold">₹{safeFormatNumber(stats.totalDealAmount)}</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
           <p className="text-sm text-gray-600">Total Payment Received</p>
-          <p className="text-3xl font-bold">₹{stats.totalPaymentReceived.toLocaleString()}</p>
+          <p className="text-3xl font-bold">₹{safeFormatNumber(stats.totalPaymentReceived)}</p>
           <p className="text-xs text-gray-500 mt-1">
-            (Token: ₹{stats.totalTokenReceived.toLocaleString()} + Approved: ₹{stats.totalApprovedSecondPayments.toLocaleString()})
+            (Token: ₹{safeFormatNumber(stats.totalTokenReceived)} + Approved: ₹{safeFormatNumber(stats.totalApprovedSecondPayments)})
           </p>
           <p className="text-xs text-gray-500">
             {stats.collectionPercentage}% Collected
@@ -167,7 +173,7 @@ export default function SalesDashboard() {
 
         <div className="bg-white p-6 rounded-lg shadow border-l-4 border-yellow-500">
           <p className="text-sm text-gray-600">Total Due Amount</p>
-          <p className="text-3xl font-bold">₹{stats.totalDueAmount.toLocaleString()}</p>
+          <p className="text-3xl font-bold">₹{safeFormatNumber(stats.totalDueAmount)}</p>
           <p className="text-xs text-gray-500 mt-1">
             {stats.totalDealAmount > 0
               ? `${((stats.totalDueAmount / stats.totalDealAmount) * 100).toFixed(1)}% Pending`
@@ -221,21 +227,21 @@ export default function SalesDashboard() {
 
                   return (
                     <tr key={c._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 font-medium">{c.name}</td>
+                      <td className="px-6 py-4 font-medium">{c.name || "N/A"}</td>
                       <td className="px-6 py-4">
                         {c.createdBy?.name || "N/A"}
                       </td>
                       <td className="px-6 py-4 font-semibold">
-                        ₹{dealAmount.toLocaleString()}
+                        ₹{safeFormatNumber(dealAmount)}
                       </td>
                       <td className="px-6 py-4">
-                        ₹{Number(c.tokenReceivedAmount || 0).toLocaleString()}
+                        ₹{safeFormatNumber(c.tokenReceivedAmount || 0)}
                       </td>
                       <td className="px-6 py-4">
                         {approvedPaymentsCount > 0 ? (
                           <div>
                             <span className="text-green-600 font-medium">
-                              ₹{approvedSecondPayments.toLocaleString()}
+                              ₹{safeFormatNumber(approvedSecondPayments)}
                             </span>
                             <span className="text-xs text-gray-500 ml-1">
                               ({approvedPaymentsCount} approved)
@@ -246,7 +252,7 @@ export default function SalesDashboard() {
                         )}
                       </td>
                       <td className="px-6 py-4 font-semibold text-green-600">
-                        ₹{totalReceived.toLocaleString()}
+                        ₹{safeFormatNumber(totalReceived)}
                       </td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded text-xs font-medium ${receivedPercent === 100
@@ -259,7 +265,7 @@ export default function SalesDashboard() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        {new Date(c.createdAt).toLocaleDateString()}
+                        {c.createdAt ? new Date(c.createdAt).toLocaleDateString() : "N/A"}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center">
@@ -273,7 +279,7 @@ export default function SalesDashboard() {
                         </div>
                       </td>
                       <td className="px-6 py-4 font-semibold text-orange-600">
-                        ₹{balanceAmount.toLocaleString()}
+                        ₹{safeFormatNumber(balanceAmount)}
                       </td>
                       <td className="px-6 py-4 flex gap-2">
                         <button

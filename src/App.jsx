@@ -34,6 +34,8 @@ import EditClient from "./pages/admin/EditClient.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import useAutoLogout from "./utils/useAutoLogout.js";
 import ClientsList from "./pages/admin/ClientList.jsx";
+import AdminReimbursements from "./pages/admin/AdminReimbursements.jsx";
+import TrackReimbursement from "./pages/sales/TrackReimbursement.jsx";
 
 // Wrapper for Sales Routes
 const SalesLayout = () => (
@@ -78,6 +80,7 @@ export default function App() {
           <Route path="/sales/reimbursement" element={<Reimbursement />} />
           <Route path="/sales/profile" element={<UserProfile />} />
           <Route path="/sales/client/:id" element={<SalesClientDetails />} />
+          <Route path="/sales/reimbursement/track" element={<TrackReimbursement />} />
         </Route>
 
         {/* Admin Routes */}
@@ -89,6 +92,7 @@ export default function App() {
           <Route path="/admin/client/:id" element={<ClientDetails />} />
           <Route path="/admin/client/edit/:id" element={<EditClient />} />
           <Route path="/admin/daewoo-clients" element={<ClientsList />} />
+          <Route path="/admin/reimbursements" element={<AdminReimbursements />} />
         </Route>
 
       </Routes>

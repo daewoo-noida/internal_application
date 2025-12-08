@@ -6,7 +6,7 @@ const menuItems = [
     { path: "/admin/salesmen", label: "Users" },
     { path: "/admin/daewoo-clients", label: "Daewoo Clients" },
     { path: "/admin/pdf-manager", label: "File Manager" },
-    // { path: "/admin/settings", label: "Settings" },
+    { path: "/admin/reimbursements", label: "Reimbursements" },
 ];
 
 export default function AdminSidebar() {

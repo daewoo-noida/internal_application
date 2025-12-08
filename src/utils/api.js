@@ -78,4 +78,33 @@ export const adminAPI = {
 };
 
 
+export const reimbursementAPI = {
+  create: (formData) =>
+    api.post("/reimbursement/create", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }),
+
+  getUserRequests: (params) => api.get("/reimbursement/user", { params }),
+
+  getAllRequests: (params) => api.get("/reimbursement/all", { params }),
+
+  getStats: () => api.get("/reimbursement/stats"),
+
+  verifyRequest: (id, data) => api.put(`/reimbursement/${id}/verify`, data),
+
+  getById: (id) => api.get(`/reimbursement/${id}`),
+
+  updateRequest: (id, data) => api.put(`/reimbursement/${id}`, data),
+
+  deleteRequest: (id) => api.delete(`/reimbursement/${id}`),
+
+  downloadFile: (filepath) =>
+    api.get(`/uploads/${filepath}`, {
+      responseType: 'blob',
+    }),
+};
+
+
 export default api;

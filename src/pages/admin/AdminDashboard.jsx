@@ -32,17 +32,27 @@ export default function AdminDashboard() {
 
     const [graph, setGraph] = useState(null);
 
+    // Update the loadData function to ensure graph includes approved payments:
     const loadData = async () => {
         try {
             const [statsRes, salesmenRes, graphRes] = await Promise.all([
                 adminAPI.stats(),
                 adminAPI.salesmen(),
-                adminAPI.graph(),        // <---- NEW
+                adminAPI.graph(),
             ]);
 
             setStats(statsRes.data.data);
             setSalesmen(salesmenRes.data.salesmen || []);
-            setGraph(graphRes.data);     // <---- NEW
+            setGraph(graphRes.data);
+
+            console.log("Payment Stats:", {
+                totalDeal: statsRes.data.data.totalDealAmount,
+                totalReceived: statsRes.data.data.totalReceived,
+                totalDue: statsRes.data.data.totalDue,
+                efficiency: statsRes.data.data.totalDealAmount > 0
+                    ? ((statsRes.data.data.totalReceived / statsRes.data.data.totalDealAmount) * 100).toFixed(2) + '%'
+                    : '0%'
+            });
 
         } catch (err) {
             console.error("Admin Dashboard Error:", err);
@@ -110,12 +120,67 @@ export default function AdminDashboard() {
     return (
         <div className="p-6 fade-in-up">
 
+
+            <div className="bg-white shadow rounded-xl p-6 mb-6">
+                <h2 className="text-xl font-semibold mb-4" style={{ color: primary }}>
+                    Payment Summary
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="p-4 border rounded-lg">
+                        <p className="text-gray-600 text-sm">Total Deal Amount</p>
+                        <p className="text-2xl font-bold" style={{ color: primary }}>
+                            ₹{Number(stats.totalDealAmount).toLocaleString()}
+                        </p>
+                    </div>
+
+                    <div className="p-4 border rounded-lg">
+                        <p className="text-gray-600 text-sm">Total Received</p>
+                        <p className="text-2xl font-bold text-green-600">
+                            ₹{Number(stats.totalReceived).toLocaleString()}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                            {stats.totalDealAmount > 0
+                                ? `${((stats.totalReceived / stats.totalDealAmount) * 100).toFixed(1)}% Collected`
+                                : '0% Collected'
+                            }
+                        </p>
+                    </div>
+
+                    <div className="p-4 border rounded-lg">
+                        <p className="text-gray-600 text-sm">Total Due Amount</p>
+                        <p className="text-2xl font-bold text-orange-600">
+                            ₹{Number(stats.totalDue).toLocaleString()}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                            {stats.totalDealAmount > 0
+                                ? `${((stats.totalDue / stats.totalDealAmount) * 100).toFixed(1)}% Pending`
+                                : '0% Pending'
+                            }
+                        </p>
+                    </div>
+
+                    <div className="p-4 border rounded-lg">
+                        <p className="text-gray-600 text-sm">Collection Efficiency</p>
+                        <p className="text-2xl font-bold" style={{ color: stats.totalReceived >= stats.totalDealAmount * 0.7 ? 'green' : 'orange' }}>
+                            {stats.totalDealAmount > 0
+                                ? `${((stats.totalReceived / stats.totalDealAmount) * 100).toFixed(1)}%`
+                                : '0%'
+                            }
+                        </p>
+                        <p className="text-sm text-gray-500">
+                            {stats.totalClients} Active Clients
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             {/* ---------- KPI CARDS ---------- */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 <KPI title="Total Clients" value={stats.totalClients} color={primary} />
                 <KPI title="Total Deal Amount" value={`₹${Number(stats.totalDealAmount).toLocaleString()}`} color={primary} />
                 <KPI title="Total Payment Received" value={`₹${Number(stats.totalReceived).toLocaleString()}`} color={primary} />
-                <KPI title="Total Due Amount" value={`₹${Number(stats.totalDue).toLocaleString()}`} color={primary} />
+                <KPI title="Total Due Amount" value={`₹${Number(stats.balanceAmount).toLocaleString()}`} color={primary} />
             </div>
 
             {/* ---------- CHART CARD ---------- */}

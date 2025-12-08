@@ -30,6 +30,7 @@ export default function ClientsList() {
 
     // Define all columns from database
     const [tableColumns, setTableColumns] = useState([
+        { key: 'clientId', label: 'Client ID', visible: true, category: 'basic' },
         { key: 'franchiseType', label: 'Franchise Type', visible: true, category: 'basic' },
         { key: 'name', label: 'Client Name', visible: true, category: 'basic' },
         { key: 'territory', label: 'Territory', visible: true, category: 'basic' },
@@ -88,7 +89,6 @@ export default function ClientsList() {
         }
     };
 
-    // Search functionality
     useEffect(() => {
         const results = clients.filter(client => {
             return Object.keys(client).some(key => {

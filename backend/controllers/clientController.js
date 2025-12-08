@@ -3,6 +3,9 @@
 // ==========================================
 const ClientMaster = require("../models/ClientMaster");
 
+// const { sendAdminNotification } = require("../utils/createClients");
+
+
 // Build public URL for uploaded file
 const buildFileUrl = (req, filename) => {
     return `${req.protocol}://${req.get("host")}/uploads/${filename}`;
@@ -118,6 +121,8 @@ exports.createClient = async (req, res) => {
 
         await client.save();
 
+        // await sendAdminNotification(client, req.user);
+
         res.json({ success: true, client });
 
     } catch (err) {
@@ -217,6 +222,9 @@ exports.addPayment = async (req, res) => {
 // ==========================================
 // APPROVE PAYMENT (Admin)
 // ==========================================
+// ==========================================
+// APPROVE PAYMENT (Admin) - UPDATED VERSION
+// ==========================================
 exports.approveSecondPayment = async (req, res) => {
     try {
         const { clientId, paymentId } = req.params;
@@ -231,10 +239,39 @@ exports.approveSecondPayment = async (req, res) => {
             return res.json({ success: false, message: "Payment already approved" });
 
         payment.status = "approved";
-        recalcPayments(client);
+
+        // Recalculate all payments to get real amounts
+        const deal = Number(client.dealAmount) || 0;
+        const baseToken = Number(client.tokenReceivedAmount) || 0;
+
+        // Sum only APPROVED second payments
+        const approvedSum = client.secondPayments
+            .filter(p => p.status === "approved")
+            .reduce((acc, p) => acc + Number(p.amount), 0);
+
+        // Calculate real totals
+        const totalReceived = baseToken + approvedSum;
+
+        // Update client with real amounts
+        client.totalReceived = totalReceived;
+        client.receivedPercent = deal ? Number(((totalReceived / deal) * 100).toFixed(2)) : 0;
+        client.remainPercent = Number((100 - client.receivedPercent).toFixed(2));
+        client.balanceAmount = Number((deal - totalReceived).toFixed(2));
 
         await client.save();
-        res.json({ success: true, message: "Payment approved", client });
+
+        // Return response with updated amounts
+        res.json({
+            success: true,
+            message: "Payment approved",
+            client,
+            paymentDetails: {
+                approvedAmount: payment.amount,
+                totalReceived,
+                receivedPercent: client.receivedPercent,
+                balanceAmount: client.balanceAmount
+            }
+        });
 
     } catch (err) {
         console.log("Approve Payment Error:", err);
@@ -244,6 +281,9 @@ exports.approveSecondPayment = async (req, res) => {
 
 // ==========================================
 // REJECT PAYMENT (Admin)
+// ==========================================
+// ==========================================
+// REJECT PAYMENT (Admin) - UPDATED VERSION
 // ==========================================
 exports.rejectSecondPayment = async (req, res) => {
     try {
@@ -256,10 +296,34 @@ exports.rejectSecondPayment = async (req, res) => {
         if (!payment) return res.status(404).json({ success: false, message: "Payment not found" });
 
         payment.status = "rejected";
-        recalcPayments(client);
+
+        // Recalculate after rejection
+        const deal = Number(client.dealAmount) || 0;
+        const baseToken = Number(client.tokenReceivedAmount) || 0;
+
+        const approvedSum = client.secondPayments
+            .filter(p => p.status === "approved")
+            .reduce((acc, p) => acc + Number(p.amount), 0);
+
+        const totalReceived = baseToken + approvedSum;
+
+        client.totalReceived = totalReceived;
+        client.receivedPercent = deal ? Number(((totalReceived / deal) * 100).toFixed(2)) : 0;
+        client.remainPercent = Number((100 - client.receivedPercent).toFixed(2));
+        client.balanceAmount = Number((deal - totalReceived).toFixed(2));
 
         await client.save();
-        res.json({ success: true, message: "Payment rejected", client });
+
+        res.json({
+            success: true,
+            message: "Payment rejected",
+            client,
+            updatedAmounts: {
+                totalReceived,
+                receivedPercent: client.receivedPercent,
+                balanceAmount: client.balanceAmount
+            }
+        });
 
     } catch (err) {
         console.error("Reject Payment Error:", err);

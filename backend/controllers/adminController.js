@@ -4,14 +4,37 @@ const User = require("../models/User");
 /* ===========================
     ADMIN DASHBOARD STATS
 =========================== */
+// In your clientController.js file, update the getAdminStats function:
+
+/* ===========================
+    ADMIN DASHBOARD STATS - UPDATED VERSION
+=========================== */
 exports.getAdminStats = async (req, res) => {
     try {
         const clients = await Client.find();
 
-        const totalClients = clients.length;
-        const totalDealAmount = clients.reduce((sum, c) => sum + (c.dealAmount || 0), 0);
-        const totalReceived = clients.reduce((sum, c) => sum + (c.tokenReceivedAmount || 0), 0);
-        const totalDue = totalDealAmount - totalReceived;
+        let totalClients = 0;
+        let totalDealAmount = 0;
+        let totalReceived = 0;
+        let totalDue = 0;
+
+        clients.forEach((c) => {
+            totalClients++;
+            const deal = Number(c.dealAmount) || 0;
+            const baseToken = Number(c.tokenReceivedAmount) || 0;
+
+            // Calculate approved second payments
+            const approvedSecondPayments = c.secondPayments
+                .filter(p => p.status === "approved")
+                .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+
+            // Total received = base token + approved second payments
+            const clientTotalReceived = baseToken + approvedSecondPayments;
+
+            totalDealAmount += deal;
+            totalReceived += clientTotalReceived;
+            totalDue += (deal - clientTotalReceived);
+        });
 
         res.json({
             success: true,
@@ -19,7 +42,8 @@ exports.getAdminStats = async (req, res) => {
                 totalClients,
                 totalDealAmount,
                 totalReceived,
-                totalDue
+                totalDue,
+                balanceAmount: totalDue  // Adding balanceAmount for consistency
             }
         });
 
@@ -27,7 +51,6 @@ exports.getAdminStats = async (req, res) => {
         res.status(500).json({ success: false, message: "Server Error", err });
     }
 };
-
 
 /* ===========================
       ALL SALESMEN LIST
@@ -84,7 +107,44 @@ exports.salesmen = async (req, res) => {
                 $addFields: {
                     totalClients: { $size: "$clients" },
                     totalDealAmount: { $sum: "$clients.dealAmount" },
-                    totalReceived: { $sum: "$clients.tokenReceivedAmount" }
+                    totalTokenReceived: { $sum: "$clients.tokenReceivedAmount" },
+                    // Calculate total approved second payments
+                    totalApprovedSecondPayments: {
+                        $sum: {
+                            $reduce: {
+                                input: "$clients",
+                                initialValue: 0,
+                                in: {
+                                    $add: [
+                                        "$$value",
+                                        {
+                                            $sum: {
+                                                $map: {
+                                                    input: {
+                                                        $filter: {
+                                                            input: "$$this.secondPayments",
+                                                            as: "payment",
+                                                            cond: { $eq: ["$$payment.status", "approved"] }
+                                                        }
+                                                    },
+                                                    as: "approvedPayment",
+                                                    in: "$$approvedPayment.amount"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            {
+                $addFields: {
+                    totalReceived: {
+                        $add: ["$totalTokenReceived", "$totalApprovedSecondPayments"]
+                    }
                 }
             },
 
@@ -94,6 +154,8 @@ exports.salesmen = async (req, res) => {
                     designation: 1,
                     totalClients: 1,
                     totalDealAmount: 1,
+                    totalTokenReceived: 1,
+                    totalApprovedSecondPayments: 1,
                     totalReceived: 1
                 }
             }

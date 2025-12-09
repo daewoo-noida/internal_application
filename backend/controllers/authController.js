@@ -18,7 +18,8 @@ exports.signup = async (req, res) => {
       "@theebg.com",
       "@daewooappliances.in",
       "@ebikego.in",
-      "@franchiseworld.com"
+      "@franchiseworld.com",
+      "@kustard.in"
     ];
 
     const emailLower = email.toLowerCase();

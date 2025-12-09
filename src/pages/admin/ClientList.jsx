@@ -3,6 +3,7 @@ import { clientAPI } from "../../utils/api";
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { Delete, Eye, LucideDelete } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 // Simple icon components (using text/emoji as fallback)
 const SearchIcon = () => <span className="text-gray-400">🔍</span>;
@@ -422,6 +423,12 @@ export default function ClientsList() {
         setColumnFilters({});
     };
 
+    const navigate = useNavigate()
+
+    const handleRowClick = (clientId) => {
+        navigate(`/admin/client/${clientId}`);
+    };
+
     // Get visible columns
     const visibleColumns = tableColumns.filter(col => col.visible);
 
@@ -457,8 +464,7 @@ export default function ClientsList() {
         }
     };
 
-    // Get cell value for display
-    // Get cell value for display
+
     const getCellValue = (client, columnKey) => {
         // Handle delete column - render delete button
         if (columnKey === 'delete') {
@@ -836,7 +842,10 @@ export default function ClientsList() {
                                 </tr>
                             ) : (
                                 currentClients.map((client) => (
-                                    <tr key={client._id} className="hover:bg-gray-50">
+                                    <tr key={client._id}
+                                        className="hover:bg-gray-50 cursor-pointer"
+                                        onClick={() => handleRowClick(client._id)}
+                                    >
                                         {visibleColumns.map(column => (
                                             <td
                                                 key={`${client._id}-${column.key}`}

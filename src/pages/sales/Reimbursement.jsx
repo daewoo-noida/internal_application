@@ -150,7 +150,7 @@ export default function Reimbursement() {
                         </p>
                     </div>
                     <div className="mt-6 md:mt-0 border border-gray-300 rounded-lg px-4 py-2 hover:shadow-lg transition cursor-pointer flex items-center gap-2">
-                        <button onClick={() => window.location.href = "/sales/reimbursement/track"}> Track Your Reimberment </button>
+                        <button onClick={() => window.location.href = "/sales/reimbursement/track"}> Track Your Reimbursement </button>
                     </div>
 
                 </div>

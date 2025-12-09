@@ -36,6 +36,7 @@ import useAutoLogout from "./utils/useAutoLogout.js";
 import ClientsList from "./pages/admin/ClientList.jsx";
 import AdminReimbursements from "./pages/admin/AdminReimbursements.jsx";
 import TrackReimbursement from "./pages/sales/TrackReimbursement.jsx";
+import Page404 from "./pages/sales/404.jsx";
 
 // Wrapper for Sales Routes
 const SalesLayout = () => (
@@ -94,7 +95,7 @@ export default function App() {
           <Route path="/admin/daewoo-clients" element={<ClientsList />} />
           <Route path="/admin/reimbursements" element={<AdminReimbursements />} />
         </Route>
-
+        <Route path="*" element={<Page404 />} />
       </Routes>
     </>
   );

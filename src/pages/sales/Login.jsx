@@ -155,6 +155,7 @@ export default function Login() {
                   <option value="@daewooappliances.in">@daewooappliances.in</option>
                   <option value="@ebikego.in">@ebikego.in</option>
                   <option value="@franchiseworld.com">@franchiseworld.com</option>
+                  <option value="@kustard.in">@kustard.in</option>
                 </select>
               </div>
 

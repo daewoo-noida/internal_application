@@ -119,7 +119,7 @@ export default function TrackReimbursement() {
                         <h3 className="text-xl font-semibold text-gray-900 mb-2">No reimbursement requests yet</h3>
                         <p className="text-gray-600 mb-6">Submit your first reimbursement request to get started</p>
                         <a
-                            href="/reimbursement"
+                            href="/sales/reimbursement"
                             className="inline-flex items-center px-6 py-3 bg-[#0070b9] text-white rounded-lg hover:bg-[#0070b9] transition font-medium"
                         >
                             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -284,7 +284,7 @@ export default function TrackReimbursement() {
                                                 >
                                                     Delete Request
                                                 </button>
-                                                <button
+                                                {/* <button
                                                     onClick={() => {
                                                         // You can add edit functionality here
                                                         toast.info('Edit functionality coming soon');
@@ -292,7 +292,7 @@ export default function TrackReimbursement() {
                                                     className="px-4 py-2 border border-[#0070b9] text-[#0070b9] rounded-lg text-sm hover:bg-[#0070b9] hover:text-white transition"
                                                 >
                                                     Edit Request
-                                                </button>
+                                                </button> */}
                                             </>
                                         )}
                                         {request.status === 'rejected' && (

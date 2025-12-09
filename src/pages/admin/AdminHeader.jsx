@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-
+import NotificationBell from "../../components/NotificationBell";
 export default function AdminHeader({ toggleSidebar }) {
     const [admin, setAdmin] = useState(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -31,6 +31,7 @@ export default function AdminHeader({ toggleSidebar }) {
             className="w-full shadow-sm bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40"
             style={{ height: "60px" }}
         >
+
             <div className="h-full flex items-center justify-between px-4">
 
                 {/* Sidebar Toggle Button */}
@@ -52,7 +53,8 @@ export default function AdminHeader({ toggleSidebar }) {
                 </div>
 
                 {/* Admin Profile */}
-                <div className="relative" ref={dropdownRef}>
+                <div className="relative flex items-center gap-3" ref={dropdownRef}>
+                    <NotificationBell />
                     <button
                         onClick={() => setDropdownOpen(!dropdownOpen)}
                         className="flex items-center gap-3 px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"

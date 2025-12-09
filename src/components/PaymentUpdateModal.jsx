@@ -19,6 +19,32 @@ export default function PaymentUpdateModal({ client, onClose, onSuccess }) {
     };
 
     const handleSubmit = async () => {
+        // Validation
+        if (!form.amount || form.amount <= 0) {
+            alert("Amount is required and must be greater than 0");
+            return;
+        }
+
+        if (!form.paymentDate) {
+            alert("Payment date is required");
+            return;
+        }
+
+        if (!form.mode) {
+            alert("Payment mode is required");
+            return;
+        }
+
+        if (!form.transactionId || form.transactionId.trim() === "") {
+            alert("Transaction ID is required");
+            return;
+        }
+
+        if (!form.proof) {
+            alert("Payment proof is required");
+            return;
+        }
+
         const fd = new FormData();
         Object.keys(form).forEach((key) => fd.append(key, form[key]));
 
@@ -52,6 +78,7 @@ export default function PaymentUpdateModal({ client, onClose, onSuccess }) {
                         placeholder="Amount"
                         onChange={handleChange}
                         className="w-full border p-2 rounded"
+                        required
                     />
 
                     <input
@@ -59,12 +86,14 @@ export default function PaymentUpdateModal({ client, onClose, onSuccess }) {
                         type="date"
                         onChange={handleChange}
                         className="w-full border p-2 rounded"
+                        required
                     />
 
                     <select
                         name="mode"
                         onChange={handleChange}
                         className="w-full border p-2 rounded"
+                        required
                     >
                         <option value="">Select Payment Mode</option>
                         <option value="Cash">Cash</option>
@@ -78,6 +107,7 @@ export default function PaymentUpdateModal({ client, onClose, onSuccess }) {
                         placeholder="Transaction ID"
                         onChange={handleChange}
                         className="w-full border p-2 rounded"
+                        required
                     />
 
                     <input
@@ -86,6 +116,7 @@ export default function PaymentUpdateModal({ client, onClose, onSuccess }) {
                         accept="image/*"
                         onChange={handleChange}
                         className="w-full"
+                        required
                     />
                 </div>
 

@@ -2,7 +2,7 @@
 // Client Controller
 // ==========================================
 const ClientMaster = require("../models/ClientMaster");
-
+const { createNotification } = require('../utils/notificationHelper');
 // const { sendAdminNotification } = require("../utils/createClients");
 
 
@@ -208,8 +208,21 @@ exports.addPayment = async (req, res) => {
         };
 
         client.secondPayments.push(payment);
+
         recalcPayments(client);
+
         await client.save();
+
+
+        const savedPayment = client.secondPayments[client.secondPayments.length - 1];
+
+        await createNotification({
+            title: 'New Payment Request',
+            message: `New payment of ₹${payment.amount} added for ${client.name} (Pending approval)`,
+            type: 'payment',
+            clientId: client._id,
+            paymentId: savedPayment._id
+        });
 
         res.json({ success: true, message: "Payment added (pending approval)", client });
 
@@ -260,6 +273,14 @@ exports.approveSecondPayment = async (req, res) => {
 
         await client.save();
 
+        await createNotification({
+            title: 'Payment Approved',
+            message: `Payment of ₹${payment.amount} approved for ${client.name}`,
+            type: 'payment',
+            clientId: client._id,
+            paymentId: payment._id
+        });
+
         // Return response with updated amounts
         res.json({
             success: true,
@@ -272,6 +293,8 @@ exports.approveSecondPayment = async (req, res) => {
                 balanceAmount: client.balanceAmount
             }
         });
+
+
 
     } catch (err) {
         console.log("Approve Payment Error:", err);
@@ -323,6 +346,14 @@ exports.rejectSecondPayment = async (req, res) => {
                 receivedPercent: client.receivedPercent,
                 balanceAmount: client.balanceAmount
             }
+        });
+
+        await createNotification({
+            title: 'Payment Rejected',
+            message: `Payment of ₹${payment.amount} rejected for ${client.name}`,
+            type: 'payment',
+            clientId: client._id,
+            paymentId: payment._id
         });
 
     } catch (err) {

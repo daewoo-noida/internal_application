@@ -186,13 +186,14 @@ export default function SalesDashboard() {
       {/* ======================= */}
       {/*   CLIENT TABLE         */}
       {/* ======================= */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-lg shadow overflow-x-auto">
         {loading ? (
           <div className="text-center py-10">Loading...</div>
         ) : (
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium">CLIENT ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium">CLIENT NAME</th>
                 <th className="px-6 py-3 text-left text-xs font-medium">OWNER NAME</th>
                 <th className="px-6 py-3 text-left text-xs font-medium">DEAL AMOUNT</th>
@@ -227,6 +228,7 @@ export default function SalesDashboard() {
 
                   return (
                     <tr key={c._id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 font-mono text-sm">{c.clientId || "N/A"}</td>
                       <td className="px-6 py-4 font-medium">{c.name || "N/A"}</td>
                       <td className="px-6 py-4">
                         {c.createdBy?.name || "N/A"}

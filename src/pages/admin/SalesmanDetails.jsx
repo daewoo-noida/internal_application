@@ -276,6 +276,7 @@ export default function SalesmanDetails() {
                     <table className="w-full border-collapse">
                         <thead>
                             <tr className="bg-gray-50 border-b">
+                                <th className="p-3 text-left">Client ID</th>
                                 <th className="p-3 text-left">Client Name</th>
                                 <th className="p-3 text-left">Territory</th>
                                 <th className="p-3 text-left">Deal Amount</th>
@@ -312,6 +313,7 @@ export default function SalesmanDetails() {
 
                                     return (
                                         <tr key={c._id} className="border-b hover:bg-gray-50">
+                                            <td className="p-3 font-mono text-sm">{c.clientId}</td>
                                             <td className="p-3 font-medium">{c.name}</td>
                                             <td className="p-3">{c.territory || "-"}</td>
                                             <td className="p-3 font-semibold">

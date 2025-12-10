@@ -1,61 +1,70 @@
 import { Navigate } from "react-router-dom";
-
-// Function to check if sales profile is complete
-const isSalesProfileComplete = (userData) => {
-    if (!userData) return false;
-
-    // Check all required fields for sales profile completion
-    const requiredFields = {
-        gender: userData.gender,
-        dob: userData.dob,
-        officeBranch: userData.officeBranch,
-        profileImage: userData.profileImage
-    };
-
-    // All fields should not be empty/null/undefined
-    return Object.values(requiredFields).every(field =>
-        field !== undefined &&
-        field !== null &&
-        field !== "" &&
-        field.trim() !== ""
-    );
-};
+import { useEffect, useState } from "react";
+import { authAPI } from "../utils/api";
 
 export default function SalesProtectedRoute({ children }) {
     const token = localStorage.getItem("authToken");
     const role = localStorage.getItem("userRole");
-    const loginTime = localStorage.getItem("loginTime");
+    const [isLoading, setIsLoading] = useState(true);
+    const [profileComplete, setProfileComplete] = useState(false);
 
-    // Get user data from localStorage
-    const userDataString = localStorage.getItem("userData");
-    let userData = null;
+    useEffect(() => {
+        const checkProfileFromServer = async () => {
+            if (!token || role?.toLowerCase() !== "sales") {
+                setIsLoading(false);
+                return;
+            }
 
-    if (userDataString) {
-        try {
-            userData = JSON.parse(userDataString);
-        } catch (error) {
-            console.error("Error parsing userData:", error);
-        }
-    }
+            try {
+                // Fetch fresh user data from server
+                const res = await authAPI.profile();
+                const userData = res.data.user;
+
+                // Store user data in localStorage
+                localStorage.setItem("userData", JSON.stringify(userData));
+
+                // ✅ Check profile completion from server field
+                const complete = userData.profileCompleted || false;
+                setProfileComplete(complete);
+
+                // Store completion status
+                localStorage.setItem("salesProfileComplete", complete ? "true" : "false");
+
+            } catch (error) {
+                console.error("Error checking profile:", error);
+
+                // Fallback to localStorage check
+                const storedComplete = localStorage.getItem("salesProfileComplete");
+                if (storedComplete === "true") {
+                    setProfileComplete(true);
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        checkProfileFromServer();
+    }, [token, role]);
 
     // Check authentication
     if (!token || role?.toLowerCase() !== "sales") {
         return <Navigate to="/login" />;
     }
 
-    // // Check session timeout (5 hours)
-    // const fiveHours = 5 * 60 * 60 * 1000;
-    // if (Date.now() - Number(loginTime) > fiveHours) {
-    //     localStorage.clear();
-    //     return <Navigate to="/login" />;
-    // }
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        );
+    }
 
     const currentPath = window.location.pathname;
     const isProfilePage = currentPath === "/sales/profile";
 
-    if (!isProfilePage && !isSalesProfileComplete(userData)) {
-        // Redirect to profile page if profile is incomplete
-        return <Navigate to="/sales/profile" />;
+    // If profile is not complete and we're not on profile page, redirect
+    if (!isProfilePage && !profileComplete) {
+        return <Navigate to="/sales/profile" replace />;
     }
 
     return children;

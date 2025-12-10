@@ -85,8 +85,8 @@ export default function Profile() {
         return Object.keys(newErrors).length === 0;
     };
 
+
     const saveChanges = async () => {
-        // Validate form before saving
         if (!validateForm()) {
             alert("Please fill in all required fields correctly");
             return;
@@ -104,15 +104,23 @@ export default function Profile() {
             setEdit(false);
             setErrors({});
 
-            // Update localStorage with complete profile data
+            // Update localStorage
             localStorage.setItem("userData", JSON.stringify(res.data.user));
 
-            // Close guide if profile is now complete
-            if (isProfileComplete(res.data.user)) {
-                setShowGuide(false);
+            // ✅ Use the profileCompleted flag from server response
+            if (res.data.profileCompleted) {
+                localStorage.setItem("salesProfileComplete", "true");
             }
 
-            // Show success message
+            // Close guide if profile is now complete
+            if (res.data.profileCompleted) {
+                setShowGuide(false);
+                // Redirect to dashboard after successful completion
+                setTimeout(() => {
+                    window.location.href = "/sales/dashboard";
+                }, 1500);
+            }
+
             alert("Profile updated successfully!");
 
         } catch (error) {
@@ -122,6 +130,7 @@ export default function Profile() {
             setIsSaving(false);
         }
     };
+
 
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];

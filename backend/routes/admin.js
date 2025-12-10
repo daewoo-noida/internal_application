@@ -10,7 +10,8 @@ const {
     getAllSalesmen,
     getSalesmanClients,
     getPendingDocuments, getSalesmanStats, verifySalesman, deleteSalesman,
-    getGraphStats
+    getGraphStats,
+
 } = require("../controllers/adminController");
 
 router.get("/stats", protect, allowRoles("admin"), getAdminStats);

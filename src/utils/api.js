@@ -60,6 +60,7 @@ export const clientAPI = {
     }),
   approvePayment: (cid, pid) => api.post(`/clients/${cid}/approve-payment/${pid}`),
   rejectPayment: (cid, pid) => api.post(`/clients/${cid}/reject-payment/${pid}`),
+  deleteSecondPayment: (cid, pid) => api.delete(`/clients/${cid}/delete-payment/${pid}`),
 
 };
 

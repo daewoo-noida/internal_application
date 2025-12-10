@@ -63,6 +63,18 @@ export default function ClientDetails() {
         }
     };
 
+    const deletePayment = async (paymentId) => {
+        if (!window.confirm("Are you sure you want to delete this payment?")) return;
+
+        try {
+            await clientAPI.deleteSecondPayment(client._id, paymentId);
+            alert("Payment deleted");
+            loadClient();
+        } catch (err) {
+            alert("Error deleting payment");
+        }
+    };
+
     // Check if file is PDF
     const isPdfFile = (filepath) => {
         if (!filepath) return false;
@@ -247,19 +259,19 @@ export default function ClientDetails() {
                 {/* ADDITIONAL PAYMENTS */}
                 {client.secondPayments?.length > 0 && (
                     <Section title="Additional Payments">
-                        <div className="overflow-x-auto">
-                            <table className="w-full border-collapse">
+                        {/* <div className="overflow-x-auto"> */}
+                        <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                            <table className="w-full">
                                 <thead>
-                                    <tr className="bg-gray-100 border">
-                                        <th className="p-3 text-left">#</th>
-                                        <th className="p-3 text-left">Amount</th>
-                                        <th className="p-3 text-left">Payment Date</th>
-                                        <th className="p-3 text-left">Mode</th>
-                                        {/* <th className="p-3 text-left">Txn ID</th> */}
-                                        <th className="p-3 text-left">Proof</th>
-                                        <th className="p-3 text-left">Status</th>
-                                        <th className="p-3 text-left">Approved Amount</th>
-                                        <th className="p-3 text-left">Actions</th>
+                                    <tr className="bg-gray-50 border-b border-gray-200">
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">#</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Amount</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Payment Date</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Mode</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Proof</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Approved Amount</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
 
@@ -275,35 +287,26 @@ export default function ClientDetails() {
                                         const proofURL = clean(p.proof?.path);
                                         const isPdf = isPdfFile(p.proof?.path);
 
-                                        const rowColor =
-                                            p.status === "approved"
-                                                ? "bg-green-50"
-                                                : p.status === "rejected"
-                                                    ? "bg-red-50"
-                                                    : "bg-yellow-50";
-
                                         return (
-                                            <tr key={p._id} className={`${rowColor} border`}>
-                                                <td className="p-3">{index + 1}</td>
-                                                <td className="p-3 font-semibold">₹ {p.amount}</td>
-                                                <td className="p-3">{p.paymentDate?.slice(0, 10)}</td>
-                                                <td className="p-3">{p.mode}</td>
-                                                {/* <td className="p-3">{p.transactionId || "--"}</td> */}
+                                            <tr key={p._id} className="border-b border-gray-100 hover:bg-gray-50">
+                                                <td className="px-4 py-3 text-sm text-gray-600">{index + 1}</td>
+                                                <td className="px-4 py-3 text-sm font-medium text-gray-900">₹ {p.amount}</td>
+                                                <td className="px-4 py-3 text-sm text-gray-700">{p.paymentDate?.slice(0, 10)}</td>
+                                                <td className="px-4 py-3 text-sm text-gray-700">{p.mode}</td>
 
-                                                <td className="p-3">
+                                                <td className="px-4 py-3">
                                                     {proofURL ? (
                                                         <div className="flex items-center gap-2">
                                                             {isPdf ? (
-                                                                // PDF Display
                                                                 <div className="relative group">
-                                                                    <div className="h-16 w-16 border border-gray-300 rounded flex flex-col items-center justify-center bg-red-50">
-                                                                        <FileText className="text-red-500" size={24} />
-                                                                        <span className="text-xs text-gray-600 mt-1">PDF</span>
+                                                                    <div className="h-12 w-12 border border-gray-200 rounded flex flex-col items-center justify-center bg-red-50">
+                                                                        <FileText className="text-red-500" size={20} />
+                                                                        <span className="text-xs text-gray-600">PDF</span>
                                                                     </div>
                                                                     <div className="absolute inset-0 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded">
                                                                         <button
                                                                             onClick={() => viewPdf(proofURL)}
-                                                                            className="bg-blue-600 text-white p-1 rounded hover:bg-blue-700"
+                                                                            className="bg-blue-500 text-white p-1 rounded hover:bg-blue-600"
                                                                             title="View PDF"
                                                                         >
                                                                             <Eye size={14} />
@@ -313,7 +316,7 @@ export default function ClientDetails() {
                                                                                 const fileName = p.proof.path?.split("\\").pop().split("/").pop();
                                                                                 downloadFile(proofURL, fileName);
                                                                             }}
-                                                                            className="bg-green-600 text-white p-1 rounded hover:bg-green-700"
+                                                                            className="bg-green-500 text-white p-1 rounded hover:bg-green-600"
                                                                             title="Download PDF"
                                                                         >
                                                                             <Download size={14} />
@@ -321,12 +324,11 @@ export default function ClientDetails() {
                                                                     </div>
                                                                 </div>
                                                             ) : (
-                                                                // Image Display
                                                                 <div className="relative group">
                                                                     <img
                                                                         src={proofURL}
                                                                         alt={`Payment proof ${index + 1}`}
-                                                                        className="h-16 w-16 object-cover rounded border cursor-pointer"
+                                                                        className="h-12 w-12 object-cover rounded border cursor-pointer"
                                                                         onClick={() => {
                                                                             setPreviewImage(proofURL);
                                                                             setShowPreview(true);
@@ -339,7 +341,7 @@ export default function ClientDetails() {
                                                                                 const fileName = p.proof.path?.split("\\").pop().split("/").pop();
                                                                                 downloadFile(proofURL, fileName);
                                                                             }}
-                                                                            className="bg-blue-600 text-white p-1 rounded-tl-md"
+                                                                            className="bg-blue-500 text-white p-1 rounded-tl-md"
                                                                             title="Download image"
                                                                         >
                                                                             <Download size={12} />
@@ -349,39 +351,64 @@ export default function ClientDetails() {
                                                             )}
                                                         </div>
                                                     ) : (
-                                                        <span className="text-gray-400">No File</span>
+                                                        <span className="text-gray-400 text-sm">No File</span>
                                                     )}
                                                 </td>
 
-                                                <td className="p-3 font-medium">
-                                                    {p.status === "approved" && <span className="bg-green-200 text-green-800 px-3 py-1 rounded">Approved</span>}
-                                                    {p.status === "pending" && <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded">Pending</span>}
-                                                    {p.status === "rejected" && <span className="bg-red-200 text-red-800 px-3 py-1 rounded">Rejected</span>}
+                                                <td className="px-4 py-3">
+                                                    {p.status === "approved" && (
+                                                        <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                                            Approved
+                                                        </span>
+                                                    )}
+                                                    {p.status === "pending" && (
+                                                        <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
+                                                            Pending
+                                                        </span>
+                                                    )}
+                                                    {p.status === "rejected" && (
+                                                        <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                                                            Rejected
+                                                        </span>
+                                                    )}
                                                 </td>
 
-                                                <td className="p-3 font-semibold">
-                                                    {p.status === "approved" ? `₹ ${p.amount}` : "--"}
+                                                <td className="px-4 py-3 text-sm font-medium">
+                                                    {p.status === "approved" ? `₹ ${p.amount}` : (
+                                                        <span className="text-gray-400">--</span>
+                                                    )}
                                                 </td>
 
-                                                <td className="p-3">
+                                                <td className="px-4 py-3">
                                                     {p.status === "pending" && user?.role === "admin" && (
-                                                        <div className="flex gap-2">
+                                                        <div className="flex items-center gap-2">
                                                             <button
                                                                 onClick={() => approvePayment(p._id)}
-                                                                className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+                                                                className="px-3 py-1.5 bg-green-500 text-white text-xs rounded hover:bg-green-600"
+                                                                title="Approve Payment"
                                                             >
                                                                 Approve
                                                             </button>
                                                             <button
                                                                 onClick={() => rejectPayment(p._id)}
-                                                                className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+                                                                className="px-3 py-1.5 bg-orange-500 text-white text-xs rounded hover:bg-orange-600"
+                                                                title="Reject Payment"
                                                             >
                                                                 Reject
+                                                            </button>
+                                                            <button
+                                                                onClick={() => deletePayment(p._id)}
+                                                                className="px-3 py-1.5 bg-red-500 text-white text-xs rounded hover:bg-red-600"
+                                                                title="Delete Payment"
+                                                            >
+                                                                Delete
                                                             </button>
                                                         </div>
                                                     )}
 
-                                                    {p.status !== "pending" && <span className="text-gray-500">--</span>}
+                                                    {p.status !== "pending" && (
+                                                        <span className="text-gray-400 text-sm">--</span>
+                                                    )}
                                                 </td>
                                             </tr>
                                         );
@@ -389,6 +416,7 @@ export default function ClientDetails() {
                                 </tbody>
                             </table>
                         </div>
+                        {/* </div> */}
                     </Section>
                 )}
 

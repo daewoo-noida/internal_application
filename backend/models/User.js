@@ -24,7 +24,11 @@ const userSchema = new mongoose.Schema({
     gender: { type: String, default: "" },
     dob: { type: String, default: "" },
     officeBranch: { type: String, default: "" },
-    profileImage: { type: String, default: "" }
+    profileImage: { type: String, default: "" },
+    profileCompleted: {
+        type: Boolean,
+        default: false
+    },
 });
 
 module.exports = mongoose.model("User", userSchema);

@@ -40,6 +40,7 @@ export default function Login() {
     }
 
     try {
+      // Step 1: Login
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -53,12 +54,72 @@ export default function Login() {
 
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
-        localStorage.setItem("userData", JSON.stringify(data.user));
         localStorage.setItem("userRole", data.user.role);
         localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("loginTime", Date.now());
+        localStorage.setItem("loginTime", Date.now().toString());
 
-        navigate("/");
+        // Step 2: Fetch complete user profile with profileCompleted field
+        try {
+          const profileResponse = await fetch(`${API_URL}/auth/profile`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${data.token}`
+            },
+          });
+
+          if (profileResponse.ok) {
+            const profileData = await profileResponse.json();
+
+            // Store complete user data with profileCompleted field
+            localStorage.setItem("userData", JSON.stringify(profileData.user));
+
+            // Check if profile is complete from server
+            const isProfileComplete = profileData.user.profileCompleted ||
+              (profileData.user.gender &&
+                profileData.user.dob &&
+                profileData.user.officeBranch &&
+                profileData.user.profileImage);
+
+            // Store profile completion status
+            localStorage.setItem("salesProfileComplete", isProfileComplete ? "true" : "false");
+
+            // Redirect based on role and profile completion
+            if (data.user.role.toLowerCase() === "sales") {
+              if (isProfileComplete) {
+                navigate("/sales/dashboard"); // Go to dashboard if profile complete
+              } else {
+                navigate("/sales/profile"); // Go to profile page if incomplete
+              }
+            } else if (data.user.role.toLowerCase() === "admin") {
+              navigate("/admin/dashboard");
+            } else {
+              navigate("/");
+            }
+          } else {
+            // If profile fetch fails, use basic data from login
+            localStorage.setItem("userData", JSON.stringify(data.user));
+            localStorage.setItem("salesProfileComplete", "false");
+
+            // Default redirect
+            if (data.user.role.toLowerCase() === "sales") {
+              navigate("/sales/profile");
+            } else {
+              navigate("/");
+            }
+          }
+        } catch (profileError) {
+          console.error("Error fetching profile:", profileError);
+          // Fallback with basic data
+          localStorage.setItem("userData", JSON.stringify(data.user));
+          localStorage.setItem("salesProfileComplete", "false");
+
+          if (data.user.role.toLowerCase() === "sales") {
+            navigate("/sales/profile");
+          } else {
+            navigate("/");
+          }
+        }
       } else {
         setGeneralError(data.message || "Invalid email or password.");
       }
@@ -80,7 +141,6 @@ export default function Login() {
       navigate("/admin/dashboard");
     }
   }, [navigate]);
-
   const backGroundImage = {
     backgroundImage: `url(/images/Login_Banner.png)`,
     backgroundSize: "cover",

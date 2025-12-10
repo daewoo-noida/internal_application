@@ -375,6 +375,52 @@ exports.rejectSecondPayment = async (req, res) => {
     }
 };
 
+exports.deleteSecondPayment = async (req, res) => {
+    try {
+        const { clientId, paymentId } = req.params;
+
+        const client = await ClientMaster.findById(clientId);
+        if (!client) return res.status(404).json({ success: false, message: "Client not found" });
+
+        // Find the payment first to get its amount
+        const payment = client.secondPayments.find(p => p._id.toString() === paymentId);
+        if (!payment) return res.status(404).json({ success: false, message: "Payment not found" });
+
+        const paymentAmount = payment.amount;
+
+        // Remove the payment using pull
+        client.secondPayments.pull({ _id: paymentId });
+
+        recalcPayments(client);
+
+        await client.save();
+
+        // Add notification for payment deletion
+        await createNotification({
+            title: 'Payment Deleted',
+            message: `Payment of ₹${paymentAmount} deleted for ${client.name}`,
+            type: 'payment',
+            clientId: client._id,
+            paymentId: paymentId
+        });
+
+        res.json({
+            success: true,
+            message: "Payment deleted",
+            client,
+            updatedAmounts: {
+                totalReceived: client.totalReceived,
+                receivedPercent: client.receivedPercent,
+                balanceAmount: client.balanceAmount
+            }
+        });
+
+    } catch (err) {
+        console.error("Delete Payment Error:", err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+};
+// ==========================================
 // ==========================================
 // UPDATE CLIENT
 // ==========================================

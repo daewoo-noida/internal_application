@@ -226,16 +226,32 @@ exports.updateProfile = async (req, res) => {
       officeBranch: req.body.officeBranch
     };
 
-    const user = await User.findByIdAndUpdate(req.user.id, updates, {
-      new: true,
-    }).select("-password");
+    // Check if all required fields for profile completion are filled
+    const requiredFields = ['gender', 'dob', 'officeBranch'];
+    const isComplete = requiredFields.every(field =>
+      req.body[field] && req.body[field].toString().trim() !== ""
+    );
 
-    res.json({ success: true, user });
+    // Add profileCompleted field to updates if complete
+    updates.profileCompleted = isComplete;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      updates,
+      { new: true }
+    ).select("-password");
+
+    res.json({
+      success: true,
+      user,
+      profileCompleted: isComplete
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, message: "Update failed" });
   }
 };
+
 
 exports.updateProfileImage = async (req, res) => {
   const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;

@@ -560,19 +560,19 @@ export default function SalesTeam() {
 
                             {/* Card Body */}
                             <div className="px-3 py-3">
-                                <h3 className="text-lg font-semibold text-gray-800 truncate">
+                                <h3 className="text-lg font-semibold text-gray-800 truncate text-capitalize">
                                     {s.name || "No Name"}
                                 </h3>
 
                                 <div className="flex items-center mt-2 text-gray-600">
                                     {/* <MailIcon /> */}
-                                    <span className="text-sm truncate ml-2">{s.email || "No Email"}</span>
+                                    <span className="text-sm truncate">{s.email || "No Email"}</span>
                                 </div>
 
                                 {s.phone && (
                                     <div className="flex items-center mt-2 text-gray-600">
                                         {/* <span className="text-sm">📱</span> */}
-                                        <span className="text-sm truncate ml-2">{s.phone}</span>
+                                        <span className="text-sm truncate">{s.phone}</span>
                                     </div>
                                 )}
 

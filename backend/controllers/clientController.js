@@ -137,11 +137,25 @@ exports.createClient = async (req, res) => {
 exports.getClients = async (req, res) => {
     try {
         const designation = req.user.designation?.toLowerCase();
+        const userId = req.user._id;
 
-        const filter = designation === "admin" ? {} : { createdBy: req.user._id };
+        // For sales users, find clients where they appear in ANY role
+        const filter = designation === "admin" ? {} : {
+            $or: [
+                { createdBy: userId },
+                { bda: userId },
+                { bde: userId },
+                { bdm: userId },
+                { bhead: userId }
+            ]
+        };
 
         const clients = await ClientMaster.find(filter)
-            .populate("createdBy", "name email designation");
+            .populate("createdBy", "name email designation")
+            .populate("bda", "name email designation")
+            .populate("bde", "name email designation")
+            .populate("bdm", "name email designation")
+            .populate("bhead", "name email designation");
 
         clients.forEach((c) => {
             recalcPayments(c);
@@ -155,7 +169,6 @@ exports.getClients = async (req, res) => {
         res.status(500).json({ success: false, message: err.message });
     }
 };
-
 // ==========================================
 // GET CLIENT BY ID
 // ==========================================

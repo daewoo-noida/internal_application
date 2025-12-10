@@ -292,96 +292,94 @@ export default function SalesmanDetails() {
                         </thead>
 
                         <tbody>
-                            {clients.length === 0 ? (
-                                <tr>
-                                    <td colSpan="11" className="p-6 text-center text-gray-500">
-                                        No Clients Found
-                                    </td>
-                                </tr>
-                            ) : (
-                                clients.map((c) => {
-                                    const approvedPaymentsCount = c.secondPayments?.filter(p => p.status === "approved").length || 0;
-                                    const approvedPaymentsTotal = c.secondPayments
-                                        ?.filter(p => p.status === "approved")
-                                        .reduce((sum, p) => sum + Number(p.amount || 0), 0) || 0;
 
-                                    const totalReceived = Number(c.tokenReceivedAmount || 0) + approvedPaymentsTotal;
-                                    const balance = Number(c.dealAmount || 0) - totalReceived;
-                                    const receivedPercent = Number(c.dealAmount || 0) > 0
-                                        ? Number(((totalReceived / Number(c.dealAmount || 0)) * 100).toFixed(1))
-                                        : 0;
+                            {clients.map((c) => {
+                                const approvedPaymentsCount = c.secondPayments?.filter(p => p.status === "approved").length || 0;
+                                const approvedPaymentsTotal = c.secondPayments
+                                    ?.filter(p => p.status === "approved")
+                                    .reduce((sum, p) => sum + Number(p.amount || 0), 0) || 0;
 
-                                    return (
-                                        <tr key={c._id} className="border-b hover:bg-gray-50">
-                                            <td className="p-3 font-mono text-sm">{c.clientId}</td>
-                                            <td className="p-3 font-medium">{c.name}</td>
-                                            <td className="p-3">{c.territory || "-"}</td>
-                                            <td className="p-3 font-semibold">
-                                                ₹{Number(c.dealAmount || 0).toLocaleString()}
-                                            </td>
-                                            <td className="p-3">
-                                                ₹{Number(c.tokenReceivedAmount || 0).toLocaleString()}
-                                            </td>
-                                            <td className="p-3">
-                                                {approvedPaymentsCount > 0 ? (
-                                                    <div>
-                                                        <span className="text-green-600 font-medium">
-                                                            ₹{approvedPaymentsTotal.toLocaleString()}
-                                                        </span>
-                                                        <span className="text-xs text-gray-500 ml-1">
-                                                            ({approvedPaymentsCount} approved)
-                                                        </span>
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-gray-400">-</span>
-                                                )}
-                                            </td>
-                                            <td className="p-3 font-semibold text-green-600">
-                                                ₹{totalReceived.toLocaleString()}
-                                            </td>
-                                            <td className="p-3">
-                                                <div className="flex items-center">
-                                                    <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                                                        <div
-                                                            className="bg-green-500 h-2 rounded-full"
-                                                            style={{ width: `${Math.min(receivedPercent, 100)}%` }}
-                                                        ></div>
-                                                    </div>
-                                                    <span>{receivedPercent}%</span>
+                                const totalReceived = Number(c.tokenReceivedAmount || 0) + approvedPaymentsTotal;
+                                const balance = Number(c.dealAmount || 0) - totalReceived;
+                                const receivedPercent = Number(c.dealAmount || 0) > 0
+                                    ? Number(((totalReceived / Number(c.dealAmount || 0)) * 100).toFixed(1))
+                                    : 0;
+
+                                return (
+                                    <tr key={c._id} className="border-b hover:bg-gray-50">
+                                        <td className="p-3 font-medium">{c.name}</td>
+                                        <td className="p-3">{c.territory || "-"}</td>
+                                        <td className="p-3 font-semibold">
+                                            ₹{Number(c.dealAmount || 0).toLocaleString()}
+                                        </td>
+                                        <td className="p-3">
+                                            ₹{Number(c.tokenReceivedAmount || 0).toLocaleString()}
+                                        </td>
+                                        <td className="p-3">
+                                            {approvedPaymentsCount > 0 ? (
+                                                <div>
+                                                    <span className="text-green-600 font-medium">
+                                                        ₹{approvedPaymentsTotal.toLocaleString()}
+                                                    </span>
+                                                    <span className="text-xs text-gray-500 ml-1">
+                                                        ({approvedPaymentsCount} approved)
+                                                    </span>
                                                 </div>
-                                            </td>
-                                            <td className="p-3 font-semibold text-orange-600">
-                                                ₹{balance.toLocaleString()}
-                                            </td>
-                                            <td className="p-3">
-                                                <span className={`px-2 py-1 rounded text-xs font-medium ${receivedPercent === 100
-                                                    ? "bg-green-100 text-green-800"
+                                            ) : (
+                                                <span className="text-gray-400">-</span>
+                                            )}
+                                        </td>
+                                        <td className="p-3 font-semibold text-green-600">
+                                            ₹{totalReceived.toLocaleString()}
+                                        </td>
+                                        {/* NEW COLUMN: User's Role */}
+                                        <td className="p-3">
+                                            <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                                                {c._userRole || 'Creator'}
+                                            </span>
+                                        </td>
+                                        <td className="p-3">
+                                            <div className="flex items-center">
+                                                <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                                                    <div
+                                                        className="bg-green-500 h-2 rounded-full"
+                                                        style={{ width: `${Math.min(receivedPercent, 100)}%` }}
+                                                    ></div>
+                                                </div>
+                                                <span>{receivedPercent}%</span>
+                                            </div>
+                                        </td>
+                                        <td className="p-3 font-semibold text-orange-600">
+                                            ₹{balance.toLocaleString()}
+                                        </td>
+                                        <td className="p-3">
+                                            <span className={`px-2 py-1 rounded text-xs font-medium ${receivedPercent === 100
+                                                ? "bg-green-100 text-green-800"
+                                                : receivedPercent === 0
+                                                    ? "bg-gray-100 text-gray-800"
+                                                    : "bg-blue-100 text-blue-800"
+                                                }`}>
+                                                {receivedPercent === 100
+                                                    ? "Completed"
                                                     : receivedPercent === 0
-                                                        ? "bg-gray-100 text-gray-800"
-                                                        : "bg-blue-100 text-blue-800"
-                                                    }`}>
-                                                    {receivedPercent === 100
-                                                        ? "Completed"
-                                                        : receivedPercent === 0
-                                                            ? "Pending"
-                                                            : "Partial"}
-                                                </span>
-                                            </td>
-                                            <td className="p-3 text-sm">
-                                                {new Date(c.createdAt).toLocaleDateString()}
-                                            </td>
-                                            <td className="p-3">
-                                                <Link
-                                                    to={`/admin/client/${c._id}`}
-                                                    className="px-3 py-1 rounded bg-[#0070b9] text-white text-sm hover:bg-[#005a94]"
-                                                >
-                                                    View
-                                                </Link>
-                                            </td>
-                                        </tr>
-                                    );
-                                })
-                            )}
+                                                        ? "Pending"
+                                                        : "Partial"}
+                                            </span>
+                                        </td>
+                                        <td className="p-3 text-sm">
+                                            {new Date(c.createdAt).toLocaleDateString()}
+                                        </td>
+                                        <td className="p-3">
+                                            <Link
+                                                to={`/admin/client/${c._id}`}
+                                                className="px-3 py-1 rounded bg-[#0070b9] text-white text-sm hover:bg-[#005a94]"
+                                            >
+                                                View
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>

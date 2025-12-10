@@ -227,7 +227,7 @@ export default function ClientDetails() {
                 {/* PAYMENT DETAILS */}
                 <Section title="Payment Details">
                     {info("Deal Amount", `₹ ${client.dealAmount}`)}
-                    {info("Received Amount", `₹ ${client.tokenReceivedAmount}`)}
+                    {info("Token Amount", `₹ ${client.tokenReceivedAmount}`)}
                     {info("Received %", `${client.receivedPercent}%`)}
                     {info("Remaining %", `${client.remainPercent}%`)}
                     {info("Balance Amount", `₹ ${client.balanceAmount}`)}

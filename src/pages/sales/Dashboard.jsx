@@ -17,6 +17,7 @@ export default function SalesDashboard() {
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [user, setUser] = useState(null);
 
   const openPaymentModal = (client) => {
     setSelectedClient(client);
@@ -46,6 +47,32 @@ export default function SalesDashboard() {
       .reduce((sum, p) => sum + Number(p.amount || 0), 0) || 0;
   };
 
+  // Function to get user's role for a specific client
+  // const getUserRoleForClient = (client, userId) => {
+  //   const roles = [];
+
+  //   if (client.createdBy?._id === userId || client.createdBy === userId) {
+  //     roles.push('Creator');
+  //   }
+  //   if (client.bda?._id === userId || client.bda === userId) {
+  //     roles.push('BDA');
+  //   }
+  //   if (client.bde?._id === userId || client.bde === userId) {
+  //     roles.push('BDE');
+  //   }
+  //   if (client.bdm?._id === userId || client.bdm === userId) {
+  //     roles.push('BDM');
+  //   }
+  //   if (client.bhead?._id === userId || client.bhead === userId) {
+  //     roles.push('BHead');
+  //   }
+
+  //   return roles.length > 0 ? roles.join(', ') : 'N/A';
+  // };
+
+  // ======================================
+  // FETCH CLIENTS OF LOGGED-IN SALES USER
+  // ======================================
   // ======================================
   // FETCH CLIENTS OF LOGGED-IN SALES USER
   // ======================================
@@ -53,11 +80,73 @@ export default function SalesDashboard() {
     try {
       setLoading(true);
 
+      // Get user data from localStorage
+      const userDataString = localStorage.getItem("userData");
+      console.log("userData string from localStorage:", userDataString);
+
+      let userData = null;
+
+      if (userDataString) {
+        try {
+          userData = JSON.parse(userDataString);
+          console.log("Parsed userData:", userData);
+        } catch (parseError) {
+          console.error("Error parsing userData from localStorage:", parseError);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Debug: Check what we have
+      console.log("Final userData:", userData);
+
+      // Check for both id and _id (Mongoose uses _id, but your data has id)
+      const userId = userData?._id || userData?.id;
+
+      if (!userData || !userId) {
+        console.error("No valid user data found.");
+        console.log("User data available:", userData);
+        setLoading(false);
+        return;
+      }
+
+      setUser(userData);
+
+      // Get all clients (backend should filter based on user roles)
       const res = await clientAPI.getAll();
-      const data = res.data.clients || [];
+      const allClients = res.data.clients || [];
+
+      console.log("Total clients from API:", allClients.length);
+      console.log("User ID for filtering:", userId);
+
+      // Filter clients where user appears in ANY role
+      const userClients = allClients.filter(client => {
+        // Helper function to compare IDs
+        const compareIds = (id1, id2) => {
+          if (!id1 || !id2) return false;
+          return id1.toString() === id2.toString();
+        };
+
+        // Get IDs from client (check both _id and id fields)
+        const clientCreatedBy = client.createdBy?._id || client.createdBy?.id || client.createdBy;
+        const clientBDA = client.bda?._id || client.bda?.id || client.bda;
+        const clientBDE = client.bde?._id || client.bde?.id || client.bde;
+        const clientBDM = client.bdm?._id || client.bdm?.id || client.bdm;
+        const clientBHead = client.bhead?._id || client.bhead?.id || client.bhead;
+
+        return (
+          compareIds(clientCreatedBy, userId) ||
+          compareIds(clientBDA, userId) ||
+          compareIds(clientBDE, userId) ||
+          compareIds(clientBDM, userId) ||
+          compareIds(clientBHead, userId)
+        );
+      });
+
+      console.log("Filtered clients for user:", userClients.length);
 
       // Process clients to add calculated fields
-      const processedClients = data.map(client => {
+      const processedClients = userClients.map(client => {
         const totalReceived = calculateClientTotalReceived(client);
         const approvedSecondPayments = calculateApprovedSecondPayments(client);
         const dealAmount = Number(client.dealAmount || 0);
@@ -71,20 +160,21 @@ export default function SalesDashboard() {
           _approvedSecondPayments: approvedSecondPayments,
           _receivedPercent: receivedPercent,
           _balanceAmount: dealAmount - totalReceived,
-          _approvedPaymentsCount: client.secondPayments?.filter(p => p.status === "approved").length || 0
+          _approvedPaymentsCount: client.secondPayments?.filter(p => p.status === "approved").length || 0,
+          _userRole: getUserRoleForClient(client, userId) // Pass userId here
         };
       });
 
       setClients(processedClients);
 
       // ---- CALCULATE STATS WITH APPROVED PAYMENTS ----
-      const totalSubmissions = data.length;
+      const totalSubmissions = userClients.length;
       let totalDealAmount = 0;
       let totalTokenReceived = 0;
       let totalApprovedSecondPayments = 0;
       let totalPaymentReceived = 0;
 
-      data.forEach((c) => {
+      userClients.forEach((c) => {
         const deal = Number(c.dealAmount || 0);
         const baseToken = Number(c.tokenReceivedAmount || 0);
         const approvedSecond = calculateApprovedSecondPayments(c);
@@ -115,6 +205,49 @@ export default function SalesDashboard() {
       console.log("Dashboard Error:", err);
       setLoading(false);
     }
+  };
+
+  // Also update the getUserRoleForClient function to handle both id and _id:
+  const getUserRoleForClient = (client, userId) => {
+    const roles = [];
+
+    // Helper to compare IDs
+    const compareIds = (id1, id2) => {
+      if (!id1 || !id2) return false;
+      return id1.toString() === id2.toString();
+    };
+
+    // Check createdBy (check both _id and id fields)
+    const clientCreatedById = client.createdBy?._id || client.createdBy?.id || client.createdBy;
+    if (compareIds(clientCreatedById, userId)) {
+      roles.push('Creator');
+    }
+
+    // Check bda
+    const clientBDAId = client.bda?._id || client.bda?.id || client.bda;
+    if (compareIds(clientBDAId, userId)) {
+      roles.push('BDA');
+    }
+
+    // Check bde
+    const clientBDEId = client.bde?._id || client.bde?.id || client.bde;
+    if (compareIds(clientBDEId, userId)) {
+      roles.push('BDE');
+    }
+
+    // Check bdm
+    const clientBDMId = client.bdm?._id || client.bdm?.id || client.bdm;
+    if (compareIds(clientBDMId, userId)) {
+      roles.push('BDM');
+    }
+
+    // Check bhead
+    const clientBHeadId = client.bhead?._id || client.bhead?.id || client.bhead;
+    if (compareIds(clientBHeadId, userId)) {
+      roles.push('BHead');
+    }
+
+    return roles.length > 0 ? roles.join(', ') : 'N/A';
   };
 
   useEffect(() => {
@@ -195,7 +328,7 @@ export default function SalesDashboard() {
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium">CLIENT ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium">CLIENT NAME</th>
-                <th className="px-6 py-3 text-left text-xs font-medium">OWNER NAME</th>
+                <th className="px-6 py-3 text-left text-xs font-medium">YOUR ROLE</th>
                 <th className="px-6 py-3 text-left text-xs font-medium">DEAL AMOUNT</th>
                 <th className="px-6 py-3 text-left text-xs font-medium">TOKEN AMOUNT</th>
                 <th className="px-6 py-3 text-left text-xs font-medium">APPROVED PAYMENTS</th>
@@ -211,8 +344,8 @@ export default function SalesDashboard() {
             <tbody className="bg-white divide-y divide-gray-200">
               {clients.length === 0 ? (
                 <tr>
-                  <td colSpan="11" className="text-center py-10 text-gray-500">
-                    No data found
+                  <td colSpan="12" className="text-center py-10 text-gray-500">
+                    No clients found where you are assigned (Creator, BDA, BDE, BDM, or BHead)
                   </td>
                 </tr>
               ) : (
@@ -231,7 +364,9 @@ export default function SalesDashboard() {
                       <td className="px-6 py-4 font-mono text-sm">{c.clientId || "N/A"}</td>
                       <td className="px-6 py-4 font-medium">{c.name || "N/A"}</td>
                       <td className="px-6 py-4">
-                        {c.createdBy?.name || "N/A"}
+                        <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                          {c._userRole}
+                        </span>
                       </td>
                       <td className="px-6 py-4 font-semibold">
                         ₹{safeFormatNumber(dealAmount)}

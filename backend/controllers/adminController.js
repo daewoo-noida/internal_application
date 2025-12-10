@@ -94,47 +94,45 @@ exports.salesmen = async (req, res) => {
         const salesmen = await User.aggregate([
             { $match: { role: "Sales" } },
 
+            // Lookup clients where user appears in ANY role
             {
                 $lookup: {
                     from: "clientmasters",
-                    localField: "_id",
-                    foreignField: "createdBy",
-                    as: "clients"
+                    let: { userId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        { $eq: ["$createdBy", "$$userId"] },
+                                        { $eq: ["$bda", "$$userId"] },
+                                        { $eq: ["$bde", "$$userId"] },
+                                        { $eq: ["$bdm", "$$userId"] },
+                                        { $eq: ["$bhead", "$$userId"] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "associatedClients"
                 }
             },
 
             {
                 $addFields: {
-                    totalClients: { $size: "$clients" },
-                    totalDealAmount: { $sum: "$clients.dealAmount" },
-                    totalTokenReceived: { $sum: "$clients.tokenReceivedAmount" },
-                    // Calculate total approved second payments
-                    totalApprovedSecondPayments: {
-                        $sum: {
-                            $reduce: {
-                                input: "$clients",
-                                initialValue: 0,
-                                in: {
-                                    $add: [
-                                        "$$value",
-                                        {
-                                            $sum: {
-                                                $map: {
-                                                    input: {
-                                                        $filter: {
-                                                            input: "$$this.secondPayments",
-                                                            as: "payment",
-                                                            cond: { $eq: ["$$payment.status", "approved"] }
-                                                        }
-                                                    },
-                                                    as: "approvedPayment",
-                                                    in: "$$approvedPayment.amount"
-                                                }
-                                            }
-                                        }
-                                    ]
-                                }
-                            }
+                    // Count distinct clients
+                    totalClients: { $size: "$associatedClients" },
+
+                    // Sum calculations
+                    totalDealAmount: { $sum: "$associatedClients.dealAmount" },
+                    totalTokenReceived: { $sum: "$associatedClients.tokenReceivedAmount" },
+
+                    // Flatten all second payments
+                    allSecondPayments: {
+                        $reduce: {
+                            input: "$associatedClients.secondPayments",
+                            initialValue: [],
+                            in: { $concatArrays: ["$$value", { $ifNull: ["$$this", []] }] }
                         }
                     }
                 }
@@ -142,6 +140,24 @@ exports.salesmen = async (req, res) => {
 
             {
                 $addFields: {
+                    // Filter approved second payments
+                    approvedSecondPayments: {
+                        $filter: {
+                            input: "$allSecondPayments",
+                            as: "payment",
+                            cond: { $eq: ["$$payment.status", "approved"] }
+                        }
+                    }
+                }
+            },
+
+            {
+                $addFields: {
+                    // Sum approved second payments
+                    totalApprovedSecondPayments: {
+                        $sum: "$approvedSecondPayments.amount"
+                    },
+                    // Calculate total received
                     totalReceived: {
                         $add: ["$totalTokenReceived", "$totalApprovedSecondPayments"]
                     }
@@ -156,7 +172,8 @@ exports.salesmen = async (req, res) => {
                     totalDealAmount: 1,
                     totalTokenReceived: 1,
                     totalApprovedSecondPayments: 1,
-                    totalReceived: 1
+                    totalReceived: 1,
+                    _id: 1
                 }
             }
         ]);
@@ -175,8 +192,24 @@ exports.salesmen = async (req, res) => {
 =========================== */
 exports.getSalesmanClients = async (req, res) => {
     try {
-        const clients = await Client.find({ createdBy: req.params.id })
-            .populate("createdBy", "name email phone designation");
+        const salesmanId = req.params.id;
+
+        // Find clients where the salesman appears in ANY role
+        const clients = await Client.find({
+            $or: [
+                { createdBy: salesmanId },
+                { bda: salesmanId },
+                { bde: salesmanId },
+                { bdm: salesmanId },
+                { bhead: salesmanId }
+            ]
+        })
+            .populate("createdBy", "name email phone designation")
+            .populate("bda", "name email phone designation")
+            .populate("bde", "name email phone designation")
+            .populate("bdm", "name email phone designation")
+            .populate("bhead", "name email phone designation")
+            .sort({ createdAt: -1 });
 
         res.json({ success: true, clients });
 
@@ -303,10 +336,17 @@ exports.getGraphStats = async (req, res) => {
             const m = d.getMonth(); // 0–11
 
             const deal = Number(c.dealAmount || 0);
-            const received = Number(c.tokenReceivedAmount || 0);
+            const baseToken = Number(c.tokenReceivedAmount || 0);
+
+            // Calculate approved second payments
+            const approvedSecondPayments = c.secondPayments
+                .filter(p => p.status === "approved")
+                .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+
+            const totalReceived = baseToken + approvedSecondPayments;
 
             monthlyDeal[m] += deal;
-            monthlyReceived[m] += received;
+            monthlyReceived[m] += totalReceived; // Include approved payments
         });
 
         // YEARLY (last 5 years)
@@ -326,8 +366,15 @@ exports.getGraphStats = async (req, res) => {
                 const cy = new Date(c.createdAt).getFullYear();
 
                 if (cy === y) {
-                    dSum += Number(c.dealAmount || 0);
-                    rSum += Number(c.tokenReceivedAmount || 0);
+                    const deal = Number(c.dealAmount || 0);
+                    const baseToken = Number(c.tokenReceivedAmount || 0);
+
+                    const approvedSecondPayments = c.secondPayments
+                        .filter(p => p.status === "approved")
+                        .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+
+                    dSum += deal;
+                    rSum += (baseToken + approvedSecondPayments);
                 }
             });
 

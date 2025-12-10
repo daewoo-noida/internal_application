@@ -1,6 +1,7 @@
 # EBG Merged Sales Portal & Super Admin
 
-This is a merged application containing both the Sales Portal and Super Admin functionality in a single React application.
+This is old README.md file dont follow this step.
+
 
 ## 🚀 Quick Start
 
@@ -52,14 +53,6 @@ The application will automatically:
 - **Profile**: http://localhost:3000/admin/profile
 
 ## 🔐 Login Credentials
-
-### Sales Portal Login
-- **Email**: `sales@ebg.com`
-- **Password**: `sales123`
-
-### Admin Portal Login
-- **Email**: `admin@ebg.com`
-- **Password**: `admin123`
 
 ## 📋 Available Scripts
 

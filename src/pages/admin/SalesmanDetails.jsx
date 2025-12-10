@@ -186,7 +186,7 @@ export default function SalesmanDetails() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="p-4 border rounded-lg">
-                        <p className="text-gray-600 text-sm">Total Deal Amount</p>
+                        <p className="text-gray-600 text-sm">Total Deal Amount + GST</p>
                         <p className="text-2xl font-bold" style={{ color: primary }}>
                             ₹{Number(stats.totalDealAmount).toLocaleString()}
                         </p>

@@ -84,7 +84,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
           { title: "Total Clients", value: stats.totalClients },
-          { title: "Total Deal Amount", value: `₹${stats.totalDealAmount.toLocaleString()}` },
+          { title: "Total Deal Amount + GST", value: `₹${stats.totalDealAmount.toLocaleString()}` },
           { title: "Payment Received", value: `₹${stats.totalReceived.toLocaleString()}` },
           { title: "Pending Due", value: `₹${stats.totalDue.toLocaleString()}` },
         ].map((box, i) => (

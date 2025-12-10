@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import { clientAPI } from "../../utils/api";
 import PaymentUpdateModal from "../../components/PaymentUpdateModal";
 import { useNavigate } from "react-router-dom";
+import {
+  Users, DollarSign, CreditCard, TrendingUp,
+  Eye, PlusCircle, FileText, Calendar,
+  ChevronRight, TrendingDown, CheckCircle, Clock, AlertCircle
+} from "lucide-react";
 
 export default function SalesDashboard() {
   const [clients, setClients] = useState([]);
@@ -48,31 +53,28 @@ export default function SalesDashboard() {
   };
 
   // Function to get user's role for a specific client
-  // const getUserRoleForClient = (client, userId) => {
-  //   const roles = [];
+  const getUserRoleForClient = (client, userId) => {
+    const roles = [];
 
-  //   if (client.createdBy?._id === userId || client.createdBy === userId) {
-  //     roles.push('Creator');
-  //   }
-  //   if (client.bda?._id === userId || client.bda === userId) {
-  //     roles.push('BDA');
-  //   }
-  //   if (client.bde?._id === userId || client.bde === userId) {
-  //     roles.push('BDE');
-  //   }
-  //   if (client.bdm?._id === userId || client.bdm === userId) {
-  //     roles.push('BDM');
-  //   }
-  //   if (client.bhead?._id === userId || client.bhead === userId) {
-  //     roles.push('BHead');
-  //   }
+    if (client.createdBy?._id === userId || client.createdBy === userId) {
+      roles.push('Creator');
+    }
+    if (client.bda?._id === userId || client.bda === userId) {
+      roles.push('BDA');
+    }
+    if (client.bde?._id === userId || client.bde === userId) {
+      roles.push('BDE');
+    }
+    if (client.bdm?._id === userId || client.bdm === userId) {
+      roles.push('BDM');
+    }
+    if (client.bhead?._id === userId || client.bhead === userId) {
+      roles.push('BHead');
+    }
 
-  //   return roles.length > 0 ? roles.join(', ') : 'N/A';
-  // };
+    return roles.length > 0 ? roles.join(', ') : 'N/A';
+  };
 
-  // ======================================
-  // FETCH CLIENTS OF LOGGED-IN SALES USER
-  // ======================================
   // ======================================
   // FETCH CLIENTS OF LOGGED-IN SALES USER
   // ======================================
@@ -82,52 +84,39 @@ export default function SalesDashboard() {
 
       // Get user data from localStorage
       const userDataString = localStorage.getItem("userData");
-      console.log("userData string from localStorage:", userDataString);
-
       let userData = null;
 
       if (userDataString) {
         try {
           userData = JSON.parse(userDataString);
-          console.log("Parsed userData:", userData);
         } catch (parseError) {
-          console.error("Error parsing userData from localStorage:", parseError);
+          console.error("Error parsing userData:", parseError);
           setLoading(false);
           return;
         }
       }
 
-      // Debug: Check what we have
-      console.log("Final userData:", userData);
-
-      // Check for both id and _id (Mongoose uses _id, but your data has id)
       const userId = userData?._id || userData?.id;
 
       if (!userData || !userId) {
         console.error("No valid user data found.");
-        console.log("User data available:", userData);
         setLoading(false);
         return;
       }
 
       setUser(userData);
 
-      // Get all clients (backend should filter based on user roles)
+      // Get all clients
       const res = await clientAPI.getAll();
       const allClients = res.data.clients || [];
 
-      console.log("Total clients from API:", allClients.length);
-      console.log("User ID for filtering:", userId);
-
       // Filter clients where user appears in ANY role
       const userClients = allClients.filter(client => {
-        // Helper function to compare IDs
         const compareIds = (id1, id2) => {
           if (!id1 || !id2) return false;
           return id1.toString() === id2.toString();
         };
 
-        // Get IDs from client (check both _id and id fields)
         const clientCreatedBy = client.createdBy?._id || client.createdBy?.id || client.createdBy;
         const clientBDA = client.bda?._id || client.bda?.id || client.bda;
         const clientBDE = client.bde?._id || client.bde?.id || client.bde;
@@ -142,8 +131,6 @@ export default function SalesDashboard() {
           compareIds(clientBHead, userId)
         );
       });
-
-      console.log("Filtered clients for user:", userClients.length);
 
       // Process clients to add calculated fields
       const processedClients = userClients.map(client => {
@@ -161,13 +148,13 @@ export default function SalesDashboard() {
           _receivedPercent: receivedPercent,
           _balanceAmount: dealAmount - totalReceived,
           _approvedPaymentsCount: client.secondPayments?.filter(p => p.status === "approved").length || 0,
-          _userRole: getUserRoleForClient(client, userId) // Pass userId here
+          _userRole: getUserRoleForClient(client, userId)
         };
       });
 
       setClients(processedClients);
 
-      // ---- CALCULATE STATS WITH APPROVED PAYMENTS ----
+      // Calculate stats
       const totalSubmissions = userClients.length;
       let totalDealAmount = 0;
       let totalTokenReceived = 0;
@@ -207,49 +194,6 @@ export default function SalesDashboard() {
     }
   };
 
-  // Also update the getUserRoleForClient function to handle both id and _id:
-  const getUserRoleForClient = (client, userId) => {
-    const roles = [];
-
-    // Helper to compare IDs
-    const compareIds = (id1, id2) => {
-      if (!id1 || !id2) return false;
-      return id1.toString() === id2.toString();
-    };
-
-    // Check createdBy (check both _id and id fields)
-    const clientCreatedById = client.createdBy?._id || client.createdBy?.id || client.createdBy;
-    if (compareIds(clientCreatedById, userId)) {
-      roles.push('Creator');
-    }
-
-    // Check bda
-    const clientBDAId = client.bda?._id || client.bda?.id || client.bda;
-    if (compareIds(clientBDAId, userId)) {
-      roles.push('BDA');
-    }
-
-    // Check bde
-    const clientBDEId = client.bde?._id || client.bde?.id || client.bde;
-    if (compareIds(clientBDEId, userId)) {
-      roles.push('BDE');
-    }
-
-    // Check bdm
-    const clientBDMId = client.bdm?._id || client.bdm?.id || client.bdm;
-    if (compareIds(clientBDMId, userId)) {
-      roles.push('BDM');
-    }
-
-    // Check bhead
-    const clientBHeadId = client.bhead?._id || client.bhead?.id || client.bhead;
-    if (compareIds(clientBHeadId, userId)) {
-      roles.push('BHead');
-    }
-
-    return roles.length > 0 ? roles.join(', ') : 'N/A';
-  };
-
   useEffect(() => {
     fetchClients();
 
@@ -266,90 +210,173 @@ export default function SalesDashboard() {
       ? Number(((totalReceived / dealAmount) * 100).toFixed(2))
       : 0;
 
-    if (receivedPercent === 100) return "Completed";
+    // If no payment received at all
     if (receivedPercent === 0) return "Pending";
-    return "Partial";
+
+    // If payment received but less than 100%
+    if (receivedPercent < 100) return "Partial";
+
+    // If payment is 100% or more (includes GST)
+    return "Completed";
   };
 
-  // Fix for .toLocaleString() error - add safe number formatting
-  const safeFormatNumber = (num) => {
-    if (num === undefined || num === null) return "0";
-    return Number(num).toLocaleString();
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "Completed": return <CheckCircle size={16} className="text-green-500" />;
+      case "Pending": return <Clock size={16} className="text-yellow-500" />;
+      case "Partial": return <AlertCircle size={16} className="text-blue-500" />;
+      default: return <Clock size={16} className="text-gray-500" />;
+    }
+  };
+
+  const formatCurrency = (num) => {
+    if (num === undefined || num === null) return "₹0";
+    return `₹${Number(num).toLocaleString()}`;
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
   };
 
   return (
-    <div className="min-h-screen bg-white p-6" style={{ marginTop: "10vh" }}>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-6" style={{ marginTop: "10vh" }}>
+
+      {/* HEADER */}
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Sales Dashboard</h1>
+        <p className="text-gray-600 mt-2">Overview of your clients and payments</p>
+      </div>
+
       {/* ======================= */}
-      {/*      KPI CARDS         */}
+      {/*      MODERN KPI CARDS   */}
       {/* ======================= */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow border-l-4 border-blue-500">
-          <p className="text-sm text-gray-600">Total Submissions</p>
-          <p className="text-3xl font-bold">{stats.totalSubmissions}</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Total Submissions Card */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 rounded-xl bg-blue-50">
+              <Users className="text-[#0070b9]" size={24} />
+            </div>
+            <TrendingUp className="text-green-500" size={20} />
+          </div>
+          <h3 className="text-gray-500 text-sm font-medium">Total Clients</h3>
+          <p className="text-3xl font-bold text-gray-800 mt-2">{stats.totalSubmissions}</p>
+          <p className="text-gray-400 text-sm mt-2">Clients assigned to you</p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border-l-4 border-purple-500">
-          <p className="text-sm text-gray-600">Total Deal Amount</p>
-          <p className="text-3xl font-bold">₹{safeFormatNumber(stats.totalDealAmount)}</p>
+        {/* Total Deal Amount Card */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 rounded-xl bg-purple-50">
+              <DollarSign className="text-purple-600" size={24} />
+            </div>
+            <TrendingUp className="text-green-500" size={20} />
+          </div>
+          <h3 className="text-gray-500 text-sm font-medium">Total Deal Amount + GST</h3>
+          <p className="text-3xl font-bold text-gray-800 mt-2">{formatCurrency(stats.totalDealAmount)}</p>
+          <p className="text-gray-400 text-sm mt-2">Total agreement value</p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
-          <p className="text-sm text-gray-600">Total Payment Received</p>
-          <p className="text-3xl font-bold">₹{safeFormatNumber(stats.totalPaymentReceived)}</p>
-          <p className="text-xs text-gray-500 mt-1">
-            (Token: ₹{safeFormatNumber(stats.totalTokenReceived)} + Approved: ₹{safeFormatNumber(stats.totalApprovedSecondPayments)})
-          </p>
-          <p className="text-xs text-gray-500">
-            {stats.collectionPercentage}% Collected
-          </p>
+        {/* Total Received Card */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 rounded-xl bg-green-50">
+              <CreditCard className="text-green-600" size={24} />
+            </div>
+            <div className="flex items-center">
+              <span className={`text-sm font-medium ${stats.collectionPercentage >= 70 ? 'text-green-600' : 'text-orange-600'}`}>
+                {stats.collectionPercentage}%
+              </span>
+              {stats.collectionPercentage >= 70 ?
+                <TrendingUp className="text-green-500 ml-1" size={16} /> :
+                <TrendingDown className="text-orange-500 ml-1" size={16} />
+              }
+            </div>
+          </div>
+          <h3 className="text-gray-500 text-sm font-medium">Total Received</h3>
+          <p className="text-3xl font-bold text-gray-800 mt-2">{formatCurrency(stats.totalPaymentReceived)}</p>
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-gray-400 text-xs">Token: {formatCurrency(stats.totalTokenReceived)}</span>
+            <span className="text-gray-400 text-xs">Approved: {formatCurrency(stats.totalApprovedSecondPayments)}</span>
+          </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border-l-4 border-yellow-500">
-          <p className="text-sm text-gray-600">Total Due Amount</p>
-          <p className="text-3xl font-bold">₹{safeFormatNumber(stats.totalDueAmount)}</p>
-          <p className="text-xs text-gray-500 mt-1">
-            {stats.totalDealAmount > 0
-              ? `${((stats.totalDueAmount / stats.totalDealAmount) * 100).toFixed(1)}% Pending`
-              : '0% Pending'
-            }
-          </p>
+        {/* Total Due Card */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 rounded-xl bg-orange-50">
+              <FileText className="text-orange-600" size={24} />
+            </div>
+            <TrendingDown className="text-orange-500" size={20} />
+          </div>
+          <h3 className="text-gray-500 text-sm font-medium">Total Due Amount</h3>
+          <p className="text-3xl font-bold text-gray-800 mt-2">{formatCurrency(stats.totalDueAmount)}</p>
+          <div className="mt-3">
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-orange-500 h-2 rounded-full"
+                style={{
+                  width: `${stats.totalDealAmount > 0 ? Math.min((stats.totalDueAmount / stats.totalDealAmount) * 100, 100) : 0}%`
+                }}
+              ></div>
+            </div>
+            <p className="text-gray-400 text-xs mt-2">
+              {stats.totalDealAmount > 0 ? `${((stats.totalDueAmount / stats.totalDealAmount) * 100).toFixed(1)}% Pending` : '0% Pending'}
+            </p>
+          </div>
         </div>
       </div>
 
       {/* ======================= */}
-      {/*   CLIENT TABLE         */}
+      {/*   CLIENT LIST SECTION   */}
       {/* ======================= */}
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
-        {loading ? (
-          <div className="text-center py-10">Loading...</div>
-        ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium">CLIENT ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium">CLIENT NAME</th>
-                <th className="px-6 py-3 text-left text-xs font-medium">YOUR ROLE</th>
-                <th className="px-6 py-3 text-left text-xs font-medium">DEAL AMOUNT</th>
-                <th className="px-6 py-3 text-left text-xs font-medium">TOKEN AMOUNT</th>
-                <th className="px-6 py-3 text-left text-xs font-medium">APPROVED PAYMENTS</th>
-                <th className="px-6 py-3 text-left text-xs font-medium">TOTAL RECEIVED</th>
-                <th className="px-6 py-3 text-left text-xs font-medium">PAYMENT STATUS</th>
-                <th className="px-6 py-3 text-left text-xs font-medium">DATE</th>
-                <th className="px-6 py-3 text-left text-xs font-medium">RECEIVED %</th>
-                <th className="px-6 py-3 text-left text-xs font-medium">BALANCE</th>
-                <th className="px-6 py-3 text-left text-xs font-medium">ACTIONS</th>
-              </tr>
-            </thead>
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-800">Client Portfolio</h2>
+            <p className="text-gray-600 text-sm mt-1">Manage your assigned clients</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+              {clients.length} Clients
+            </span>
+          </div>
+        </div>
 
-            <tbody className="bg-white divide-y divide-gray-200">
-              {clients.length === 0 ? (
-                <tr>
-                  <td colSpan="12" className="text-center py-10 text-gray-500">
-                    No clients found where you are assigned (Creator, BDA, BDE, BDM, or BHead)
-                  </td>
+        {loading ? (
+          <div className="py-16 text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <p className="text-gray-500 mt-4">Loading clients...</p>
+          </div>
+        ) : clients.length === 0 ? (
+          <div className="py-16 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+              <Users className="text-gray-400" size={32} />
+            </div>
+            <h3 className="text-lg font-medium text-gray-700 mb-2">No clients found</h3>
+            <p className="text-gray-500">You are not assigned to any clients yet</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Client Details</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Financial Overview</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                 </tr>
-              ) : (
-                clients.map((c) => {
+              </thead>
+
+              <tbody className="divide-y divide-gray-100">
+                {clients.map((c) => {
                   const totalReceived = calculateClientTotalReceived(c);
                   const approvedSecondPayments = calculateApprovedSecondPayments(c);
                   const dealAmount = Number(c.dealAmount || 0);
@@ -358,90 +385,137 @@ export default function SalesDashboard() {
                     : 0;
                   const balanceAmount = dealAmount - totalReceived;
                   const approvedPaymentsCount = c.secondPayments?.filter(p => p.status === "approved").length || 0;
+                  const status = getPaymentStatus(c);
 
                   return (
-                    <tr key={c._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 font-mono text-sm">{c.clientId || "N/A"}</td>
-                      <td className="px-6 py-4 font-medium">{c.name || "N/A"}</td>
+                    <tr key={c._id} className="hover:bg-gray-50 transition-colors duration-150">
+                      {/* Client Details */}
                       <td className="px-6 py-4">
-                        <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
-                          {c._userRole}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 font-semibold">
-                        ₹{safeFormatNumber(dealAmount)}
-                      </td>
-                      <td className="px-6 py-4">
-                        ₹{safeFormatNumber(c.tokenReceivedAmount || 0)}
-                      </td>
-                      <td className="px-6 py-4">
-                        {approvedPaymentsCount > 0 ? (
-                          <div>
-                            <span className="text-green-600 font-medium">
-                              ₹{safeFormatNumber(approvedSecondPayments)}
-                            </span>
-                            <span className="text-xs text-gray-500 ml-1">
-                              ({approvedPaymentsCount} approved)
-                            </span>
+                        <div>
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-blue-500 to-[#0070b9] rounded-lg flex items-center justify-center text-white font-bold text-capitalize">
+                              {c.name?.charAt(0) || "C"}
+                            </div>
+                            <div className="ml-4">
+                              <h4 className="text-sm font-semibold text-gray-900">{c.name || "Unnamed Client"}</h4>
+                              <div className="flex items-center mt-1">
+                                <span className="text-xs text-gray-500">{c.clientId || "N/A"}</span>
+                                <span className="mx-2 text-gray-300">•</span>
+                                <span className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full">
+                                  {c._userRole}
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                        ) : (
-                          <span className="text-gray-400">-</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 font-semibold text-green-600">
-                        ₹{safeFormatNumber(totalReceived)}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded text-xs font-medium ${receivedPercent === 100
-                          ? "bg-green-100 text-green-800"
-                          : receivedPercent === 0
-                            ? "bg-gray-100 text-gray-800"
-                            : "bg-blue-100 text-blue-800"
-                          }`}>
-                          {getPaymentStatus(c)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        {c.createdAt ? new Date(c.createdAt).toLocaleDateString() : "N/A"}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                            <div
-                              className="bg-green-500 h-2 rounded-full"
-                              style={{ width: `${Math.min(receivedPercent, 100)}%` }}
-                            ></div>
+                          <div className="flex items-center mt-3 text-xs text-gray-500">
+                            <Calendar size={12} className="mr-1" />
+                            {formatDate(c.createdAt)}
                           </div>
-                          <span>{receivedPercent}%</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 font-semibold text-orange-600">
-                        ₹{safeFormatNumber(balanceAmount)}
-                      </td>
-                      <td className="px-6 py-4 flex gap-2">
-                        <button
-                          onClick={() => openDetails(c)}
-                          className="bg-[#0070b9] text-white px-3 py-1 rounded text-sm hover:bg-[#005a94]"
-                        >
-                          View
-                        </button>
 
-                        <button
-                          onClick={() => openPaymentModal(c)}
-                          className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
-                        >
-                          Add Payment
-                        </button>
+                      {/* Financial Overview */}
+                      <td className="px-6 py-4">
+                        <div className="space-y-3">
+                          <div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Deal Amount</span>
+                              <span className="font-semibold text-gray-900">{formatCurrency(dealAmount)}</span>
+                            </div>
+                            <div className="flex justify-between text-sm mt-1">
+                              <span className="text-gray-600">Received</span>
+                              <span className="font-semibold text-green-600">{formatCurrency(totalReceived)}</span>
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between text-xs text-gray-500">
+                              <span>Token: {formatCurrency(c.tokenReceivedAmount || 0)}</span>
+                              {approvedPaymentsCount > 0 && (
+                                <span className="text-green-600">+{approvedPaymentsCount} approved payments</span>
+                              )}
+                            </div>
+                            <div className="mt-2">
+                              <div className="flex justify-between text-xs mb-1">
+                                <span className="text-gray-600">Progress</span>
+                                <span className="font-medium">{receivedPercent}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                <div
+                                  className={`h-1.5 rounded-full ${receivedPercent === 100 ? 'bg-green-500' : receivedPercent === 0 ? 'bg-gray-400' : 'bg-blue-500'}`}
+                                  style={{ width: `${Math.min(receivedPercent, 100)}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col items-start">
+                          <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${status === "Completed" ? "bg-green-50 text-green-700" :
+                            status === "Pending" ? "bg-yellow-50 text-yellow-700" :
+                              "bg-blue-50 text-blue-700"
+                            }`}>
+                            {getStatusIcon(status)}
+                            <span className="ml-2">{status}</span>
+                          </div>
+
+                          {status !== "Completed" && (
+                            <div className="mt-3 text-sm">
+                              <div className="text-gray-600">Balance Due</div>
+                              <div className="font-semibold text-orange-600">{formatCurrency(balanceAmount)}</div>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col space-y-2">
+                          <button
+                            onClick={() => openDetails(c)}
+                            className="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-500 to-[#0070b9] text-white rounded-lg hover:from-[#0070b9] hover:to-blue-700 transition-all duration-200 text-sm font-medium"
+                          >
+                            <Eye size={16} className="mr-2" />
+                            View Details
+                            <ChevronRight size={16} className="ml-1" />
+                          </button>
+
+                          <button
+                            onClick={() => openPaymentModal(c)}
+                            className="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 text-sm font-medium"
+                          >
+                            <PlusCircle size={16} className="mr-2" />
+                            Add Payment
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
-                })
-              )}
-            </tbody>
-          </table>
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Footer */}
+        {clients.length > 0 && (
+          <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
+            <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600">
+              <div>
+                Showing <span className="font-semibold">{clients.length}</span> clients
+              </div>
+              <div className="mt-2 sm:mt-0">
+                Total Collection: <span className="font-bold text-green-600">{formatCurrency(stats.totalPaymentReceived)}</span>
+              </div>
+            </div>
+          </div>
         )}
       </div>
 
+      {/* Payment Modal */}
       {showPaymentModal && (
         <PaymentUpdateModal
           client={selectedClient}

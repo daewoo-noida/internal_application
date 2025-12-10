@@ -320,7 +320,7 @@ export default function AdminDashboard() {
                                 <th className="p-3">Name</th>
                                 <th className="p-3">Designation</th>
                                 <th className="p-3">Total Clients</th>
-                                <th className="p-3">Total Deal Amount</th>
+                                <th className="p-3">Total Deal Amount + GST</th>
                                 {/* <th className="p-3">Total Received</th> */}
                                 <th className="p-3">Action</th>
                             </tr>

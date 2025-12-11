@@ -10,6 +10,8 @@ const fileRoutes = require("./routes/files");
 const reimbursementRoutes = require('./routes/reimbursement');
 const notificationRoutes = require('./routes/notificationRoutes');
 const meetingRoutes = require('./routes/meetingRoutes');
+const franchiseRoutes = require('./routes/franchiseRoutes');
+
 const path = require('path');
 
 const app = express();
@@ -44,6 +46,8 @@ app.use("/api/files", fileRoutes);
 app.use('/api/reimbursement', reimbursementRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/meetings', meetingRoutes);
+app.use('/api/franchises', franchiseRoutes);
+
 // Health Check
 app.get('/health', (req, res) => {
     res.json({ status: 'Server is running' });

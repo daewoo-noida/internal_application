@@ -1,35 +1,38 @@
 import { useState, useEffect, useRef } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { franchiseAPI } from "../../utils/api";
 
 export default function DDPFranchise() {
+
+
     const [storeFilter] = useState("Booked");
     const [searchTerm, setSearchTerm] = useState("");
+    const [franchises, setFranchises] = useState([]);
+    const [loading, setLoading] = useState(true);
     const carouselRef = useRef(null);
-    const navigate = useNavigate();
 
-    const stores = [
-        {
-            title: "Uttar Pradesh | DDP",
-            desc: "Gautam Buddha Nagar, Ghaziabad, Meerut, Muzaffarnagar, Saharanpur, Bijnor, Bulandshahr, Shamli, Baghpat, Hapur",
-            status: "Booked",
-            image: "/images/signature/41.png",
-        },
-        {
-            title: "Telangana | DDP",
-            desc: "Hyderabad, Ranga Reddy",
-            status: "Booked",
-            image: "/images/signature/48.png",
-        },
-    ];
+    useEffect(() => {
+        fetchFranchises();
+    }, []);
 
-    // FILTER
-    const filteredStores = stores.filter(
+    const fetchFranchises = async () => {
+        try {
+            const response = await franchiseAPI.getAll('ddp');
+            // console.log('Fetched franchises:', response.data);
+            setFranchises(response.data);
+        } catch (error) {
+            console.error('Error fetching franchises:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const filteredStores = franchises.filter(
         (s) =>
             s.status === storeFilter &&
             s.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
     // AUTO SCROLL
     useEffect(() => {
         const interval = setInterval(() => {
@@ -72,7 +75,7 @@ export default function DDPFranchise() {
                     {/* BOOKED BUTTON */}
                     <div className="bg-white p-1 rounded-full shadow flex">
                         <button className="px-6 py-2 rounded-full font-medium bg-red-500 text-white shadow">
-                            Booked ({stores.length})
+                            Booked ({filteredStores.length})
                         </button>
                     </div>
 
@@ -127,9 +130,9 @@ export default function DDPFranchise() {
                                     </h3>
 
                                     {/* DESCRIPTION FIXED */}
-                                    {item.desc && (
+                                    {item.description && (
                                         <p className="text-gray-600 text-sm mt-2 line-clamp-5">
-                                            {item.desc}
+                                            {item.description}
                                         </p>
                                     )}
                                 </div>

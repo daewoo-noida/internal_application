@@ -118,18 +118,28 @@ export const notificationAPI = {
 
 
 export const meetingAPI = {
-
+  // Admin APIs
   createMeeting: (data) => api.post('/meetings/create', data),
   getAdminMeetings: () => api.get('/meetings/admin'),
   getSalesPersons: (search) => api.get(`/meetings/salespersons?search=${search}`),
   deleteMeeting: (meetingId) => api.delete(`/meetings/${meetingId}`),
+  getMeetingStats: () => api.get('/meetings/stats'), // Add this line
 
-
+  // User APIs
   getUserMeetings: () => api.get('/meetings/user'),
   updateResponse: (meetingId, data) => api.put(`/meetings/${meetingId}/response`, data),
 
-  exportToCalendar: (meetingId) => api.get(`/meetings/${meetingId}/calendar`)
+  // Public API for email responses
+  handleEmailResponse: (meetingId, userId, status) =>
+    api.get(`/meetings/email-response?meetingId=${meetingId}&userId=${userId}&status=${status}`)
 };
 
+
+export const franchiseAPI = {
+  getAll: (type) => api.get(`/franchises?type=${type}`),
+  create: (data) => api.post('/franchises', data),
+  update: (id, data) => api.put(`/franchises/${id}`, data),
+  delete: (id) => api.delete(`/franchises/${id}`),
+};
 
 export default api;

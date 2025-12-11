@@ -2,48 +2,29 @@ import { useState, useEffect, useRef } from "react";
 import { BiLeftArrow, BiLeftIndent, BiSolidLeftArrow } from "react-icons/bi";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { franchiseAPI } from "../../utils/api";
 
 export default function FranchiseCarousel() {
     const [franchiseFilter, setFranchiseFilter] = useState("Available");
     const [searchTerm, setSearchTerm] = useState("");
-    const [franchiseSlide, setFranchiseSlide] = useState(0);
+    const [franchises, setFranchises] = useState([]);
+    const [loading, setLoading] = useState(true);
     const carouselRef = useRef(null);
 
-    const franchises = [
+    const fetchFranchises = async () => {
+        try {
+            const response = await franchiseAPI.getAll('master');
+            setFranchises(response.data);
+        } catch (error) {
+            console.error('Error fetching franchises:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        { title: "Delhi NCR", status: "Booked", image: "http://plus.unsplash.com/premium_photo-1697730373510-51b7fcf2ff52?q=80&w=1170&auto=format&fit=crop" },
-        { title: "Telangana", status: "Booked", image: "https://images.unsplash.com/photo-1594813629504-69e08ac152f4?q=80&w=1170&auto=format&fit=crop" },
-        { title: "Odisha", status: "Booked", image: "https://images.unsplash.com/photo-1633603510855-1e638350f89e?q=80&w=1229&auto=format&fit=crop" },
-        { title: "Rajsthan", status: "Booked", image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?q=80&w=1170&auto=format&fit=crop" },
-        { title: "Western Madhya Pradesh", status: "Booked", image: "https://plus.unsplash.com/premium_photo-1697730407363-4fff46d992bb?q=80&w=975&auto=format&fit=crop" },
-        { title: "Eastern Madhya Pradesh", status: "Booked", image: "https://images.unsplash.com/photo-1679556369532-bacc9cbdb8da?q=80&w=1170&auto=format&fit=crop" },
-        { title: "Mumbai Metropolitan & Western Maharastra", status: "Booked", image: "https://images.unsplash.com/photo-1566552881560-0be862a7c445?q=80&w=735&auto=format&fit=crop" },
-        { title: "Central & South Gujarat", status: "Booked", image: "https://images.unsplash.com/photo-1642841819300-20ed449c02a1?q=80&w=735&auto=format&fit=crop" },
-        { title: "North Gujrat & Sourastra", status: "Booked", image: "https://images.unsplash.com/photo-1642841819300-20ed449c02a1?q=80&w=735&auto=format&fit=crop" },
-        { title: "Western & Central Uttar Pradesh", status: "Booked", image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&h=300&fit=crop" },
-        { title: "Andhra Pradesh", status: "Booked", image: "https://images.unsplash.com/photo-1707833711203-7b37bdeb73b6?q=80&w=1331&auto=format&fit=crop" },
-        { title: "South & Urban Karnataka", status: "Booked", image: "https://plus.unsplash.com/premium_photo-1697730504977-26847b1f1f91?q=80&w=1171&auto=format&fit=crop" },
-        // { title: "Maharastra", status: "Booked", image: "https://images.unsplash.com/photo-1720174851625-3fffda5a6288?q=80&w=674&auto=format&fit=crop" },
-        { title: "Chennai & Northern Tamilnadu", status: "Booked", image: "https://images.unsplash.com/photo-1614519738232-27ba94d26403?q=80&w=687&auto=format&fit=crop" },
-        { title: "North & Central Karnataka", status: "Booked", image: "https://images.unsplash.com/photo-1600100397849-3a782cfd8492?q=80&w=1074&auto=format&fit=crop" },
-        { title: "Haryana", status: "Booked", image: "https://images.unsplash.com/photo-1695667424131-a9680e0307ee?q=80&w=1170&auto=format&fit=crop" },
-        { title: "Southern & Western Tamil Nadu", status: "Booked", image: "https://images.unsplash.com/photo-1597389935051-2f9dc0f05456?q=80&w=687&auto=format&fit=crop" },
-        { title: "West Bengal", status: "Available", image: "https://images.unsplash.com/photo-1626198226928-617fc6c6203e?q=80&w=1170&auto=format&fit=crop" },
-        { title: "Marathawada & Southern Maharastra", status: "Booked", image: "https://images.unsplash.com/photo-1674452388723-e47ff1e6df92?q=80&w=1332&auto=format&fit=crop" },
-        { title: "Vidarbha & North Maharastra", status: "Available", image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&h=300&fit=crop" },
-        { title: "Eastern Uttar pradesh & Bundelkhand", status: "Available", image: "https://images.unsplash.com/photo-1642152654183-a2baa9a08f34?q=80&w=1170&auto=format&fit=crop" }
-        ,
-        { title: "Jharkhand", status: "Booked", image: "https://plus.unsplash.com/premium_photo-1697730494992-7d5a0c46ea52?q=80&w=1171&auto=format&fit=crop" },
-        { title: "Chattisgarh", status: "Booked", image: "http://plus.unsplash.com/premium_photo-1691031429475-a18a2c89d83c?q=80&w=1974&auto=format&fit=crop" },
-        { title: "Goa", status: "Available", image: "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?q=80&w=1170&auto=format&fit=crop" },
-        { title: "Himachal Pradesh", status: "Available", image: "https://images.unsplash.com/photo-1597074866923-dc0589150358?q=80&w=1170&auto=format&fit=crop" },
-        { title: "Jammu & Kashmir", status: "Available", image: "https://plus.unsplash.com/premium_photo-1697730426664-f04d9916f700?q=80&w=1170&auto=format&fit=crop" },
-        { title: "North East", status: "Available", image: "https://plus.unsplash.com/premium_photo-1694475392038-7c2a5706786e?q=80&w=1166&auto=format&fit=crop" },
-        { title: "Uttrakhand", status: "Available", image: "https://images.unsplash.com/photo-1596599623428-87dbae5e7816?q=80&w=1170&auto=format&fit=crop" },
-        { title: "Punjab", status: "Booked", image: "https://plus.unsplash.com/premium_photo-1697730324062-c012bc98eb13?q=80&w=1170&auto=format&fit=crop" },
-        { title: "Bihar", status: "Available", image: "https://images.unsplash.com/photo-1722332780160-6b166b9367d9?q=80&w=735&auto=format&fit=crop" },
-        { title: "Kerala", status: "Available", image: "https://plus.unsplash.com/premium_photo-1697729438401-fcb4ff66d9a8?q=80&w=1170&auto=format&fit=crop" },
-    ];
+    useEffect(() => {
+        fetchFranchises();
+    }, []);
 
     const filteredFranchises = franchises.filter(
         (f) =>

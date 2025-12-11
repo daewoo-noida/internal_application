@@ -41,6 +41,7 @@ import AdminMeetingsList from "./pages/admin/AdminMeetingsList.jsx";
 import AdminMeetingDetail from "./pages/admin/AdminMeetingDetail.jsx";
 import CreateMeeting from "./pages/admin/CreateMeeting.jsx";
 import MeetingsDashboard from "./pages/sales/MeetingsDashboard.jsx";
+import FranchiseTab from "./pages/admin/FranchiseTab.jsx";
 
 // Wrapper for Sales Routes
 const SalesLayout = () => (
@@ -99,9 +100,10 @@ export default function App() {
           <Route path="/admin/client/edit/:id" element={<EditClient />} />
           <Route path="/admin/daewoo-clients" element={<ClientsList />} />
           <Route path="/admin/reimbursements" element={<AdminReimbursements />} />
-          {/* <Route path="/admin/meetings" element={<AdminMeetingsList />} />
+          <Route path="/admin/franchise-manager" element={<FranchiseTab />} />
+          <Route path="/admin/meetings" element={<AdminMeetingsList />} />
           <Route path="/admin/meetings/:meetingId" element={<AdminMeetingDetail />} />
-          <Route path="/admin/create-meeting" element={<CreateMeeting />} /> */}
+          <Route path="/admin/create-meeting" element={<CreateMeeting />} />
         </Route>
 
         <Route path="*" element={<Page404 />} />

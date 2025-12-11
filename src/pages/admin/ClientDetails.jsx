@@ -140,7 +140,7 @@ export default function ClientDetails() {
                     </button>
 
                     <Link
-                        to="/admin/salesmen"
+                        to="/admin/daewoo-clients"
                         className="px-4 py-2 rounded text-white"
                         style={{ background: primary }}
                     >

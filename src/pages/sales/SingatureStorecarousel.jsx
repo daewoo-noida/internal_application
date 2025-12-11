@@ -1,37 +1,38 @@
 import { useState, useEffect, useRef } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { franchiseAPI } from "../../utils/api";
 
 export default function SignatureStoreCarousel() {
     const [storeFilter, setStoreFilter] = useState("Booked");
     const [searchTerm, setSearchTerm] = useState("");
+    const [franchises, setFranchises] = useState([]);
+    const [loading, setLoading] = useState(true);
     const carouselRef = useRef(null);
 
-    const stores = [
-        {
-            title: "Ahemdabad", status: "Booked", desc: `Unit No. 26, 27 & 28, The crown
-Gangotri Circle, opp. Kalhar Bunglow,
-Nikol, Ahmedabad, Gujarat - 380049`, image: "/images/signature/41.png"
-        },
-        {
-            title: "Jaipur", status: "Booked", desc: `Shop no. 1,2 & 3 scheme number 27, NH
-11 Main Sikar Road, Opposite
-Vidhyadhar Nagar Depot, Jaipur,
-Rajasthan - 302039`, image: "/images/signature/55.png"
-        },
-        {
-            title: "Delhi", status: "Booked", desc: `1st Floor, Plot No. 1083, Niti Khand 1,
-Indirapuram, Ghaziabad, UP - 201014`, image: "/images/signature/66.png"
-        },
-    ];
+    const fetchFranchises = async () => {
+        try {
+            const response = await franchiseAPI.getAll('signature');
+            setFranchises(response.data);
+        } catch (error) {
+            console.error('Error fetching franchises:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchFranchises();
+    }, []);
+
 
     // ⭐ AUTO SELECT BOOKED ON LOAD
     useEffect(() => {
-        const hasBooked = stores.some((s) => s.status === "Booked");
+        const hasBooked = franchises.some((f) => f.status === "Booked");
         if (hasBooked) setStoreFilter("Booked");
     }, []);
 
-    const filteredStores = stores.filter(
+    const filteredStores = franchises.filter(
         (s) =>
             s.status === storeFilter &&
             s.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -87,7 +88,7 @@ Indirapuram, Ghaziabad, UP - 201014`, image: "/images/signature/66.png"
                                 : "text-gray-600 hover:bg-gray-100"
                                 }`}
                         >
-                            Booked ({stores.filter((s) => s.status === "Booked").length})
+                            Booked ({franchises.filter((s) => s.status === "Booked").length})
                         </button>
                     </div>
 
@@ -142,9 +143,9 @@ Indirapuram, Ghaziabad, UP - 201014`, image: "/images/signature/66.png"
                                     </h3>
 
                                     {/* DESCRIPTION FIXED */}
-                                    {item.desc && (
+                                    {item.description && (
                                         <p className="text-gray-600 text-sm mt-2 line-clamp-5">
-                                            {item.desc}
+                                            {item.description}
                                         </p>
                                     )}
                                 </div>

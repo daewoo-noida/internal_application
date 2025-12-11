@@ -116,4 +116,20 @@ export const notificationAPI = {
   deleteNotification: (id) => api.delete(`/notifications/${id}`),
 };
 
+
+export const meetingAPI = {
+
+  createMeeting: (data) => api.post('/meetings/create', data),
+  getAdminMeetings: () => api.get('/meetings/admin'),
+  getSalesPersons: (search) => api.get(`/meetings/salespersons?search=${search}`),
+  deleteMeeting: (meetingId) => api.delete(`/meetings/${meetingId}`),
+
+
+  getUserMeetings: () => api.get('/meetings/user'),
+  updateResponse: (meetingId, data) => api.put(`/meetings/${meetingId}/response`, data),
+
+  exportToCalendar: (meetingId) => api.get(`/meetings/${meetingId}/calendar`)
+};
+
+
 export default api;

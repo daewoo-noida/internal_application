@@ -37,6 +37,10 @@ import ClientsList from "./pages/admin/ClientList.jsx";
 import AdminReimbursements from "./pages/admin/AdminReimbursements.jsx";
 import TrackReimbursement from "./pages/sales/TrackReimbursement.jsx";
 import Page404 from "./pages/sales/404.jsx";
+import AdminMeetingsList from "./pages/admin/AdminMeetingsList.jsx";
+import AdminMeetingDetail from "./pages/admin/AdminMeetingDetail.jsx";
+import CreateMeeting from "./pages/admin/CreateMeeting.jsx";
+import MeetingsDashboard from "./pages/sales/MeetingsDashboard.jsx";
 
 // Wrapper for Sales Routes
 const SalesLayout = () => (
@@ -82,6 +86,7 @@ export default function App() {
           <Route path="/sales/profile" element={<UserProfile />} />
           <Route path="/sales/client/:id" element={<SalesClientDetails />} />
           <Route path="/sales/reimbursement/track" element={<TrackReimbursement />} />
+          <Route path="/sales/meetings" element={<MeetingsDashboard />} />
         </Route>
 
         {/* Admin Routes */}
@@ -94,7 +99,11 @@ export default function App() {
           <Route path="/admin/client/edit/:id" element={<EditClient />} />
           <Route path="/admin/daewoo-clients" element={<ClientsList />} />
           <Route path="/admin/reimbursements" element={<AdminReimbursements />} />
+          {/* <Route path="/admin/meetings" element={<AdminMeetingsList />} />
+          <Route path="/admin/meetings/:meetingId" element={<AdminMeetingDetail />} />
+          <Route path="/admin/create-meeting" element={<CreateMeeting />} /> */}
         </Route>
+
         <Route path="*" element={<Page404 />} />
       </Routes>
     </>

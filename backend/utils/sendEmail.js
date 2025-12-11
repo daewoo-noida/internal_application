@@ -34,9 +34,6 @@ async function sendEmail(to, subject, html) {
             html,
         });
 
-        // console.log("✅ Email sent successfully");
-        // console.log("   Message ID:", info.messageId);
-        // console.log("   Response:", info.response);
     } catch (error) {
         console.error("❌ Error while sending email:");
         console.error("   Message:", error.message);

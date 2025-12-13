@@ -1,66 +1,95 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { authAPI } from '../utils/api';
 
-const ImpersonationBanner = () => {
-    const [exiting, setExiting] = useState(false);
+const ImpersonateLogin = () => {
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
-    const isImpersonating = localStorage.getItem('isImpersonating') === 'true';
-    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    const originalAdmin = JSON.parse(localStorage.getItem('originalAdmin') || 'null');
+    useEffect(() => {
+        const token = searchParams.get('token');
 
-    const handleExitImpersonation = async () => {
-        if (!window.confirm('Exit impersonation and return to admin dashboard?')) {
+        if (!token) {
+            setError('Invalid impersonation link');
+            setLoading(false);
             return;
         }
 
-        setExiting(true);
-        try {
-            await authAPI.exitImpersonation();
+        const loginWithToken = async () => {
+            try {
+                // Use token to login as user
+                const response = await authAPI.loginWithImpersonation(token);
+                const { token: authToken, user, isImpersonating, originalUser } = response.data;
 
-            // Clear current session
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userRole');
-            localStorage.removeItem('userData');
-            localStorage.removeItem('user');
-            localStorage.removeItem('isImpersonating');
-            localStorage.removeItem('isAuthenticated');
-            localStorage.removeItem('salesProfileComplete');
+                // CRITICAL: Store user data in the format your app expects
+                localStorage.setItem('authToken', authToken);
+                localStorage.setItem('userRole', 'Sales'); // Force set to "Sales"
+                localStorage.setItem('userData', JSON.stringify(user));
+                localStorage.setItem('isImpersonating', isImpersonating);
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('loginTime', Date.now().toString());
 
-            window.location.href = '/admin/dashboard';
+                localStorage.setItem('user', JSON.stringify({
+                    name: user.name,
+                    email: user.email,
+                    designation: user.designation,
+                    role: 'Sales'
+                }));
 
-        } catch (error) {
-            console.error('Failed to exit impersonation:', error);
-            alert('Failed to exit. Please try again.');
-            setExiting(false);
-        }
-    };
+                if (originalUser) {
+                    localStorage.setItem('originalAdmin', JSON.stringify(originalUser));
+                }
 
-    if (!isImpersonating) return null;
+                // Redirect to user dashboard
+                navigate('/sales/dashboard');
 
-    return (
-        <div className="bg-yellow-50 border-l-4 border-yellow-500 p-3 md:p-4" style={{ marginTop: "80px" }}>
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-0">
-                <div className="flex items-start md:items-center">
-                    <svg className="w-5 h-5 text-yellow-500 mr-2 flex-shrink-0 mt-0.5 md:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="font-medium text-sm md:text-base">
-                        You are viewing as: <span className="text-blue-600 block md:inline">{currentUser.name}</span>
-                        <span className="text-gray-600 text-xs md:text-sm block md:inline">
-                            ({currentUser.email})
-                        </span>
-                    </span>
+            } catch (err) {
+                console.error('Impersonation login error:', err);
+                setError(err.response?.data?.message || 'Impersonation failed or token expired');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loginWithToken();
+    }, [searchParams, navigate]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Logging in as user...</p>
                 </div>
-                <button
-                    onClick={handleExitImpersonation}
-                    disabled={exiting}
-                    className="px-3 py-1.5 md:px-4 md:py-1 bg-red-600 text-white text-xs md:text-sm rounded hover:bg-red-700 disabled:opacity-50 whitespace-nowrap self-end md:self-auto w-full md:w-auto text-center"
-                >
-                    {exiting ? 'Exiting...' : 'Exit Impersonation'}
-                </button>
             </div>
-        </div>
-    );
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="bg-white p-8 rounded-lg shadow-md max-w-md">
+                    <div className="text-red-500 mb-4">
+                        <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h2 className="text-xl font-bold text-center mb-4">Impersonation Failed</h2>
+                    <p className="text-gray-600 text-center mb-6">{error}</p>
+                    <button
+                        onClick={() => navigate('/admin/dashboard')}
+                        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                    >
+                        Return to Admin Dashboard
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    return null;
 };
 
-export default ImpersonationBanner;
+export default ImpersonateLogin;

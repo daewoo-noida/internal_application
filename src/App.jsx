@@ -44,6 +44,8 @@ import MeetingsDashboard from "./pages/sales/MeetingsDashboard.jsx";
 import FranchiseTab from "./pages/admin/FranchiseTab.jsx";
 import ImpersonateLogin from "./components/ImpersonateLogin.jsx";
 import ImpersonationBanner from "./components/ImpersonationBanner.jsx";
+import AdminArticles from "./pages/admin/AdminArticles.jsx";
+import UserArticles from "./pages/sales/Article.jsx";
 
 // Wrapper for Sales Routes
 const SalesLayout = () => (
@@ -91,6 +93,7 @@ export default function App() {
           <Route path="/sales/client/:id" element={<SalesClientDetails />} />
           <Route path="/sales/reimbursement/track" element={<TrackReimbursement />} />
           <Route path="/sales/meetings" element={<MeetingsDashboard />} />
+          <Route path="/sales/articles" element={<UserArticles />} />
         </Route>
 
         {/* Admin Routes */}
@@ -107,7 +110,7 @@ export default function App() {
           <Route path="/admin/meetings" element={<AdminMeetingsList />} />
           <Route path="/admin/meetings/:meetingId" element={<AdminMeetingDetail />} />
           <Route path="/admin/create-meeting" element={<CreateMeeting />} />
-
+          <Route path="/admin/articles" element={<AdminArticles />} />
         </Route>
 
         <Route path="*" element={<Page404 />} />

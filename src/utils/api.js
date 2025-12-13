@@ -153,4 +153,17 @@ export const franchiseAPI = {
   delete: (id) => api.delete(`/franchises/${id}`),
 };
 
+export const articleAPI = {
+  createArticle: (data) => api.post("/articles", data),
+  getAllArticles: (params) => api.get("/articles", { params }),
+  updateArticle: (id, data) => api.put(`/articles/${id}`, data),
+  deleteArticle: (id) => api.delete(`/articles/${id}`),
+  updateArticleStatus: (id, status) =>
+    api.put(`/articles/${id}/status`, { status }),
+
+  getPublishedArticles: (params) => api.get("/articles/published", { params }),
+  getAllPublishedArticles: () => api.get("/articles/published?all=true"),
+  getArticleById: (id) => api.get(`/articles/${id}`),
+};
+
 export default api;

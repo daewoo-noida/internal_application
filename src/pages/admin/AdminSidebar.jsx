@@ -9,6 +9,7 @@ const menuItems = [
     { path: "/admin/reimbursements", label: "Reimbursements" },
     { path: "/admin/meetings", label: "Meeting & Invites" },
     { path: "/admin/franchise-manager", label: "Franchise Manager" },
+    { path: "/admin/articles", label: "Articles" },
 ];
 
 export default function AdminSidebar() {

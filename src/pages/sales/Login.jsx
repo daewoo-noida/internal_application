@@ -87,7 +87,7 @@ export default function Login() {
             // Redirect based on role and profile completion
             if (data.user.role.toLowerCase() === "sales") {
               if (isProfileComplete) {
-                navigate("/sales/dashboard");
+                navigate("/");
               } else {
                 navigate("/sales/profile");
               }

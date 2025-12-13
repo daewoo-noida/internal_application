@@ -9,6 +9,7 @@ import { Copy } from "lucide-react";
 import OfferPopup from "../../components/LandingPopup";
 import DDPFranchise from "./DDPFranchise";
 import MotivationSection from "./MotivationSection";
+import ArticlesList from "./ArticlesList";
 export default function Index() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -71,25 +72,35 @@ IFSC: ICIC0001238
       </section>
 
 
-      {/* 🟢 CLIENT LOGO CAROUSEL */}
+
       <ClientLogoCarousel />
 
-      {/* 🟢 LEADERS */}
+
       <LeadersSection />
       <DDPFranchise />
-      {/* 🟢 FRANCHISE CAROUSEL */}
+
       <FranchiseCarousel />
 
       <MapToMarket />
-      {/* 🟢 SIGNATURE STORE CAROUSEL */}
+
       <SignatureStoreCarousel />
 
-      {/* 🟢 MAP2MARKET SECTION */}
+
+      {/* <section className="py-10 md:py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 ">
+
+          <img src="/images/Article_section.png" alt="" className="rounded-lg" />
+
+        </div> */}
+
+
+      {/* </section> */}
+      <ArticlesList />
 
 
 
       {/* 🟢 MOTIVATION SECTION */}
-      <section className="py-10 md:py-16 bg-white">
+      < section className="py-10 md:py-16 bg-white" >
         <div className="max-w-7xl mx-auto px-4">
 
           {/* HEADER */}
@@ -131,9 +142,9 @@ IFSC: ICIC0001238
 
           </div>
         </div>
-      </section>
+      </section >
 
 
-    </div>
+    </div >
   );
 }

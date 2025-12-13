@@ -11,7 +11,7 @@ const reimbursementRoutes = require('./routes/reimbursement');
 const notificationRoutes = require('./routes/notificationRoutes');
 const meetingRoutes = require('./routes/meetingRoutes');
 const franchiseRoutes = require('./routes/franchiseRoutes');
-
+const articlesRoutes = require('./routes/articleRoutes');
 const path = require('path');
 
 const app = express();
@@ -47,7 +47,7 @@ app.use('/api/reimbursement', reimbursementRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/meetings', meetingRoutes);
 app.use('/api/franchises', franchiseRoutes);
-
+app.use('/api/articles', articlesRoutes);
 // Health Check
 app.get('/health', (req, res) => {
     res.json({ status: 'Server is running' });

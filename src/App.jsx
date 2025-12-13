@@ -13,7 +13,7 @@ import BookNow from "./pages/sales/booknow/BookNow.jsx";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
-import AdminLogin from "./pages/admin/Login.jsx";
+
 
 // Protected Routes
 import SalesProtectedRoute from "./routes/SalesProtectedRoute.jsx";
@@ -42,6 +42,8 @@ import AdminMeetingDetail from "./pages/admin/AdminMeetingDetail.jsx";
 import CreateMeeting from "./pages/admin/CreateMeeting.jsx";
 import MeetingsDashboard from "./pages/sales/MeetingsDashboard.jsx";
 import FranchiseTab from "./pages/admin/FranchiseTab.jsx";
+import ImpersonateLogin from "./components/ImpersonateLogin.jsx";
+import ImpersonationBanner from "./components/ImpersonationBanner.jsx";
 
 // Wrapper for Sales Routes
 const SalesLayout = () => (
@@ -68,9 +70,10 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
-
+      {/* <ImpersonationBanner /> */}
       <Routes>
         {/* Public Sales Pages */}
+        <Route path="/impersonate-login" element={<ImpersonateLogin />} />
         <Route path="/login" element={<MainLayout><SalesLogin /></MainLayout>} />
         <Route path="/signup" element={<MainLayout><SignupPage /></MainLayout>} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
@@ -104,6 +107,7 @@ export default function App() {
           <Route path="/admin/meetings" element={<AdminMeetingsList />} />
           <Route path="/admin/meetings/:meetingId" element={<AdminMeetingDetail />} />
           <Route path="/admin/create-meeting" element={<CreateMeeting />} />
+
         </Route>
 
         <Route path="*" element={<Page404 />} />

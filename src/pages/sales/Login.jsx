@@ -40,7 +40,7 @@ export default function Login() {
     }
 
     try {
-      // Step 1: Login
+
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -87,9 +87,9 @@ export default function Login() {
             // Redirect based on role and profile completion
             if (data.user.role.toLowerCase() === "sales") {
               if (isProfileComplete) {
-                navigate("/sales/dashboard"); // Go to dashboard if profile complete
+                navigate("/sales/dashboard");
               } else {
-                navigate("/sales/profile"); // Go to profile page if incomplete
+                navigate("/sales/profile");
               }
             } else if (data.user.role.toLowerCase() === "admin") {
               navigate("/admin/dashboard");
@@ -130,7 +130,7 @@ export default function Login() {
     }
   };
 
-  // AUTO-REDIRECT IF LOGGED IN
+
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     const role = localStorage.getItem("userRole");
@@ -141,6 +141,8 @@ export default function Login() {
       navigate("/admin/dashboard");
     }
   }, [navigate]);
+
+
   const backGroundImage = {
     backgroundImage: `url(/images/Login_Banner.png)`,
     backgroundSize: "cover",

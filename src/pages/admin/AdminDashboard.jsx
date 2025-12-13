@@ -20,8 +20,8 @@ export default function AdminDashboard() {
     const [filteredSalesmen, setFilteredSalesmen] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("monthly");
-    const [sortBy, setSortBy] = useState("name-asc"); // New state for sorting
-    const [searchTerm, setSearchTerm] = useState(""); // New state for search
+    const [sortBy, setSortBy] = useState("name-asc");
+    const [searchTerm, setSearchTerm] = useState("");
 
     const primary = "#0070b9";
 

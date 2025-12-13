@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { adminAPI } from "../../utils/api";
+import ImpersonateButton from "../admin/ImpersonateButton.jsx"; // Import the button
 
 export default function SalesmanDetails() {
     const { id } = useParams();
     const [salesman, setSalesman] = useState(null);
-    const [userProfile, setUserProfile] = useState(null);
     const [clients, setClients] = useState([]);
     const [stats, setStats] = useState({
         officeBranch: "",
@@ -116,14 +116,22 @@ export default function SalesmanDetails() {
                 <h1 className="text-3xl font-bold" style={{ color: primary }}>
                     {salesman?.name || "Salesman"}'s Summary
                 </h1>
-
-                <Link
-                    to="/admin/salesmen"
-                    className="px-4 py-2 rounded text-white"
-                    style={{ background: primary }}
-                >
-                    Back
-                </Link>
+                <div className="flex items-center gap-4">
+                    {/* Add Impersonate Button Here */}
+                    {salesman && (
+                        <ImpersonateButton
+                            userId={salesman._id || id}
+                            userName={salesman.name}
+                        />
+                    )}
+                    <Link
+                        to="/admin/salesmen"
+                        className="px-4 py-2 rounded text-white"
+                        style={{ background: primary }}
+                    >
+                        Back
+                    </Link>
+                </div>
             </div>
 
             {/* Profile Card */}

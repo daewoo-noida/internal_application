@@ -59,7 +59,6 @@ exports.signup = async (req, res) => {
 
     await newUser.save();
 
-    // SEND OTP EMAIL ✔ using template
     await sendEmail(
       email,
       "Your Daewoo Verification OTP",
@@ -190,6 +189,9 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
 
 exports.getAllUser = async (req, res) => {
   try {

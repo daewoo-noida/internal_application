@@ -6,14 +6,14 @@ export default function AdminProtectedRoute({ children }) {
     const loginTime = localStorage.getItem("loginTime");
 
     if (!token || role?.toLowerCase() !== "admin") {
-        return <Navigate to="/admin/login" />;
+        return <Navigate to="/login" />;
     }
 
     const fiveHours = 5 * 60 * 60 * 1000;
 
     if (Date.now() - Number(loginTime) > fiveHours) {
         localStorage.clear();
-        return <Navigate to="/admin/login" />;
+        return <Navigate to="/login" />;
     }
 
     return children;

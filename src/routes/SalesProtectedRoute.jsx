@@ -5,35 +5,33 @@ import { authAPI } from "../utils/api";
 export default function SalesProtectedRoute({ children }) {
     const token = localStorage.getItem("authToken");
     const role = localStorage.getItem("userRole");
+    const isImpersonating = localStorage.getItem("isImpersonating") === "true";
     const [isLoading, setIsLoading] = useState(true);
     const [profileComplete, setProfileComplete] = useState(false);
 
     useEffect(() => {
         const checkProfileFromServer = async () => {
+            // If impersonating, skip profile check
+            if (isImpersonating) {
+                setProfileComplete(true);
+                setIsLoading(false);
+                return;
+            }
+
             if (!token || role?.toLowerCase() !== "sales") {
                 setIsLoading(false);
                 return;
             }
 
             try {
-                // Fetch fresh user data from server
                 const res = await authAPI.profile();
                 const userData = res.data.user;
-
-                // Store user data in localStorage
                 localStorage.setItem("userData", JSON.stringify(userData));
-
-                // ✅ Check profile completion from server field
                 const complete = userData.profileCompleted || false;
                 setProfileComplete(complete);
-
-                // Store completion status
                 localStorage.setItem("salesProfileComplete", complete ? "true" : "false");
-
             } catch (error) {
                 console.error("Error checking profile:", error);
-
-                // Fallback to localStorage check
                 const storedComplete = localStorage.getItem("salesProfileComplete");
                 if (storedComplete === "true") {
                     setProfileComplete(true);
@@ -44,10 +42,12 @@ export default function SalesProtectedRoute({ children }) {
         };
 
         checkProfileFromServer();
-    }, [token, role]);
+    }, [token, role, isImpersonating]);
 
-    // Check authentication
-    if (!token || role?.toLowerCase() !== "sales") {
+    // Check authentication - allow if either:
+    // 1. Regular sales user OR
+    // 2. Admin impersonating a sales user
+    if (!token || (role?.toLowerCase() !== "sales" && !isImpersonating)) {
         return <Navigate to="/login" />;
     }
 
@@ -62,8 +62,8 @@ export default function SalesProtectedRoute({ children }) {
     const currentPath = window.location.pathname;
     const isProfilePage = currentPath === "/sales/profile";
 
-    // If profile is not complete and we're not on profile page, redirect
-    if (!isProfilePage && !profileComplete) {
+    // If impersonating, skip profile completion check
+    if (!isImpersonating && !isProfilePage && !profileComplete) {
         return <Navigate to="/sales/profile" replace />;
     }
 

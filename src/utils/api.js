@@ -39,6 +39,17 @@ export const authAPI = {
     api.put("/auth/profile-image", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
+  generateImpersonationToken: (userId) =>
+    api.post(`/auth/impersonate/${userId}`),
+
+  loginWithImpersonation: (token) =>
+    api.post('/auth/impersonate-login', { token }),
+
+  exitImpersonation: () =>
+    api.post('/auth/exit-impersonation'),
+
+  getImpersonationSessions: () =>
+    api.get('/auth/impersonation-sessions'),
 };
 
 
@@ -123,7 +134,7 @@ export const meetingAPI = {
   getAdminMeetings: () => api.get('/meetings/admin'),
   getSalesPersons: (search) => api.get(`/meetings/salespersons?search=${search}`),
   deleteMeeting: (meetingId) => api.delete(`/meetings/${meetingId}`),
-  getMeetingStats: () => api.get('/meetings/stats'), // Add this line
+  getMeetingStats: () => api.get('/meetings/stats'),
 
   // User APIs
   getUserMeetings: () => api.get('/meetings/user'),

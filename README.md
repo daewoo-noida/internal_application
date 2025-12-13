@@ -39,7 +39,7 @@ The application will automatically:
 - **Sales Dashboard** (Protected): http://localhost:3000/sales/dashboard
 
 ### Admin Portal (Protected)
-- **Admin Login**: http://localhost:3000/admin/login
+- **Admin Login**: http://localhost:3000/login
 - **Admin Dashboard**: http://localhost:3000/admin/
 - **User Management**: http://localhost:3000/admin/user-management
 - **Role Management**: http://localhost:3000/admin/role-management

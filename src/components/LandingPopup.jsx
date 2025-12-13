@@ -4,11 +4,9 @@ export default function OfferPopup() {
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        // Check if popup was shown before
         const hasShown = localStorage.getItem("offerPopupShown");
 
         if (!hasShown) {
-            // Show popup after delay
             setTimeout(() => setOpen(true), 200);
             localStorage.setItem("offerPopupShown", "true");
         }
@@ -18,17 +16,16 @@ export default function OfferPopup() {
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
-
             <div className="bg-white rounded-2xl shadow-2xl w-[90%] max-w-3xl overflow-hidden animate-slideUp relative">
-
                 <button
                     onClick={() => setOpen(false)}
-                    className="absolute top-3 right-3 bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center"
+                    className="absolute top-3 right-3 bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center z-10"
                 >
                     ✕
                 </button>
 
                 <div className="grid grid-cols-1 md:grid-cols-2">
+                    {/* Image Section - Always visible */}
                     <div className="p-4 flex flex-col">
                         <div className="flex-1 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden border">
                             <img
@@ -39,7 +36,8 @@ export default function OfferPopup() {
                         </div>
                     </div>
 
-                    <div className="p-6">
+                    {/* Text Section - Hidden on mobile, visible on medium screens and above */}
+                    <div className="hidden md:block p-6">
                         <h2 className="text-2xl font-bold text-gray-900 mb-1">
                             Grand Cruise Challenge
                         </h2>
@@ -73,6 +71,16 @@ export default function OfferPopup() {
                             Okay, Got it!
                         </button>
                     </div>
+
+                    {/* Mobile-only close button inside image area */}
+                    {/* <div className="md:hidden absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                        <button
+                            onClick={() => setOpen(false)}
+                            className="bg-[#0070b9] text-white px-5 py-2 rounded-lg hover:bg-[#005a94] transition shadow-lg"
+                        >
+                            Okay, Got it!
+                        </button>
+                    </div> */}
                 </div>
             </div>
         </div>

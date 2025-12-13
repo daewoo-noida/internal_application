@@ -117,31 +117,31 @@ export default function ClientDetails() {
     if (!client) return <div className="p-6 text-lg">Client not found</div>;
 
     return (
-        <div className="p-6 space-y-10">
+        <div className="p-3 md:p-6 space-y-6 md:space-y-10">
             {/* HEADER */}
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold" style={{ color: primary }}>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <h1 className="text-2xl md:text-3xl font-bold" style={{ color: primary }}>
                     Client Details
                 </h1>
 
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                     <button
                         onClick={() => navigate(`/admin/client/edit/${client._id}`)}
-                        className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                        className="px-3 md:px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm md:text-base whitespace-nowrap flex-1 sm:flex-none"
                     >
                         Edit
                     </button>
 
                     <button
                         onClick={handleDelete}
-                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                        className="px-3 md:px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm md:text-base whitespace-nowrap flex-1 sm:flex-none"
                     >
                         Delete
                     </button>
 
                     <Link
                         to="/admin/daewoo-clients"
-                        className="px-4 py-2 rounded text-white"
+                        className="px-3 md:px-4 py-2 rounded text-white text-sm md:text-base whitespace-nowrap flex-1 sm:flex-none text-center"
                         style={{ background: primary }}
                     >
                         Back
@@ -150,7 +150,7 @@ export default function ClientDetails() {
             </div>
 
             {/* MAIN CARD */}
-            <div className="bg-white shadow-xl border rounded-xl p-6">
+            <div className="bg-white shadow-xl border rounded-xl p-4 md:p-6">
 
                 {/* FRANCHISE DETAILS */}
                 <Section title="Franchise Details">
@@ -259,19 +259,18 @@ export default function ClientDetails() {
                 {/* ADDITIONAL PAYMENTS */}
                 {client.secondPayments?.length > 0 && (
                     <Section title="Additional Payments">
-                        {/* <div className="overflow-x-auto"> */}
                         <div className="overflow-x-auto border border-gray-200 rounded-lg">
-                            <table className="w-full">
+                            <table className="w-full min-w-max">
                                 <thead>
                                     <tr className="bg-gray-50 border-b border-gray-200">
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">#</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Amount</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Payment Date</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Mode</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Proof</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Approved Amount</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+                                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">#</th>
+                                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Amount</th>
+                                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider hidden sm:table-cell">Date</th>
+                                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider hidden lg:table-cell">Mode</th>
+                                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Proof</th>
+                                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status</th>
+                                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider hidden xl:table-cell">Approved</th>
+                                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
 
@@ -289,19 +288,19 @@ export default function ClientDetails() {
 
                                         return (
                                             <tr key={p._id} className="border-b border-gray-100 hover:bg-gray-50">
-                                                <td className="px-4 py-3 text-sm text-gray-600">{index + 1}</td>
-                                                <td className="px-4 py-3 text-sm font-medium text-gray-900">₹ {p.amount}</td>
-                                                <td className="px-4 py-3 text-sm text-gray-700">{p.paymentDate?.slice(0, 10)}</td>
-                                                <td className="px-4 py-3 text-sm text-gray-700">{p.mode}</td>
+                                                <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-600">{index + 1}</td>
+                                                <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm font-medium text-gray-900">₹ {p.amount}</td>
+                                                <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700 hidden sm:table-cell">{p.paymentDate?.slice(0, 10)}</td>
+                                                <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700 hidden lg:table-cell">{p.mode}</td>
 
-                                                <td className="px-4 py-3">
+                                                <td className="px-2 md:px-4 py-2 md:py-3">
                                                     {proofURL ? (
                                                         <div className="flex items-center gap-2">
                                                             {isPdf ? (
                                                                 <div className="relative group">
-                                                                    <div className="h-12 w-12 border border-gray-200 rounded flex flex-col items-center justify-center bg-red-50">
-                                                                        <FileText className="text-red-500" size={20} />
-                                                                        <span className="text-xs text-gray-600">PDF</span>
+                                                                    <div className="h-10 w-10 md:h-12 md:w-12 border border-gray-200 rounded flex flex-col items-center justify-center bg-red-50">
+                                                                        <FileText className="text-red-500" size={16} />
+                                                                        <span className="text-[10px] md:text-xs text-gray-600">PDF</span>
                                                                     </div>
                                                                     <div className="absolute inset-0 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded">
                                                                         <button
@@ -309,7 +308,7 @@ export default function ClientDetails() {
                                                                             className="bg-blue-500 text-white p-1 rounded hover:bg-blue-600"
                                                                             title="View PDF"
                                                                         >
-                                                                            <Eye size={14} />
+                                                                            <Eye size={12} />
                                                                         </button>
                                                                         <button
                                                                             onClick={() => {
@@ -319,7 +318,7 @@ export default function ClientDetails() {
                                                                             className="bg-green-500 text-white p-1 rounded hover:bg-green-600"
                                                                             title="Download PDF"
                                                                         >
-                                                                            <Download size={14} />
+                                                                            <Download size={12} />
                                                                         </button>
                                                                     </div>
                                                                 </div>
@@ -328,7 +327,7 @@ export default function ClientDetails() {
                                                                     <img
                                                                         src={proofURL}
                                                                         alt={`Payment proof ${index + 1}`}
-                                                                        className="h-12 w-12 object-cover rounded border cursor-pointer"
+                                                                        className="h-10 w-10 md:h-12 md:w-12 object-cover rounded border cursor-pointer"
                                                                         onClick={() => {
                                                                             setPreviewImage(proofURL);
                                                                             setShowPreview(true);
@@ -344,61 +343,61 @@ export default function ClientDetails() {
                                                                             className="bg-blue-500 text-white p-1 rounded-tl-md"
                                                                             title="Download image"
                                                                         >
-                                                                            <Download size={12} />
+                                                                            <Download size={10} />
                                                                         </button>
                                                                     </div>
                                                                 </div>
                                                             )}
                                                         </div>
                                                     ) : (
-                                                        <span className="text-gray-400 text-sm">No File</span>
+                                                        <span className="text-gray-400 text-xs">No File</span>
                                                     )}
                                                 </td>
 
-                                                <td className="px-4 py-3">
+                                                <td className="px-2 md:px-4 py-2 md:py-3">
                                                     {p.status === "approved" && (
-                                                        <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] md:text-xs font-medium bg-green-100 text-green-800 rounded-full">
                                                             Approved
                                                         </span>
                                                     )}
                                                     {p.status === "pending" && (
-                                                        <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
+                                                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] md:text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
                                                             Pending
                                                         </span>
                                                     )}
                                                     {p.status === "rejected" && (
-                                                        <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                                                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] md:text-xs font-medium bg-red-100 text-red-800 rounded-full">
                                                             Rejected
                                                         </span>
                                                     )}
                                                 </td>
 
-                                                <td className="px-4 py-3 text-sm font-medium">
+                                                <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm font-medium hidden xl:table-cell">
                                                     {p.status === "approved" ? `₹ ${p.amount}` : (
                                                         <span className="text-gray-400">--</span>
                                                     )}
                                                 </td>
 
-                                                <td className="px-4 py-3">
+                                                <td className="px-2 md:px-4 py-2 md:py-3">
                                                     {p.status === "pending" && user?.role === "admin" && (
-                                                        <div className="flex items-center gap-2">
+                                                        <div className="flex flex-col md:flex-row gap-1 md:gap-2">
                                                             <button
                                                                 onClick={() => approvePayment(p._id)}
-                                                                className="px-3 py-1.5 bg-green-500 text-white text-xs rounded hover:bg-green-600"
+                                                                className="px-2 md:px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 whitespace-nowrap"
                                                                 title="Approve Payment"
                                                             >
                                                                 Approve
                                                             </button>
                                                             <button
                                                                 onClick={() => rejectPayment(p._id)}
-                                                                className="px-3 py-1.5 bg-orange-500 text-white text-xs rounded hover:bg-orange-600"
+                                                                className="px-2 md:px-3 py-1 bg-orange-500 text-white text-xs rounded hover:bg-orange-600 whitespace-nowrap"
                                                                 title="Reject Payment"
                                                             >
                                                                 Reject
                                                             </button>
                                                             <button
                                                                 onClick={() => deletePayment(p._id)}
-                                                                className="px-3 py-1.5 bg-red-500 text-white text-xs rounded hover:bg-red-600"
+                                                                className="px-2 md:px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 whitespace-nowrap"
                                                                 title="Delete Payment"
                                                             >
                                                                 Delete
@@ -407,7 +406,7 @@ export default function ClientDetails() {
                                                     )}
 
                                                     {p.status !== "pending" && (
-                                                        <span className="text-gray-400 text-sm">--</span>
+                                                        <span className="text-gray-400 text-xs md:text-sm">--</span>
                                                     )}
                                                 </td>
                                             </tr>
@@ -416,7 +415,6 @@ export default function ClientDetails() {
                                 </tbody>
                             </table>
                         </div>
-                        {/* </div> */}
                     </Section>
                 )}
 
@@ -430,7 +428,7 @@ export default function ClientDetails() {
                 </Section>
 
                 <Section title="Remarks">
-                    <div className="p-3 bg-gray-50 rounded border">{client.remark || "--"}</div>
+                    <div className="p-3 bg-gray-50 rounded border text-sm md:text-base">{client.remark || "--"}</div>
                 </Section>
             </div>
 
@@ -446,17 +444,17 @@ export default function ClientDetails() {
 }
 
 const info = (label, value) => (
-    <div className="grid grid-cols-3 py-2 border-b">
-        <span className="font-medium text-gray-500">{label}</span>
-        <span className="col-span-2">{value || "--"}</span>
+    <div className="grid grid-cols-1 md:grid-cols-3 py-2 border-b">
+        <span className="font-medium text-gray-500 text-sm md:text-base mb-1 md:mb-0">{label}</span>
+        <span className="col-span-1 md:col-span-2 text-sm md:text-base break-words">{value || "--"}</span>
     </div>
 );
 
 function Section({ title, children }) {
     return (
-        <div className="mb-10">
-            <h2 className="text-xl font-semibold mb-4 text-[#0070b9]">{title}</h2>
-            <div className="bg-gray-50 p-4 rounded-lg border">{children}</div>
+        <div className="mb-6 md:mb-10">
+            <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-[#0070b9]">{title}</h2>
+            <div className="bg-gray-50 p-3 md:p-4 rounded-lg border">{children}</div>
         </div>
     );
 }
@@ -486,27 +484,27 @@ function FileRow({ label, file, files, setPreviewImage, setShowPreview, download
             // PDF Display
             return (
                 <div key={index} className="relative group">
-                    <div className="h-20 w-20 border border-gray-300 rounded flex flex-col items-center justify-center bg-red-50 hover:bg-red-100 transition-colors">
-                        <FileText className="text-red-500" size={28} />
+                    <div className="h-16 w-16 md:h-20 md:w-20 border border-gray-300 rounded flex flex-col items-center justify-center bg-red-50 hover:bg-red-100 transition-colors">
+                        <FileText className="text-red-500" size={20} />
                         <span className="text-xs text-gray-600 mt-1">PDF</span>
-                        <span className="text-xs text-gray-500 truncate w-16 text-center mt-1">
+                        <span className="text-[10px] md:text-xs text-gray-500 truncate w-14 md:w-16 text-center mt-1">
                             {fileName.length > 12 ? `${fileName.substring(0, 9)}...` : fileName}
                         </span>
                     </div>
-                    <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded">
+                    <div className="absolute inset-0 flex items-center justify-center gap-1 md:gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded">
                         <button
                             onClick={() => viewPdf(fileUrl)}
-                            className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700"
+                            className="bg-blue-600 text-white p-1 md:p-2 rounded-full hover:bg-blue-700"
                             title="View PDF"
                         >
-                            <Eye size={16} />
+                            <Eye size={12} />
                         </button>
                         <button
                             onClick={() => downloadFile(fileUrl, fileName)}
-                            className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700"
+                            className="bg-green-600 text-white p-1 md:p-2 rounded-full hover:bg-green-700"
                             title="Download PDF"
                         >
-                            <Download size={16} />
+                            <Download size={12} />
                         </button>
                     </div>
                 </div>
@@ -518,7 +516,7 @@ function FileRow({ label, file, files, setPreviewImage, setShowPreview, download
                     <img
                         src={fileUrl}
                         alt={label}
-                        className="h-20 w-20 object-cover rounded border cursor-pointer hover:opacity-90 transition-opacity"
+                        className="h-16 w-16 md:h-20 md:w-20 object-cover rounded border cursor-pointer hover:opacity-90 transition-opacity"
                         onClick={() => {
                             setPreviewImage(fileUrl);
                             setShowPreview(true);
@@ -533,7 +531,7 @@ function FileRow({ label, file, files, setPreviewImage, setShowPreview, download
                             className="bg-blue-600 text-white p-1 rounded-tl-md"
                             title="Download image"
                         >
-                            <Download size={12} />
+                            <Download size={10} />
                         </button>
                     </div>
                 </div>
@@ -542,15 +540,15 @@ function FileRow({ label, file, files, setPreviewImage, setShowPreview, download
     };
 
     return (
-        <div className="py-3 border-b">
-            <div className="font-medium text-gray-600 mb-2">{label}</div>
+        <div className="py-2 md:py-3 border-b">
+            <div className="font-medium text-gray-600 text-sm md:text-base mb-2">{label}</div>
 
-            <div className="flex gap-3 flex-wrap">
+            <div className="flex gap-2 md:gap-3 flex-wrap">
                 {files && files.map((f, i) => renderFileDisplay(f, i))}
                 {file && renderFileDisplay(file)}
 
                 {(!file && (!files || files.length === 0)) && (
-                    <span className="text-gray-400 italic">No File</span>
+                    <span className="text-gray-400 italic text-sm">No File</span>
                 )}
             </div>
         </div>
@@ -562,25 +560,25 @@ function ImageModal({ previewImage, setShowPreview, downloadFile }) {
 
     return (
         <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
             onClick={() => setShowPreview(false)}
         >
             <div
-                className="relative bg-white rounded-xl shadow-2xl p-3 max-w-3xl w-[90%]"
+                className="relative bg-white rounded-xl shadow-2xl p-2 md:p-3 max-w-3xl w-full"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="absolute top-2 right-10 flex gap-2">
                     <button
                         onClick={() => downloadFile(previewImage, fileName)}
-                        className="bg-blue-600 text-white rounded-full w-8 h-8 flex justify-center items-center hover:bg-blue-700"
+                        className="bg-blue-600 text-white rounded-full w-7 h-7 md:w-8 md:h-8 flex justify-center items-center hover:bg-blue-700"
                         title="Download"
                     >
-                        <Download size={16} />
+                        <Download size={14} />
                     </button>
                 </div>
 
                 <button
-                    className="absolute top-2 right-2 bg-gray-800 text-white rounded-full w-8 h-8 flex justify-center items-center hover:bg-gray-900"
+                    className="absolute top-2 right-2 bg-gray-800 text-white rounded-full w-7 h-7 md:w-8 md:h-8 flex justify-center items-center hover:bg-gray-900"
                     onClick={() => setShowPreview(false)}
                 >
                     ✕
@@ -588,7 +586,7 @@ function ImageModal({ previewImage, setShowPreview, downloadFile }) {
 
                 <img
                     src={previewImage}
-                    className="w-full max-h-[80vh] object-contain rounded"
+                    className="w-full max-h-[70vh] md:max-h-[80vh] object-contain rounded"
                     alt="Preview"
                 />
             </div>

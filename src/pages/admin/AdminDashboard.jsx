@@ -216,7 +216,7 @@ export default function AdminDashboard() {
         }
     };
     return (
-        <div className="p-4 md:p-6 fade-in-up">
+        <div className="p-3 md:p-6 fade-in-up">
 
             {/* ---------- PAYMENT SUMMARY CARD ---------- */}
             <div className="bg-white shadow rounded-xl p-4 md:p-6 mb-6">

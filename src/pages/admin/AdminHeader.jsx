@@ -48,7 +48,7 @@ export default function AdminHeader({ toggleSidebar }) {
                         <img
                             src="/images/logo.png"
                             alt="Logo"
-                            className="h-9 w-auto"
+                            className="h-7 w-auto"
                         />
                     </div>
                 </div>

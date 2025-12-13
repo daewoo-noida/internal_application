@@ -110,7 +110,7 @@ export default function SalesmanDetails() {
     if (loading) return <div className="p-6 text-lg">Loading...</div>;
 
     return (
-        <div className="p-4 md:p-6 space-y-6 md:space-y-10">
+        <div className="md:p-6 space-y-6 md:space-y-10">
             {/* HEADER */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <h1 className="text-2xl md:text-3xl font-bold" style={{ color: primary }}>
@@ -135,7 +135,7 @@ export default function SalesmanDetails() {
             </div>
 
             {/* Profile Card */}
-            <div className="bg-white shadow-md rounded-xl p-4 md:p-8 border border-gray-100 w-full max-w-4xl mx-auto">
+            <div className="bg-white shadow-md rounded-xl p-4 md:p-8 border border-gray-100 w-full max-w-4xl">
                 <div className="flex flex-col md:flex-row">
                     {/* Profile Image */}
                     <div className="flex flex-col items-center w-full md:w-1/3 mb-6 md:mb-0">
@@ -281,7 +281,7 @@ export default function SalesmanDetails() {
                 </h2>
 
                 <div className="overflow-x-auto">
-                    <div className="min-w-full border border-gray-200 rounded-lg">
+                    <div className="min-w-full rounded-lg">
                         <table className="w-full">
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-200">

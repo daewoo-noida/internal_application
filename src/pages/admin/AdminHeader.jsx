@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import NotificationBell from "../../components/NotificationBell";
+
 export default function AdminHeader({ toggleSidebar }) {
     const [admin, setAdmin] = useState(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -28,31 +29,31 @@ export default function AdminHeader({ toggleSidebar }) {
 
     return (
         <header
-            className="w-full shadow-sm bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40"
+            className="w-full shadow-sm bg-white border-b border-gray-200"
             style={{ height: "60px" }}
         >
-
             <div className="h-full flex items-center justify-between px-4">
+                {/* Left: Sidebar Toggle Button + Logo */}
+                <div className="flex items-center gap-4">
+                    {/* Sidebar Toggle Button - Visible on mobile */}
+                    <button
+                        onClick={toggleSidebar}
+                        className="menu-button p-2 rounded-lg hover:bg-gray-100 transition md:hidden"
+                    >
+                        <span className="text-2xl font-bold text-[#0070b9]">☰</span>
+                    </button>
 
-                {/* Sidebar Toggle Button */}
-                <button
-                    onClick={toggleSidebar}
-                    className="p-2 rounded-lg hover:bg-gray-100 transition md:hidden"
-                >
-                    <span className="text-2xl font-bold text-[#0070b9]">☰</span>
-                </button>
-
-                {/* Logo */}
-                <div className="flex items-center gap-3">
-                    <img
-                        src="/images/logo.png"
-                        alt="Logo"
-                        className="h-9 w-auto"
-                    />
-
+                    {/* Logo */}
+                    <div className="flex items-center gap-3">
+                        <img
+                            src="/images/logo.png"
+                            alt="Logo"
+                            className="h-9 w-auto"
+                        />
+                    </div>
                 </div>
 
-                {/* Admin Profile */}
+                {/* Right: Admin Profile */}
                 <div className="relative flex items-center gap-3" ref={dropdownRef}>
                     <NotificationBell />
                     <button
@@ -74,7 +75,7 @@ export default function AdminHeader({ toggleSidebar }) {
 
                     {/* Dropdown */}
                     {dropdownOpen && (
-                        <div className="absolute right-0 mt-2 bg-white border rounded-lg shadow-lg py-2 w-44 z-50">
+                        <div className="absolute right-0 top-full mt-2 bg-white border rounded-lg shadow-lg py-2 w-44 z-50">
                             <div className="px-4 py-2 text-sm text-gray-700 border-b">
                                 <strong>{admin?.name}</strong>
                                 <div className="text-xs text-gray-500">Admin</div>
@@ -89,7 +90,6 @@ export default function AdminHeader({ toggleSidebar }) {
                         </div>
                     )}
                 </div>
-
             </div>
         </header>
     );

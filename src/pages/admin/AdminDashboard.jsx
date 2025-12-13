@@ -152,19 +152,53 @@ export default function AdminDashboard() {
 
     const chartOptions = {
         responsive: true,
+        maintainAspectRatio: false, // This is important for responsiveness
         plugins: {
             legend: {
                 display: true,
                 position: 'top',
+                labels: {
+                    font: {
+                        size: window.innerWidth < 768 ? 10 : 12 // Responsive font size for legend
+                    }
+                }
+            },
+            tooltip: {
+                titleFont: {
+                    size: window.innerWidth < 768 ? 10 : 12
+                },
+                bodyFont: {
+                    size: window.innerWidth < 768 ? 10 : 12
+                }
             }
         },
         scales: {
-            x: { grid: { display: false } },
+            x: {
+                grid: { display: false },
+                ticks: {
+                    font: {
+                        size: window.innerWidth < 768 ? 9 : 11
+                    },
+                    maxRotation: window.innerWidth < 768 ? 45 : 0,
+                    autoSkip: true,
+                    maxTicksLimit: window.innerWidth < 768 ? 6 : 12
+                }
+            },
             y: {
                 grid: { color: "#eee" },
                 beginAtZero: true,
                 ticks: {
+                    font: {
+                        size: window.innerWidth < 768 ? 9 : 11
+                    },
                     callback: function (value) {
+                        // Format large numbers for mobile
+                        if (window.innerWidth < 768 && value >= 1000000) {
+                            return '₹' + (value / 1000000).toFixed(1) + 'M';
+                        }
+                        if (window.innerWidth < 768 && value >= 1000) {
+                            return '₹' + (value / 1000).toFixed(0) + 'K';
+                        }
                         return '₹' + value.toLocaleString();
                     }
                 }
@@ -174,42 +208,36 @@ export default function AdminDashboard() {
             intersect: false,
             mode: 'index',
         },
-        tooltips: {
-            callbacks: {
-                label: function (context) {
-                    let label = context.dataset.label || '';
-                    if (label) {
-                        label += ': ';
-                    }
-                    label += '₹' + context.parsed.y.toLocaleString();
-                    return label;
-                }
+        elements: {
+            point: {
+                radius: window.innerWidth < 768 ? 3 : 4, // Smaller points on mobile
+                hoverRadius: window.innerWidth < 768 ? 5 : 6
             }
         }
     };
-
     return (
-        <div className="p-6 fade-in-up">
+        <div className="p-4 md:p-6 fade-in-up">
 
-            <div className="bg-white shadow rounded-xl p-6 mb-6">
-                <h2 className="text-xl font-semibold mb-4" style={{ color: primary }}>
+            {/* ---------- PAYMENT SUMMARY CARD ---------- */}
+            <div className="bg-white shadow rounded-xl p-4 md:p-6 mb-6">
+                <h2 className="text-lg md:text-xl font-semibold mb-4" style={{ color: primary }}>
                     Payment Summary
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="p-4 border rounded-lg">
-                        <p className="text-gray-600 text-sm">Total Deal Amount + GST</p>
-                        <p className="text-2xl font-bold" style={{ color: primary }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                    <div className="p-3 md:p-4 border rounded-lg">
+                        <p className="text-gray-600 text-xs md:text-sm">Total Deal Amount + GST</p>
+                        <p className="text-lg md:text-2xl font-bold" style={{ color: primary }}>
                             ₹{Number(stats.totalDealAmount).toLocaleString()}
                         </p>
                     </div>
 
-                    <div className="p-4 border rounded-lg">
-                        <p className="text-gray-600 text-sm">Total Received</p>
-                        <p className="text-2xl font-bold text-green-600">
+                    <div className="p-3 md:p-4 border rounded-lg">
+                        <p className="text-gray-600 text-xs md:text-sm">Total Received</p>
+                        <p className="text-lg md:text-2xl font-bold text-green-600">
                             ₹{Number(stats.totalReceived).toLocaleString()}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xs md:text-sm text-gray-500">
                             {stats.totalDealAmount > 0
                                 ? `${((stats.totalReceived / stats.totalDealAmount) * 100).toFixed(1)}% Collected`
                                 : '0% Collected'
@@ -217,12 +245,12 @@ export default function AdminDashboard() {
                         </p>
                     </div>
 
-                    <div className="p-4 border rounded-lg">
-                        <p className="text-gray-600 text-sm">Total Due Amount</p>
-                        <p className="text-2xl font-bold text-orange-600">
+                    <div className="p-3 md:p-4 border rounded-lg">
+                        <p className="text-gray-600 text-xs md:text-sm">Total Due Amount</p>
+                        <p className="text-lg md:text-2xl font-bold text-orange-600">
                             ₹{Number(stats.totalDue).toLocaleString()}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xs md:text-sm text-gray-500">
                             {stats.totalDealAmount > 0
                                 ? `${((stats.totalDue / stats.totalDealAmount) * 100).toFixed(1)}% Pending`
                                 : '0% Pending'
@@ -230,15 +258,15 @@ export default function AdminDashboard() {
                         </p>
                     </div>
 
-                    <div className="p-4 border rounded-lg">
-                        <p className="text-gray-600 text-sm">Collection Efficiency</p>
-                        <p className="text-2xl font-bold" style={{ color: stats.totalReceived >= stats.totalDealAmount * 0.7 ? 'green' : 'orange' }}>
+                    <div className="p-3 md:p-4 border rounded-lg">
+                        <p className="text-gray-600 text-xs md:text-sm">Collection Efficiency</p>
+                        <p className="text-lg md:text-2xl font-bold" style={{ color: stats.totalReceived >= stats.totalDealAmount * 0.7 ? 'green' : 'orange' }}>
                             {stats.totalDealAmount > 0
                                 ? `${((stats.totalReceived / stats.totalDealAmount) * 100).toFixed(1)}%`
                                 : '0%'
                             }
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xs md:text-sm text-gray-500">
                             {stats.totalClients} Active Clients
                         </p>
                     </div>
@@ -246,7 +274,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* ---------- KPI CARDS ---------- */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-10">
                 <KPI title="Total Clients" value={stats.totalClients} color={primary} />
                 <KPI title="Total Deal Amount + GST" value={`₹${Number(stats.totalDealAmount).toLocaleString()}`} color={primary} />
                 <KPI title="Total Payment Received" value={`₹${Number(stats.totalReceived).toLocaleString()}`} color={primary} />
@@ -254,50 +282,52 @@ export default function AdminDashboard() {
             </div>
 
             {/* ---------- CHART CARD ---------- */}
-            <div className="bg-white shadow rounded-xl p-6 mb-10">
-                <div className="flex justify-between mb-4">
-                    <h2 className="text-xl font-semibold" style={{ color: primary }}>
+            <div className="bg-white shadow rounded-xl p-4 md:p-6 mb-8 md:mb-10">
+                <div className="flex flex-col sm:flex-row justify-between mb-4 gap-3">
+                    <h2 className="text-lg md:text-xl font-semibold" style={{ color: primary }}>
                         Deal Growth Overview
                     </h2>
 
                     <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
-                        className="border p-2 rounded-lg"
+                        className="border p-2 rounded-lg text-sm md:text-base w-full sm:w-auto"
                     >
                         <option value="monthly">Monthly</option>
                         <option value="yearly">Yearly</option>
                     </select>
                 </div>
 
-                <Line data={chartData} options={chartOptions} />
+                <div className="h-64 md:h-80">
+                    <Line data={chartData} options={chartOptions} />
+                </div>
                 {/* <div className="mt-4 text-sm text-gray-600 text-center">
                     <p>Chart shows deal amounts and actual received payments (including approved second payments)</p>
                 </div> */}
             </div>
 
             {/* ---------- SALESMEN LIST WITH FILTERS ---------- */}
-            <div className="bg-white shadow rounded-xl p-6">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold" style={{ color: primary }}>
+            <div className="bg-white shadow rounded-xl p-4 md:p-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+                    <h2 className="text-lg md:text-xl font-semibold" style={{ color: primary }}>
                         Users Overview
                     </h2>
 
-                    <div className="flex gap-2 items-center">
+                    <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center w-full md:w-auto">
                         {/* Search Input */}
                         <input
                             type="text"
                             placeholder="Search by name or designation..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="border p-2 rounded-lg text-sm w-64"
+                            className="border p-2 rounded-lg text-sm w-full sm:w-48 md:w-64"
                         />
 
                         {/* Sort Dropdown */}
                         <select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value)}
-                            className="border p-2 rounded-lg text-sm"
+                            className="border p-2 rounded-lg text-sm w-full sm:w-auto"
                         >
                             <option value="name-asc">Name (A-Z)</option>
                             <option value="name-desc">Name (Z-A)</option>
@@ -309,27 +339,27 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                <div className="mb-4 text-sm text-gray-600">
+                <div className="mb-4 text-xs md:text-sm text-gray-600">
                     Showing {filteredSalesmen.length} of {salesmen.length} users
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full text-left border-collapse min-w-full">
                         <thead>
                             <tr className="border-b bg-gray-50">
-                                <th className="p-3">Name</th>
-                                <th className="p-3">Designation</th>
-                                <th className="p-3">Total Clients</th>
-                                <th className="p-3">Total Deal Amount + GST</th>
+                                <th className="p-2 md:p-3 text-xs md:text-sm">Name</th>
+                                <th className="p-2 md:p-3 text-xs md:text-sm">Designation</th>
+                                <th className="p-2 md:p-3 text-xs md:text-sm">Total Clients</th>
+                                <th className="p-2 md:p-3 text-xs md:text-sm">Total Deal Amount + GST</th>
                                 {/* <th className="p-3">Total Received</th> */}
-                                <th className="p-3">Action</th>
+                                <th className="p-2 md:p-3 text-xs md:text-sm">Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             {filteredSalesmen.length === 0 ? (
                                 <tr>
-                                    <td colSpan="6" className="p-6 text-center text-gray-500">
+                                    <td colSpan="5" className="p-4 md:p-6 text-center text-gray-500 text-sm md:text-base">
                                         No users found
                                     </td>
                                 </tr>
@@ -345,10 +375,10 @@ export default function AdminDashboard() {
                                             key={s._id}
                                             className={`border-b ${hasReceived ? "bg-green-50 hover:bg-green-100" : "hover:bg-gray-50"}`}
                                         >
-                                            <td className="p-3 font-medium">{s.name || "N/A"}</td>
-                                            <td className="p-3 text-gray-600 capitalize">{s.designation || "N/A"}</td>
-                                            <td className="p-3">{s.totalClients || 0}</td>
-                                            <td className="p-3">₹{Number(s.totalDealAmount || 0).toLocaleString()}</td>
+                                            <td className="p-2 md:p-3 font-medium text-xs md:text-sm">{s.name || "N/A"}</td>
+                                            <td className="p-2 md:p-3 text-gray-600 capitalize text-xs md:text-sm">{s.designation || "N/A"}</td>
+                                            <td className="p-2 md:p-3 text-xs md:text-sm">{s.totalClients || 0}</td>
+                                            <td className="p-2 md:p-3 text-xs md:text-sm">₹{Number(s.totalDealAmount || 0).toLocaleString()}</td>
                                             {/* <td className="p-3">
                                                 <div>
                                                     <div className="font-medium text-green-600">
@@ -359,10 +389,10 @@ export default function AdminDashboard() {
                                                     </div>
                                                 </div>
                                             </td> */}
-                                            <td className="p-3">
+                                            <td className="p-2 md:p-3">
                                                 <a
                                                     href={`/admin/salesman/${s._id}`}
-                                                    className="text-white px-4 py-1 rounded inline-block"
+                                                    className="text-white px-3 py-1 md:px-4 md:py-1 rounded inline-block text-xs md:text-sm whitespace-nowrap"
                                                     style={{ background: primary }}
                                                 >
                                                     View
@@ -384,9 +414,9 @@ export default function AdminDashboard() {
 // ---------------- KPI COMPONENT ----------------
 function KPI({ title, value, color }) {
     return (
-        <div className="p-3 rounded-xl bg-white border-l-4" style={{ borderColor: color }}>
-            <p className="text-gray-600 text-sm">{title}</p>
-            <p className="text-2xl font-semibold mt-1">{value}</p>
+        <div className="p-3 md:p-4 rounded-xl bg-white border-l-4" style={{ borderColor: color }}>
+            <p className="text-gray-600 text-xs md:text-sm">{title}</p>
+            <p className="text-lg md:text-2xl font-semibold mt-1">{value}</p>
         </div>
     );
 }

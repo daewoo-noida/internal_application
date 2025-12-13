@@ -110,13 +110,13 @@ export default function SalesmanDetails() {
     if (loading) return <div className="p-6 text-lg">Loading...</div>;
 
     return (
-        <div className="p-6 space-y-10">
+        <div className="p-4 md:p-6 space-y-6 md:space-y-10">
             {/* HEADER */}
-            <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold" style={{ color: primary }}>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <h1 className="text-2xl md:text-3xl font-bold" style={{ color: primary }}>
                     {salesman?.name || "Salesman"}'s Summary
                 </h1>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 flex-wrap">
                     {/* Add Impersonate Button Here */}
                     {salesman && (
                         <ImpersonateButton
@@ -126,7 +126,7 @@ export default function SalesmanDetails() {
                     )}
                     <Link
                         to="/admin/salesmen"
-                        className="px-4 py-2 rounded text-white"
+                        className="px-4 py-2 rounded text-white text-sm md:text-base whitespace-nowrap"
                         style={{ background: primary }}
                     >
                         Back
@@ -135,50 +135,50 @@ export default function SalesmanDetails() {
             </div>
 
             {/* Profile Card */}
-            <div className="bg-white shadow-md rounded-xl p-8 border border-gray-100 w-full max-w-4xl">
-                <div className="flex ">
+            <div className="bg-white shadow-md rounded-xl p-4 md:p-8 border border-gray-100 w-full max-w-4xl mx-auto">
+                <div className="flex flex-col md:flex-row">
                     {/* Profile Image */}
-                    <div className="flex flex-col items-center w-1/3">
+                    <div className="flex flex-col items-center w-full md:w-1/3 mb-6 md:mb-0">
                         {salesman?.profileImage ? (
                             <img
                                 src={salesman.profileImage}
                                 alt="Profile"
-                                className="w-36 h-36 object-cover rounded-full border shadow-sm"
+                                className="w-24 h-24 md:w-36 md:h-36 object-cover rounded-full border shadow-sm"
                             />
                         ) : (
-                            <div className="w-36 h-36 flex items-center justify-center bg-gray-200 rounded-full border text-gray-500">
+                            <div className="w-24 h-24 md:w-36 md:h-36 flex items-center justify-center bg-gray-200 rounded-full border text-gray-500">
                                 No Image
                             </div>
                         )}
-                        <h2 className="text-xl font-semibold mt-4">{salesman?.name || "-"}</h2>
-                        <p className="text-gray-500 capitalize">{salesman?.designation || "-"}</p>
+                        <h2 className="text-lg md:text-xl font-semibold mt-3 md:mt-4">{salesman?.name || "-"}</h2>
+                        <p className="text-gray-500 text-sm md:text-base capitalize">{salesman?.designation || "-"}</p>
                     </div>
 
                     {/* Details Section */}
-                    <div className="grid grid-cols-3 gap-y-6 gap-x-10 w-2/3 text-gray-700">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full md:w-2/3 text-gray-700">
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Email</p>
-                            <p className="text-gray-900">{salesman?.email || "-"}</p>
+                            <p className="text-xs md:text-sm font-medium text-gray-500">Email</p>
+                            <p className="text-gray-900 text-sm md:text-base break-words">{salesman?.email || "-"}</p>
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Phone</p>
-                            <p className="text-gray-900">{salesman?.phone || "-"}</p>
+                            <p className="text-xs md:text-sm font-medium text-gray-500">Phone</p>
+                            <p className="text-gray-900 text-sm md:text-base">{salesman?.phone || "-"}</p>
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Branch Office</p>
-                            <p className="text-gray-900 capitalize">{salesman?.officeBranch || "-"}</p>
+                            <p className="text-xs md:text-sm font-medium text-gray-500">Branch Office</p>
+                            <p className="text-gray-900 text-sm md:text-base capitalize">{salesman?.officeBranch || "-"}</p>
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Date of Birth</p>
-                            <p className="text-gray-900">{salesman?.dob || "-"}</p>
+                            <p className="text-xs md:text-sm font-medium text-gray-500">Date of Birth</p>
+                            <p className="text-gray-900 text-sm md:text-base">{salesman?.dob || "-"}</p>
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Gender</p>
-                            <p className="text-gray-900">{salesman?.gender || "-"}</p>
+                            <p className="text-xs md:text-sm font-medium text-gray-500">Gender</p>
+                            <p className="text-gray-900 text-sm md:text-base">{salesman?.gender || "-"}</p>
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Joined On</p>
-                            <p className="text-gray-900">
+                            <p className="text-xs md:text-sm font-medium text-gray-500">Joined On</p>
+                            <p className="text-gray-900 text-sm md:text-base">
                                 {salesman?.createdAt ? new Date(salesman.createdAt).toLocaleDateString() : "-"}
                             </p>
                         </div>
@@ -187,46 +187,46 @@ export default function SalesmanDetails() {
             </div>
 
             {/* PAYMENT SUMMARY CARD */}
-            <div className="bg-white shadow rounded-xl p-6">
-                <h2 className="text-xl font-semibold mb-4" style={{ color: primary }}>
+            <div className="bg-white shadow rounded-xl p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-semibold mb-4" style={{ color: primary }}>
                     Payment Summary
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="p-4 border rounded-lg">
-                        <p className="text-gray-600 text-sm">Total Deal Amount + GST</p>
-                        <p className="text-2xl font-bold" style={{ color: primary }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                    <div className="p-3 md:p-4 border rounded-lg">
+                        <p className="text-gray-600 text-xs md:text-sm">Total Deal Amount + GST</p>
+                        <p className="text-lg md:text-2xl font-bold" style={{ color: primary }}>
                             ₹{Number(stats.totalDealAmount).toLocaleString()}
                         </p>
                     </div>
 
-                    <div className="p-4 border rounded-lg">
-                        <p className="text-gray-600 text-sm">Initial Token Amount</p>
-                        <p className="text-lg font-semibold text-blue-600">
+                    <div className="p-3 md:p-4 border rounded-lg">
+                        <p className="text-gray-600 text-xs md:text-sm">Initial Token Amount</p>
+                        <p className="text-base md:text-lg font-semibold text-blue-600">
                             ₹{Number(stats.totalTokenReceived).toLocaleString()}
                         </p>
-                        <p className="text-gray-600 text-sm mt-1">Approved 2nd Payments</p>
-                        <p className="text-lg font-semibold text-green-600">
+                        <p className="text-gray-600 text-xs md:text-sm mt-1">Approved 2nd Payments</p>
+                        <p className="text-base md:text-lg font-semibold text-green-600">
                             ₹{Number(stats.totalApprovedSecondPayments).toLocaleString()}
                         </p>
                     </div>
 
-                    <div className="p-4 border rounded-lg">
-                        <p className="text-gray-600 text-sm">Total Received</p>
-                        <p className="text-2xl font-bold text-green-600">
+                    <div className="p-3 md:p-4 border rounded-lg">
+                        <p className="text-gray-600 text-xs md:text-sm">Total Received</p>
+                        <p className="text-lg md:text-2xl font-bold text-green-600">
                             ₹{Number(stats.totalReceived).toLocaleString()}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xs md:text-sm text-gray-500">
                             {stats.collectionPercentage.toFixed(1)}% Collected
                         </p>
                     </div>
 
-                    <div className="p-4 border rounded-lg">
-                        <p className="text-gray-600 text-sm">Total Due Amount</p>
-                        <p className="text-2xl font-bold text-orange-600">
+                    <div className="p-3 md:p-4 border rounded-lg">
+                        <p className="text-gray-600 text-xs md:text-sm">Total Due Amount</p>
+                        <p className="text-lg md:text-2xl font-bold text-orange-600">
                             ₹{Number(stats.totalDue).toLocaleString()}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xs md:text-sm text-gray-500">
                             {stats.totalDealAmount > 0
                                 ? `${((stats.totalDue / stats.totalDealAmount) * 100).toFixed(1)}% Pending`
                                 : '0% Pending'
@@ -237,7 +237,7 @@ export default function SalesmanDetails() {
             </div>
 
             {/* KPI CARDS - SIMPLIFIED */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {[
                     {
                         label: "Total Clients",
@@ -262,11 +262,11 @@ export default function SalesmanDetails() {
                 ].map((card, i) => (
                     <div
                         key={i}
-                        className="p-5 bg-white shadow rounded-lg border-l-4"
+                        className="p-4 md:p-5 bg-white shadow rounded-lg border-l-4"
                         style={{ borderColor: primary }}
                     >
                         <p className="text-sm text-gray-500">{card.label}</p>
-                        <p className="text-2xl font-semibold mt-1">{card.value}</p>
+                        <p className="text-xl md:text-2xl font-semibold mt-1">{card.value}</p>
                         {card.subtext && (
                             <p className="text-xs text-gray-400 mt-1">{card.subtext}</p>
                         )}
@@ -275,29 +275,29 @@ export default function SalesmanDetails() {
             </div>
 
             {/* CLIENT TABLE - UPDATED WITH REAL PAYMENTS */}
-            <div className="bg-white shadow rounded-xl p-6">
-                <h2 className="text-xl font-semibold mb-4" style={{ color: primary }}>
+            <div className="bg-white shadow rounded-xl p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-semibold mb-4" style={{ color: primary }}>
                     Client Details (Including Approved Payments)
                 </h2>
 
                 <div className="overflow-x-auto">
-                    <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                    <div className="min-w-full border border-gray-200 rounded-lg">
                         <table className="w-full">
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-200">
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Client ID</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Client Name</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Territory</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Deal Amount</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Token Amount</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Approved Payments</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Total Received</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">% Collected</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Balance</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Status</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Date</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Created</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Action</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap">Client ID</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap">Client Name</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap hidden lg:table-cell">Territory</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap">Deal Amount</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap hidden xl:table-cell">Token Amount</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap hidden xl:table-cell">Approved Payments</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap hidden md:table-cell">Total Received</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap">% Collected</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap">Balance</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap hidden lg:table-cell">Status</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap hidden xl:table-cell">Date</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap hidden xl:table-cell">Created</th>
+                                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-xs font-medium text-gray-700 whitespace-nowrap">Action</th>
                                 </tr>
                             </thead>
 
@@ -316,16 +316,16 @@ export default function SalesmanDetails() {
 
                                     return (
                                         <tr key={c._id} className="border-b border-gray-100 hover:bg-gray-50">
-                                            <td className="px-4 py-3 text-sm font-medium text-gray-900">{c.clientId}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-900">{c.name}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-700">{c.territory || "-"}</td>
-                                            <td className="px-4 py-3 text-sm font-semibold text-gray-900">
+                                            <td className="px-3 py-2 md:px-4 md:py-3 text-sm font-medium text-gray-900 whitespace-nowrap">{c.clientId}</td>
+                                            <td className="px-3 py-2 md:px-4 md:py-3 text-sm text-gray-900">{c.name}</td>
+                                            <td className="px-3 py-2 md:px-4 md:py-3 text-sm text-gray-700 hidden lg:table-cell">{c.territory || "-"}</td>
+                                            <td className="px-3 py-2 md:px-4 md:py-3 text-sm font-semibold text-gray-900">
                                                 ₹{Number(c.dealAmount || 0).toLocaleString()}
                                             </td>
-                                            <td className="px-4 py-3 text-sm text-gray-700">
+                                            <td className="px-3 py-2 md:px-4 md:py-3 text-sm text-gray-700 hidden xl:table-cell">
                                                 ₹{Number(c.tokenReceivedAmount || 0).toLocaleString()}
                                             </td>
-                                            <td className="px-4 py-3">
+                                            <td className="px-3 py-2 md:px-4 md:py-3 hidden xl:table-cell">
                                                 {approvedPaymentsCount > 0 ? (
                                                     <div className="space-y-1">
                                                         <div className="text-sm font-medium text-green-600">
@@ -339,30 +339,30 @@ export default function SalesmanDetails() {
                                                     <span className="text-sm text-gray-400">-</span>
                                                 )}
                                             </td>
-                                            <td className="px-4 py-3 text-sm font-semibold text-green-600">
+                                            <td className="px-3 py-2 md:px-4 md:py-3 text-sm font-semibold text-green-600 hidden md:table-cell">
                                                 ₹{totalReceived.toLocaleString()}
                                             </td>
-                                            <td className="px-4 py-3">
+                                            <td className="px-3 py-2 md:px-4 md:py-3">
                                                 <div className="flex items-center">
-                                                    <div className="w-16 bg-gray-200 rounded-full h-1.5 mr-2">
+                                                    <div className="w-12 md:w-16 bg-gray-200 rounded-full h-1.5 mr-2">
                                                         <div
                                                             className="bg-green-500 h-1.5 rounded-full"
                                                             style={{ width: `${Math.min(receivedPercent, 100)}%` }}
                                                         ></div>
                                                     </div>
-                                                    <span className="text-sm font-medium">{receivedPercent}%</span>
+                                                    <span className="text-xs md:text-sm font-medium whitespace-nowrap">{receivedPercent}%</span>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-3 text-sm font-semibold text-orange-600">
+                                            <td className="px-3 py-2 md:px-4 md:py-3 text-sm font-semibold text-orange-600">
                                                 ₹{balance.toLocaleString()}
                                             </td>
-                                            <td className="px-4 py-3">
+                                            <td className="px-3 py-2 md:px-4 md:py-3 hidden lg:table-cell">
                                                 <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${receivedPercent >= 100
                                                     ? "bg-green-100 text-green-800"
                                                     : receivedPercent === 0
                                                         ? "bg-gray-100 text-gray-700"
                                                         : "bg-blue-100 text-blue-800"
-                                                    }`}>
+                                                    } whitespace-nowrap`}>
                                                     {receivedPercent >= 100
                                                         ? "Completed"
                                                         : receivedPercent === 0
@@ -370,18 +370,18 @@ export default function SalesmanDetails() {
                                                             : "Partial"}
                                                 </span>
                                             </td>
-                                            <td className="px-4 py-3 text-sm text-gray-600">
+                                            <td className="px-3 py-2 md:px-4 md:py-3 text-sm text-gray-600 hidden xl:table-cell">
                                                 {new Date(c.createdAt).toLocaleDateString()}
                                             </td>
-                                            <td className="px-4 py-3">
-                                                <span className="inline-block px-2.5 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium">
+                                            <td className="px-3 py-2 md:px-4 md:py-3 hidden xl:table-cell">
+                                                <span className="inline-block px-2.5 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium whitespace-nowrap">
                                                     {c._userRole || 'Creator'}
                                                 </span>
                                             </td>
-                                            <td className="px-4 py-3">
+                                            <td className="px-3 py-2 md:px-4 md:py-3">
                                                 <Link
                                                     to={`/admin/client/${c._id}`}
-                                                    className="inline-block px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                                                    className="inline-block px-3 py-1.5 bg-blue-600 text-white text-xs md:text-sm rounded hover:bg-blue-700 transition-colors whitespace-nowrap"
                                                 >
                                                     View
                                                 </Link>
